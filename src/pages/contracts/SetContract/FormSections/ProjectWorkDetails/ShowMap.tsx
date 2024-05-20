@@ -1,15 +1,22 @@
 import {
   MapContainer,
   TileLayer,
-  Marker,
   useMapEvents,
   Polyline,
   Polygon,
 } from "react-leaflet";
-import { Icon, LeafletMouseEvent } from "leaflet";
-import { Box, IconButton, Stack } from "@mui/material";
+import { LeafletMouseEvent } from "leaflet";
+import {
+  ButtonGroup,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
+import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import { normalizeLongitude } from "../../../../../methods/normalizeLongitude";
+import { useState } from "react";
 
 const MapClickHandler: React.FC<MapClickHandlerProps> = ({ onMapClick }) => {
   const map = useMapEvents({
@@ -28,8 +35,10 @@ export function ShowMap({
   lat,
   long,
 }: PropsType) {
+  // TODO::declare and define component state and variables
   let centerLat = lat,
     centerLong = long;
+  const [satelliteMode, setSatelliteMode] = useState(false);
 
   if (!!positionClick.length) {
     positionClick.forEach(([lat, lng]) => {
@@ -40,6 +49,7 @@ export function ShowMap({
     centerLong /= positionClick.length;
   }
 
+  // TODO::declare and define component helpers methods
   function createPolylines() {
     const polylines = [];
     for (let i = 0; i < positionClick.length - 1; i++) {
@@ -56,17 +66,16 @@ export function ShowMap({
       normalizeLongitude(position[1]),
     ];
     setPositionClick([...positionClick, positionHandler]);
-    // let _positions: { lat: number; long: number }[] = TargetPositions.map(
-    //   (ele) => ({ lat: ele[0], long: ele[1] })
-    // );
-    // updateAmountData({ map: _positions });
   };
   const handleResetClick = () => {
     setPositionClick([]);
   };
 
+  //*return component view
   return (
     <Stack
+      direction={"row"}
+      spacing={2}
       sx={{
         width: "100%",
         height: "340px",
@@ -75,17 +84,28 @@ export function ShowMap({
     >
       <MapContainer
         center={[centerLat, centerLong]}
-        zoom={3}
+        zoom={5}
         scrollWheelZoom={true}
-        style={{ width: "100%", height: "100%", position: "relative" }}
+        style={{ width: "94%", height: "100%", position: "relative" }}
       >
-        {/* First TileLayer with background color */}
+        {/* Map view */}
         <TileLayer
           className="tile"
           opacity={0.5}
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {satelliteMode && (
+          <>
+            {/* Satellite View */}
+            <TileLayer
+              url="https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+              subdomains={["mt0", "mt1", "mt2", "mt3"]}
+            />
+          </>
+        )}
+
         {/* Second TileLayer without background color */}
         <Polygon
           positions={positionClick}
@@ -94,23 +114,54 @@ export function ShowMap({
 
         <MapClickHandler onMapClick={(p) => handleMapClick(p)} />
         {createPolylines()}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "end",
-            mt: 2,
-            position: "absolute",
-            right: "10px",
-            top: "60px",
-            zIndex: "100000",
-            bgcolor: "primary.contrastText",
-          }}
+      </MapContainer>
+      <ButtonGroup
+        variant="outlined"
+        orientation="vertical"
+        aria-label="map controll actions"
+      >
+        <Tooltip
+          title={
+            <Typography variant="body2" color={"worning"}>
+              تنبية هذا الزر سوف يزيل تحديد الوقع الذي قمت به فانتبه
+            </Typography>
+          }
+          placement="right"
         >
-          <IconButton onClick={handleResetClick}>
+          <IconButton
+            sx={{
+              background: "lightgray",
+              color: "#000",
+              ":hover": {
+                background: "lightgray",
+              },
+            }}
+            onClick={handleResetClick}
+          >
             <ReplayIcon />
           </IconButton>
-        </Box>
-      </MapContainer>
+        </Tooltip>
+        <Tooltip
+          title={satelliteMode ? "Map View" : "Satellite View"}
+          placement="right"
+        >
+          <IconButton
+            sx={{
+              background: "lightgray",
+              color: "#000",
+              ":hover": {
+                background: "lightgray",
+              },
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSatelliteMode((prev) => !prev);
+            }}
+          >
+            <SatelliteAltIcon color={satelliteMode ? "warning" : undefined} />
+          </IconButton>
+        </Tooltip>
+      </ButtonGroup>
     </Stack>
   );
 }
