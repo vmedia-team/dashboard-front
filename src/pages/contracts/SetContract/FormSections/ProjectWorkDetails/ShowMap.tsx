@@ -1,15 +1,22 @@
 import {
   MapContainer,
   TileLayer,
-  Marker,
   useMapEvents,
   Polyline,
   Polygon,
 } from "react-leaflet";
-import { Icon, LeafletMouseEvent } from "leaflet";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { LeafletMouseEvent } from "leaflet";
+import {
+  ButtonGroup,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
+import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import { normalizeLongitude } from "../../../../../methods/normalizeLongitude";
+import { useState } from "react";
 
 const MapClickHandler: React.FC<MapClickHandlerProps> = ({ onMapClick }) => {
   const map = useMapEvents({
@@ -28,20 +35,21 @@ export function ShowMap({
   lat,
   long,
 }: PropsType) {
-  console.log("Center ", lat, long);
-  let _centerLat = lat,
-    _centerLong = long;
+  // TODO::declare and define component state and variables
+  let centerLat = lat,
+    centerLong = long;
+  const [satelliteMode, setSatelliteMode] = useState(false);
+
   if (!!positionClick.length) {
-    let n = positionClick.length;
-    for (let i = 0; i < n; i++) {
-      let _position = positionClick[i];
-      _centerLat += _position[0];
-      _centerLong += _position[1];
-    }
-    _centerLat /= positionClick.length;
-    _centerLong /= positionClick.length;
+    positionClick.forEach(([lat, lng]) => {
+      centerLat += lat;
+      centerLong += lng;
+    });
+    centerLat /= positionClick.length;
+    centerLong /= positionClick.length;
   }
 
+  // TODO::declare and define component helpers methods
   function createPolylines() {
     const polylines = [];
     for (let i = 0; i < positionClick.length - 1; i++) {
@@ -58,17 +66,16 @@ export function ShowMap({
       normalizeLongitude(position[1]),
     ];
     setPositionClick([...positionClick, positionHandler]);
-    // let _positions: { lat: number; long: number }[] = TargetPositions.map(
-    //   (ele) => ({ lat: ele[0], long: ele[1] })
-    // );
-    // updateAmountData({ map: _positions });
   };
   const handleResetClick = () => {
     setPositionClick([]);
   };
-  console.log("Breakpoint positionClick", positionClick);
+
+  //*return component view
   return (
     <Stack
+      direction={"row"}
+      spacing={2}
       sx={{
         width: "100%",
         height: "340px",
@@ -76,18 +83,29 @@ export function ShowMap({
       }}
     >
       <MapContainer
-        center={[lat, long]}
-        zoom={15}
+        center={[centerLat, centerLong]}
+        zoom={5}
         scrollWheelZoom={true}
-        style={{ width: "100%", height: "100%", position: "relative" }}
+        style={{ width: "94%", height: "100%", position: "relative" }}
       >
-        {/* First TileLayer with background color */}
+        {/* Map view */}
         <TileLayer
           className="tile"
           opacity={0.5}
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {satelliteMode && (
+          <>
+            {/* Satellite View */}
+            <TileLayer
+              url="https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+              subdomains={["mt0", "mt1", "mt2", "mt3"]}
+            />
+          </>
+        )}
+
         {/* Second TileLayer without background color */}
         <Polygon
           positions={positionClick}
@@ -96,23 +114,54 @@ export function ShowMap({
 
         <MapClickHandler onMapClick={(p) => handleMapClick(p)} />
         {createPolylines()}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "end",
-            mt: 2,
-            position: "absolute",
-            right: "10px",
-            top: "60px",
-            zIndex: "100000",
-            bgcolor: "primary.contrastText",
-          }}
+      </MapContainer>
+      <ButtonGroup
+        variant="outlined"
+        orientation="vertical"
+        aria-label="map controll actions"
+      >
+        <Tooltip
+          title={
+            <Typography variant="body2" color={"worning"}>
+              تنبية هذا الزر سوف يزيل تحديد الوقع الذي قمت به فانتبه
+            </Typography>
+          }
+          placement="right"
         >
-          <IconButton onClick={handleResetClick}>
+          <IconButton
+            sx={{
+              background: "lightgray",
+              color: "#000",
+              ":hover": {
+                background: "lightgray",
+              },
+            }}
+            onClick={handleResetClick}
+          >
             <ReplayIcon />
           </IconButton>
-        </Box>
-      </MapContainer>
+        </Tooltip>
+        <Tooltip
+          title={satelliteMode ? "Map View" : "Satellite View"}
+          placement="right"
+        >
+          <IconButton
+            sx={{
+              background: "lightgray",
+              color: "#000",
+              ":hover": {
+                background: "lightgray",
+              },
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSatelliteMode((prev) => !prev);
+            }}
+          >
+            <SatelliteAltIcon color={satelliteMode ? "warning" : undefined} />
+          </IconButton>
+        </Tooltip>
+      </ButtonGroup>
     </Stack>
   );
 }
