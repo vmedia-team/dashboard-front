@@ -145,6 +145,7 @@ export default function AddRequest() {
     resolver: zodResolver(locationFormSchema),
     disabled: isLocationFormDone,
   });
+
   const LocationFormSubmit = locationForm.handleSubmit((formData) => {
     return new Promise((ressolve, reject) => {
       axios
@@ -165,6 +166,7 @@ export default function AddRequest() {
             bodies: data.number_bodies,
             depth: data.depth,
             price: data.price,
+            total_price: data.total_price,
           });
           setLocationFormData(formData);
 
@@ -236,20 +238,23 @@ export default function AddRequest() {
     const body = {
       area_id: currentMap?.soil_location_id,
       client_id: id,
-      depth: calculationPriceData?.depth,
+      depth: calculationForm.getValues("depth") ?? calculationPriceData?.depth,
       floor_id: locationFormData?.soilFloorId,
       lat: selectedPin?.[0],
       long: selectedPin?.[1],
       license_id: 1,
       map: currentMap?.id,
-      number_bodies: calculationPriceData?.bodies,
+      number_bodies:
+        calculationForm.getValues("bodies") ?? calculationPriceData?.bodies,
       number_floor: options?.soilFloor?.find(
         (floor) => floor.id == locationFormData?.soilFloorId
       )?.number_floors,
       order_type_id: locationFormData?.order_type_id,
       payment: "cash",
-      price: calculationPriceData?.price,
-      total_price: calculationPriceData?.total_price,
+      price: calculationForm.getValues("price") ?? calculationPriceData?.price,
+      total_price:
+        calculationForm.getValues("total_price") ??
+        calculationPriceData?.total_price,
       image: images.filter((file) => file instanceof File),
     };
     console.log("body object", body);
@@ -467,8 +472,11 @@ export default function AddRequest() {
               {...calculationForm.register("total_price", {
                 valueAsNumber: true,
                 ...calculationFormInputCommonProps,
-                disabled: true,
               })}
+              disabled={
+                !isLocationFormDone ||
+                (!isCustomCalculationConfirmed && isManualInputs)
+              }
             />
           </GridItem>
           <GridItem label="طريقة الدفع">

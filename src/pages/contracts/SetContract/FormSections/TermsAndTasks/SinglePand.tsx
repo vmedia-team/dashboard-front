@@ -18,6 +18,8 @@ type PandT = {
   is_percent: boolean;
   is_treatment: boolean;
   is_attachment: boolean;
+  is_mission: boolean;
+  is_letter: boolean;
 };
 
 export default function SinglePand({
@@ -42,6 +44,8 @@ export default function SinglePand({
       subPandsArr.length > idx ? subPandsArr[idx].is_treatment : false,
     is_attachment:
       subPandsArr.length > idx ? subPandsArr[idx].is_attachment : false,
+    is_mission: subPandsArr.length > idx ? subPandsArr[idx].is_mission : false,
+    is_letter: subPandsArr.length > idx ? subPandsArr[idx].is_letter : false,
   });
 
   useEffect(() => {
@@ -155,6 +159,28 @@ export default function SinglePand({
                   />
                 }
                 label="المرفقات"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked={Pand.is_mission}
+                    onChange={(e, checked) =>
+                      setPand((prev) => ({ ...prev, is_mission: checked }))
+                    }
+                  />
+                }
+                label="المهمات"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked={Pand.is_letter}
+                    onChange={(e, checked) =>
+                      setPand((prev) => ({ ...prev, is_letter: checked }))
+                    }
+                  />
+                }
+                label="الخطابات"
               />
             </FormGroup>
           </Box>

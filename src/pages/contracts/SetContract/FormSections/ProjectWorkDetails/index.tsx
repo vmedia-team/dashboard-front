@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import AddLabelToEl from "../../../../../components/AddLabelToEl";
 import UploadFileInput from "../../../../../components/UploadFileInput";
@@ -32,6 +32,9 @@ import Loader from "../../../../../components/Loading/Loader";
 import { objectToFormData } from "../../../../../methods";
 import { serialize } from "object-to-formdata";
 import RequiredSymbol from "../../../../../components/RequiredSymbol";
+import { ContractDetailsContext } from "../../ContractDetailsContext";
+import { useParams } from "react-router-dom";
+import { ContractDetails } from "../../../../../types/Contracts/ContractDetails";
 
 type HeaderFieldName =
   | "numberOfPieces"
@@ -40,13 +43,15 @@ type HeaderFieldName =
   | "bannerImg"
   | "masterPlanImg"
   | "projectIcon"
-  | "imagesAlpom";
+  | "imagesAlpom"
+  | "map_link";
 
 type FormHeaders = {
   numberOfPieces: number;
   area: number;
   location: string;
   bannerImg: string;
+  map_link: string;
   masterPlanImg: string;
   projectIcon: string;
   imagesAlpom: string[];
@@ -96,6 +101,7 @@ const FormHeaders: HeaderType[] = [
   { id: "FH-0", name: "numberOfPieces", text: "عدد القطع" },
   { id: "FH-1", name: "area", text: "المساحة" },
   { id: "FH-2", name: "location", text: "الموقع" },
+  { id: "FH-3", name: "map_link", text: "رابط الموقع" },
 ];
 
 const ProjectWorkDetails = (props: PropsType) => {
@@ -115,8 +121,12 @@ const ProjectWorkDetails = (props: PropsType) => {
   const [locationsPositions, setLocationsPositions] = useState<
     [number, number][]
   >([]);
-  const [editedData, setEditedData] = useState<contractDetails>();
+  const [editedData, setEditedData] = useState<ContractDetails | undefined>(
+    undefined
+  );
   const { enqueueSnackbar } = useSnackbar();
+  const { contract } = useContext(ContractDetailsContext);
+  const isEdit = !!contract;
 
   // TODO::define global
   const FieldGrid = ({
@@ -130,7 +140,7 @@ const ProjectWorkDetails = (props: PropsType) => {
       <Grid item xs={6} paddingX={1}>
         <AddLabelToEl label={text} required>
           <TextField
-            type={name == "location" ? "text" : "number"}
+            type={(name == "location" || name == 'map_link')? "text" : "number"}
             sx={{ background: "#fff" }}
             required
             //size="small"
@@ -150,10 +160,11 @@ const ProjectWorkDetails = (props: PropsType) => {
 
   const handleFormSubmit = handleSubmit((formData) => {
     let data = {
-      contract_id: props.contractId,
+      contract_id: contract?.id,
       number_parts: formData.numberOfPieces,
       area: formData.area,
       location: formData.location,
+      map_link: formData.map_link,
       website: showOptions.website ? 1 : 0,
       application: showOptions.application ? 1 : 0,
       online_service: showOptions.electronicSerive ? 1 : 0,
@@ -193,25 +204,14 @@ const ProjectWorkDetails = (props: PropsType) => {
 
   // TODO::fetch of contract
   useEffect(() => {
-    if (props.edit) {
-      axios
-        .get(Api(`employee/contract/${props.contractId}`))
-        .then((res) => {
-          setEditedData(res.data.data.contract_details);
-        })
-        .catch((err) => {
-          console.log("Error101 :-", err);
-          enqueueSnackbar("تعذر تحميل الداتا", { variant: "error" });
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+    if (isEdit && contract.contract_details) {
+      setEditedData(contract.contract_details);
     }
-  }, [props.edit]);
+  }, [isEdit]);
 
   // TODO::set data if edit approach
   useEffect(() => {
-    if (props.edit && editedData?.id) {
+    if (isEdit && editedData?.id) {
       reset({
         area: editedData?.area,
         location: editedData?.location,
@@ -242,20 +242,27 @@ const ProjectWorkDetails = (props: PropsType) => {
         application: editedData?.application == 1 ? true : false,
         electronicSerive: editedData?.online_service == 1 ? true : false,
       });
-      let str = editedData?.map.slice(2, -3);
-      let arr = str?.toString().split("},{");
-      let positions: [number, number][] = [];
-      for (let i = 0; i < arr?.length; i++) {
-        let cordin = arr[i].split(",");
-        let temp: [number, number] = [
-          +cordin[0].split(":")[1],
-          +cordin[1].split(":")[1],
-        ];
-        positions.push(temp);
+      // let  = (JSON.parse(obj?.map?.map || "[]") as Position[])
+      console.log("ASD editedData?.map", editedData?.map);
+      if (editedData?.map && editedData?.map?.length > 4) {
+        let str = editedData?.map?.slice(2, -3);
+        let arr = str?.toString().split("},{");
+        let positions: [number, number][] = [];
+        // Temp
+        if (Array.isArray(arr)) {
+          for (let i = 0; i < arr.length; i++) {
+            let cordin = arr[i].split(",");
+            let temp: [number, number] = [
+              +cordin[0].split(":")[1],
+              +cordin[1].split(":")[1],
+            ];
+            positions.push(temp);
+          }
+          setLocationsPositions(positions);
+        }
       }
-      setLocationsPositions(positions);
     }
-  }, [props.edit, editedData]);
+  }, [isEdit, editedData]);
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -357,7 +364,7 @@ const ProjectWorkDetails = (props: PropsType) => {
           {FormHeaders.map((header) => {
             return (
               <FieldGrid
-                key={`h_${header.id}_${Math.random()}`}
+                key={`h_${header.id}`}
                 text={header.text}
                 name={header.name}
               />
@@ -643,12 +650,25 @@ const ProjectWorkDetails = (props: PropsType) => {
         {/* Map */}
         <Box sx={{ marginTop: "3rem" }}>
           <Typography variant="h5">تحديد الموقع على الخريطة</Typography>
-          <ShowMap
-            positionClick={locationsPositions}
-            setPositionClick={setLocationsPositions}
-            lat={21.036}
-            long={34.2048}
-          />
+          {(!editedData?.id ||
+            (locationsPositions.length ==0)) && (
+            <ShowMap
+              positionClick={locationsPositions}
+              setPositionClick={setLocationsPositions}
+              lat={21.036}
+              long={34.2048}
+            />
+          )}
+          {editedData?.id && locationsPositions.length > 0 && (
+            <>
+              <ShowMap
+                positionClick={locationsPositions}
+                setPositionClick={setLocationsPositions}
+                lat={locationsPositions[0][0]}
+                long={locationsPositions[0][1]}
+              />
+            </>
+          )}
         </Box>
         {/* Save */}
         <Box
@@ -671,7 +691,5 @@ const ProjectWorkDetails = (props: PropsType) => {
 
 export default ProjectWorkDetails;
 type PropsType = {
-  edit: boolean;
-  contractId?: number;
   saveStatment?: string;
 };

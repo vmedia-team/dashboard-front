@@ -11,7 +11,6 @@ import {
 import axios from "axios";
 import { Api } from "../../../../constants";
 import { useParams } from "react-router-dom";
-import { ContractItems } from "../../../../types/Contracts/ContractItems";
 import {
   ActionTypes,
   ContractItemsState,
@@ -21,7 +20,14 @@ import {
   contractItemsIntial,
   reducer,
 } from "../FormSections/ContractItems/reducer";
+import { DbOptionType } from "../../../../types/other/DbOptionType";
+import { Client } from "../../../../types/Clients";
 
+// use contractT because back-end dont return all contract data in first function we may tell him and update it.
+type contractT = {
+  contract_type: number;
+  id: number;
+};
 export const ContractDetailsContext = createContext<{
   contract?: Contract;
   use?: ContractUse;
@@ -33,10 +39,13 @@ export const ContractDetailsContext = createContext<{
   disableInputs?: boolean;
   contractItemsData?: ContractItemsState;
   updateContractItemsData?: React.Dispatch<ActionTypes>;
+  forceId?: (id: number | undefined) => void;
 }>({});
 
 function ContractDetailsContextProvider({ children }: PropsType) {
-  const { id } = useParams();
+  const params = useParams();
+  const [forceId, setForceId] = useState<number | undefined>(undefined);
+  const id = forceId || params.id;
   const [contractDetails, setContractDetails] = useState<undefined | Contract>(
     undefined
   );
@@ -48,24 +57,29 @@ function ContractDetailsContextProvider({ children }: PropsType) {
     reducer,
     contractItemsIntial
   );
+  const [createdContract, setCreatedContract] = useState<contractT>({
+    contract_type: 0,
+    id: 0,
+  });
 
-  useEffect(() => {
-    if (id) {
-      axios
-        .get<{ data: ContractItemsState }>(Api(`employee/contract/items/${id}`))
-        .then((res) => {
-          // Assuming your API response contains the contract items data
-          // updateContractItemsData({ type: 'SET_CONTRACT_ITEMS', payload: res.data.data });
-        })
-        .catch((err) => {
-          // Handle error
-        });
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     axios
+  //       .get<{ data: ContractItemsState }>(Api(`employee/contract/items/${id}`))
+  //       .then((res) => {
+  //         // Assuming your API response contains the contract items data
+  //         // updateContractItemsData({ type: 'SET_CONTRACT_ITEMS', payload: res.data.data });
+  //       })
+  //       .catch((err) => {
+  //         // Handle error
+  //       });
+  //   }
+  // }, [id]);
 
-  useEffect(getContract, []);
+  useEffect(getContract, [id]);
 
   function getContract() {
+    console.log("refresh contract executed");
     if (id)
       axios
         .get<{ data: Contract }>(Api(`employee/contract/${id}`))
@@ -102,6 +116,9 @@ function ContractDetailsContextProvider({ children }: PropsType) {
         });
     });
   }
+  function updateCreatedContractData(data: contractT) {
+    setCreatedContract(data);
+  }
 
   return (
     <ContractDetailsContext.Provider
@@ -113,6 +130,7 @@ function ContractDetailsContextProvider({ children }: PropsType) {
         disableInputs,
         contractItemsData,
         updateContractItemsData,
+        forceId: setForceId,
       }}
     >
       {children}
@@ -127,9 +145,11 @@ type PropsType = {
 export type ContractUse = {
   branches?: Branch[];
   brokers?: Broker[];
+  client?: Client[];
   contractType?: ContractType[];
   employees?: EmployeeType[];
   management?: Management[];
+  attachments_types?: DbOptionType[];
 };
 
 export default ContractDetailsContextProvider;

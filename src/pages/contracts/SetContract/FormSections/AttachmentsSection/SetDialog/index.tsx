@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Grid, Typography } from "@mui/material";
+import { Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import { useContext, useEffect, useReducer, useState } from "react";
 
 import axios from "axios";
@@ -26,9 +26,11 @@ import { AxiosErrorType } from "../../../../../../types/Axios";
 import { ErrorTypography } from "../../../../../../components/ErrorTypography";
 import RequiredSymbol from "../../../../../../components/RequiredSymbol";
 import { useSnackbar } from "notistack";
+import { FormControl } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 function SetDialog(props: PropsType) {
-  const ContractDetails = useContext(ContractDetailsContext);
+  const { contract, refreshContract, use } = useContext(ContractDetailsContext);
   const [sendState, setSendState] = useState<
     "loading" | "error" | "success" | "none"
   >("none");
@@ -40,14 +42,14 @@ function SetDialog(props: PropsType) {
 
   function handleSubmit(e: React.FormEvent<HTMLDivElement>) {
     e.preventDefault();
-    if (ContractDetails.contract?.id) {
+    if (contract?.id) {
       setSendState("loading");
-
+      console.log("Data in state::", state);
       (props.edit
         ? axios.post(
             Api(`employee/contract/lever/${props.attachmentData.id}`),
             objectToFormData({
-              contract_id: ContractDetails.contract?.id,
+              contract_id: contract.id,
               card_image: state.file,
               name: state.name,
               type: state.type,
@@ -62,7 +64,7 @@ function SetDialog(props: PropsType) {
         : axios.post(
             Api("employee/contract/lever/store"),
             objectToFormData({
-              contract_id: ContractDetails.contract?.id,
+              contract_id: contract?.id,
               card_image: state.file,
               name: state.name,
               type: state.type,
@@ -75,7 +77,7 @@ function SetDialog(props: PropsType) {
           props.handleClose();
           dispatch({ type: "SET_RESET", payload: undefined });
           enqueueSnackbar("تم الحفظ بنجاح");
-          ContractDetails.refreshContract && ContractDetails.refreshContract();
+          refreshContract?.();
         })
         .catch(
           (
@@ -123,7 +125,7 @@ function SetDialog(props: PropsType) {
           <Grid container>
             <Grid p={1} item md={6}>
               <Typography>
-                رقم المرفق
+                وصف المرفق
                 {"  "}
                 <RequiredSymbol />
               </Typography>
@@ -158,17 +160,19 @@ function SetDialog(props: PropsType) {
               <ErrorTypography>{errorState.name}</ErrorTypography>
             </Grid>
             <Grid p={1} item md={6}>
-              <Typography>اسم المرفق</Typography>
-              <TextField
-                fullWidth
-                size="small"
-                label="نوع المرفق"
-                error={!!errorState.type}
-                value={state.type}
-                onChange={(e) => {
-                  dispatch({ type: "SET_TYPE", payload: e.target.value });
-                }}
-              />
+              <Typography>نوع المرفق</Typography>
+              <FormControl fullWidth size="small">
+                <Select
+                  value={state.type}
+                  onChange={(e) => {
+                    dispatch({ type: "SET_TYPE", payload: e.target.value });
+                  }}
+                >
+                  {use?.attachments_types?.map((item) => (
+                    <MenuItem value={item.id}>{item.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <ErrorTypography>{errorState.type}</ErrorTypography>
             </Grid>
             <Grid p={1} item md={6}>

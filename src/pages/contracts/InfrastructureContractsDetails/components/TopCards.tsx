@@ -10,13 +10,74 @@ import ReplayIcon from "@mui/icons-material/Replay";
 import DoneAndReminder from "./DoneAndReminder";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import EditRaioDialog from "./EditDialog";
-import { useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import "./TopCards.scss";
-import { ContractIncomeDataType } from "..";
+import { ContractDetailsContext } from "..";
+import { useUser } from "../../../../contexts/user/user";
+import { EmployeeType } from "../../../../types";
+import { TransactionType } from "../../../../types/Contracts/ContractTransactionAttachment";
 
-export default function TopCards({ contractData }: TopCardsProps) {
+interface Item {
+  id: number;
+}
+function removeDuplicates<T extends Item>(items: T[]): T[] {
+  const seenIds = new Set<number>();
+  const uniqueItems: T[] = [];
+
+  items.forEach((item) => {
+    if (!seenIds.has(item.id)) {
+      seenIds.add(item.id);
+      uniqueItems.push(item);
+    }
+  });
+
+  return uniqueItems;
+}
+
+export default function TopCards() {
   // declare our component variables/state
   const [openDialog, setOpenDialog] = useState(false);
+  const { contract, refreshToggler } = useContext(ContractDetailsContext);
+  const { user } = useUser();
+
+  const allProcessing: TransactionType[] = [];
+  contract?.contract_items?.forEach((item) => {
+    item.contract_sub_items?.forEach((subitem) => {
+      if (subitem.processing) allProcessing.push(...subitem.processing);
+    });
+  });
+
+  const workStaff = useMemo(() => {
+    const staff: EmployeeType[] = [];
+    contract?.contract_items?.forEach((item) => {
+      item.contract_item_employees?.forEach((contractItemEmployee) => {
+        if (contractItemEmployee.employee)
+          staff.push(contractItemEmployee.employee);
+      });
+    });
+    return removeDuplicates<EmployeeType>(staff);
+  }, [refreshToggler, contract?.id]);
+
+  // Fetch transactionNumbers Array - contract_items
+  const transactionNumbers = useMemo(() => {
+    const transactions: { id: number; type: string }[] = [];
+    contract?.contract_items?.forEach((item) => {
+      item.contract_sub_items?.forEach((sub_item) => {
+        sub_item?.processing?.forEach((transaction) => {
+          if (
+            transaction.attachment_type &&
+            transaction.attachment_type.length > 0
+          ) {
+            transactions.push({
+              id: transaction.id,
+              type: transaction.attachment_type[0].name || "",
+            });
+          }
+        });
+      });
+    });
+    return transactions;
+  }, [refreshToggler, contract?.id]);
 
   return (
     <Grid
@@ -28,7 +89,7 @@ export default function TopCards({ contractData }: TopCardsProps) {
         alignItems: "center",
         justifyContent: "space-between",
       }}
-      className="fadeInUp"
+      // className="fadeInUp"
     >
       {/* First Card */}
       <Box
@@ -69,7 +130,7 @@ export default function TopCards({ contractData }: TopCardsProps) {
               variant="body2"
               fontWeight={600}
             >
-              100000
+              {contract?.amount ?? 0}
             </Typography>
             <Typography
               color={"primary.main"}
@@ -117,7 +178,7 @@ export default function TopCards({ contractData }: TopCardsProps) {
               variant="body2"
               fontWeight={600}
             >
-              150000
+              {contract?.amount ?? 0}
             </Typography>
             <Typography
               color={"primary.main"}
@@ -136,7 +197,8 @@ export default function TopCards({ contractData }: TopCardsProps) {
             fontSize={12}
           >
             <ReplayIcon sx={{ color: "secondary.main", fontSize: "12px" }} />{" "}
-            اخر تحديث {"15/09/2023"}
+            اخر تحديث{" "}
+            {new Date(contract?.updated_at ?? "").toLocaleDateString()}
           </Typography>
 
           <Box
@@ -182,7 +244,7 @@ export default function TopCards({ contractData }: TopCardsProps) {
                   variant="body2"
                   fontWeight={600}
                 >
-                  8000
+                  0
                 </Typography>
                 <Typography
                   color={"primary.main"}
@@ -227,7 +289,7 @@ export default function TopCards({ contractData }: TopCardsProps) {
                   variant="body2"
                   fontWeight={600}
                 >
-                  1000
+                  {contract?.payed ?? 0}
                 </Typography>
                 <Typography
                   color={"primary.main"}
@@ -272,7 +334,7 @@ export default function TopCards({ contractData }: TopCardsProps) {
                   variant="body2"
                   fontWeight={600}
                 >
-                  500
+                  {contract?.remaining ?? 0}
                 </Typography>
                 <Typography
                   color={"primary.main"}
@@ -314,10 +376,10 @@ export default function TopCards({ contractData }: TopCardsProps) {
             scrollbarWidth: "thin",
           }}
         >
-          {contractData?.users.map((user, idx) => {
+          {workStaff.map((user, idx) => {
             return (
               <Box
-                key={`user_${idx}_${user.id}_${Math.random()}`}
+                key={`user_${idx}_${user.id}`}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -360,67 +422,36 @@ export default function TopCards({ contractData }: TopCardsProps) {
           sx={{
             height: "150px",
             display: "flex",
-            justifyContent: "space-around",
+            justifyContent: "start",
             flexDirection: "column",
+            overflowY: "auto",
+            scrollBehavior: "smooth",
+            scrollbarWidth: "thin",
           }}
         >
-          <Box sx={{ display: "flex" }}>
-            <Typography
-              color={"primary.main"}
-              variant="body2"
-              fontSize={14}
-              fontWeight={500}
-              marginX={1}
-            >
-              الكهرباء
-            </Typography>
-            <Typography
-              color={"secondary.main"}
-              variant="body2"
-              fontSize={14}
-              fontWeight={500}
-            >
-              100,000
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex" }}>
-            <Typography
-              color={"primary.main"}
-              variant="body2"
-              fontSize={14}
-              fontWeight={500}
-              marginX={1}
-            >
-              الكهرباء
-            </Typography>
-            <Typography
-              color={"secondary.main"}
-              variant="body2"
-              fontSize={14}
-              fontWeight={500}
-            >
-              100,000
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex" }}>
-            <Typography
-              color={"primary.main"}
-              variant="body2"
-              fontSize={14}
-              fontWeight={500}
-              marginX={1}
-            >
-              الكهرباء
-            </Typography>
-            <Typography
-              color={"secondary.main"}
-              variant="body2"
-              fontSize={14}
-              fontWeight={500}
-            >
-              100,000
-            </Typography>
-          </Box>
+          {allProcessing?.map((processing) => {
+            return (
+              <Box key={processing.id} display={"flex"} marginY={2}>
+                <Typography
+                  color={"primary.main"}
+                  variant="body2"
+                  fontSize={14}
+                  fontWeight={500}
+                  marginX={1}
+                >
+                  {processing.receiver}
+                </Typography>
+                <Typography
+                  color={"secondary.main"}
+                  variant="body2"
+                  fontSize={14}
+                  fontWeight={500}
+                >
+                  {processing.id}
+                </Typography>
+              </Box>
+            );
+          })}
         </Box>
       </Box>
       {/* Forth Card */}
@@ -444,24 +475,26 @@ export default function TopCards({ contractData }: TopCardsProps) {
         >
           نسب الانجاز الكلية
         </Typography>
-        <Button
-          sx={{
-            bgcolor: "#fff",
-            position: "absolute",
-            right: "5%",
-            boxShadow: "1px 1px 2px 2px lightgray",
-            transition: "all 0.5 ease-in-out",
-            ":hover": {
-              color: "#fff",
-              bgcolor: "primary.main",
-              transform: "scale(1.056)",
-            },
-          }}
-          startIcon={<SettingsOutlinedIcon />}
-          onClick={() => setOpenDialog(true)}
-        >
-          تعديل
-        </Button>
+        {user?.employee_id === contract?.employee_id && (
+          <Button
+            sx={{
+              bgcolor: "#fff",
+              position: "absolute",
+              right: "5%",
+              boxShadow: "1px 1px 2px 2px lightgray",
+              transition: "all 0.5 ease-in-out",
+              ":hover": {
+                color: "#fff",
+                bgcolor: "primary.main",
+                transform: "scale(1.056)",
+              },
+            }}
+            startIcon={<SettingsOutlinedIcon />}
+            onClick={() => setOpenDialog(true)}
+          >
+            تعديل
+          </Button>
+        )}
         <Grid container sx={{ paddingBottom: "1rem" }}>
           <Grid item xs={4}>
             <DoneAndReminder column={true} />
@@ -478,10 +511,10 @@ export default function TopCards({ contractData }: TopCardsProps) {
               className="RatioCircularProgress"
             >
               <CircularProgress
-                style={{ width: "90px", }}
+                style={{ width: "90px" }}
                 variant="determinate"
                 color={"warning"}
-                value={85.5}
+                value={contract?.achievement_percentage}
               />
               <Typography
                 sx={{
@@ -493,7 +526,7 @@ export default function TopCards({ contractData }: TopCardsProps) {
                 color={"warning"}
                 variant="body2"
               >
-                85.5%
+                {contract?.achievement_percentage}%
               </Typography>
             </Box>
           </Grid>
@@ -504,7 +537,3 @@ export default function TopCards({ contractData }: TopCardsProps) {
     </Grid>
   );
 }
-
-type TopCardsProps = {
-  contractData: ContractIncomeDataType | undefined;
-};

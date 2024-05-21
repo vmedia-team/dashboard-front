@@ -59,7 +59,7 @@ const ContractItems = (props: PropsType) => {
   console.log(contractDetails.contract);
 
   const [contractItemsDetails, setContractItemsDetails] = useState(
-    contractDetails.contract?.Contract_items
+    contractDetails.contract?.contract_items
   );
   console.log(contractItemsDetails);
 
@@ -532,7 +532,7 @@ const ContractItems = (props: PropsType) => {
                     ? // Render fields based on editedData.contract_sub_items
                       editedData.contract_sub_items.map(
                         (item: any, index: number) => (
-                          <React.Fragment key={`${index}_${Math.random()}`}>
+                          <React.Fragment key={`${index}_SI`}>
                             <Box
                               display="flex"
                               flexDirection="row"

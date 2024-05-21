@@ -24,6 +24,7 @@ import {
   mobileServiceSchema,
 } from "../../../../types/MobileServices";
 import { z } from "zod";
+import ServiceMedia from "../set-service/ServiceMedia";
 
 export interface Root {
   mobile_services: unknown[];
@@ -45,8 +46,6 @@ const ServiceCard = ({
   onDelete: (service: MobileService) => void;
   toggleTheme?: boolean;
 }) => {
-  const [expanded, setExpanded] = useState(false);
-
   return (
     <Stack>
       <Accordion
@@ -69,7 +68,8 @@ const ServiceCard = ({
           ) : undefined}
         </AccordionSummary>
         <AccordionDetails>
-          {service.children && service.children.length > 0 ? (
+          {service.children && service.is_responsible_service ? (
+            // && service.children.length > 0
             <Stack spacing={1}>
               {service.children.map((child) => (
                 <ServiceCard
@@ -98,6 +98,7 @@ const ServiceCard = ({
               <Typography variant="body1">{service.features}</Typography>
             </Stack>
           )}
+          <ServiceMedia service={service} showOnly seedService={() => {}} />
         </AccordionDetails>
         <AccordionActions sx={{ gap: 1 }}>
           <Fab
@@ -176,10 +177,10 @@ function MobileServicesMainPage() {
       .then(() => {
         requestServices();
         setDeleteDialogOpen(false);
-        enqueueSnackbar("تم حذف الاعلان بنجاح");
+        enqueueSnackbar("تم حذف الخدمة بنجاح");
       })
       .catch((err) => {
-        enqueueSnackbar("تعذر في حذف الاعلان", { variant: "error" });
+        enqueueSnackbar("تعذر في حذف الخدمة", { variant: "error" });
       });
   };
   useEffect(requestServices, []);

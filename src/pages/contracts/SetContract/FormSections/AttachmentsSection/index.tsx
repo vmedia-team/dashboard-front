@@ -32,6 +32,7 @@ function AttachmentSection() {
   const [attachmentToEdit, setAttachmentToEdit] = useState<
     ContractAttachment | undefined
   >(undefined);
+  
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -101,7 +102,7 @@ function AttachmentSection() {
               <TableRow>
                 <TableCell>كود المرفق</TableCell>
                 <TableCell>اسم المرفق</TableCell>
-                <TableCell>رقم المرفق</TableCell>
+                <TableCell>وصف المرفق</TableCell>
                 <TableCell>نوع المرفق</TableCell>
                 <TableCell>الملف المرفق</TableCell>
                 <TableCell>الاعدادات</TableCell>
@@ -115,7 +116,9 @@ function AttachmentSection() {
                       <TableCell>{lever.id}</TableCell>
                       <TableCell>{lever.name}</TableCell>
                       <TableCell>{lever.code}</TableCell>
-                      <TableCell>{lever.type}</TableCell>
+                      <TableCell>
+                        {lever.contract_lever_attachment_type.name}
+                      </TableCell>
                       <TableCell>
                         <Button
                           startIcon={<FolderOpenIcon />}

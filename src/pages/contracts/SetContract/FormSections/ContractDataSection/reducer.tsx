@@ -15,6 +15,8 @@ export const contractIntial: BaseContractType = {
   management_id: 0,
   employee_id: 0,
   cardImageUrl: "",
+  engineering_office: "",
+  owner: "",
 };
 
 export function reducer(state: FormData, action: ActionTypes): FormData {
@@ -48,15 +50,23 @@ export function reducer(state: FormData, action: ActionTypes): FormData {
       return { ...state, employee_id: action.payload };
     case "MANAGEMENT_ID":
       return { ...state, employee_id: 0, management_id: action.payload };
+    case "OWNER":
+      return { ...state, owner: action.payload };
+    case "ENGINEERING_OFFICE":
+      return { ...state, engineering_office: action.payload };
+
     case "DTO_TO_FORM":
+      console.log("action", action);
       return {
         amount: action.payload.amount,
         period: parseInt(action.payload.period),
         date: action.payload.date,
         client_id: action.payload.client_id,
-        cardImageUrl: Domain(
-          "storage/" + action.payload.card_image
-        ) as unknown as string,
+        cardImageUrl: action.payload.card_image
+          ? (Domain(
+              "storage/" + action.payload.card_image
+            ) as unknown as string)
+          : undefined,
         branch_id: action.payload.branch_id,
         code: action.payload.code,
         contract_type_id: action.payload.contract_type_id,
@@ -65,6 +75,8 @@ export function reducer(state: FormData, action: ActionTypes): FormData {
         management_id: action.payload.management_id,
         type: action.payload.type?.id,
         card_image: null,
+        owner: action.payload.owner,
+        engineering_office: action.payload.engineering_office,
       };
 
     case "SET_ALL":
@@ -122,6 +134,12 @@ interface SetAllActionType extends ReducerAction<Partial<BaseContractType>> {
   type: "SET_ALL";
 }
 
+interface OwnerActionType extends ReducerAction<string> {
+  type: "OWNER";
+}
+interface EngineerOfficeActionType extends ReducerAction<string> {
+  type: "ENGINEERING_OFFICE";
+}
 export type ActionTypes =
   | CodeActionType
   | DateActionType
@@ -137,7 +155,9 @@ export type ActionTypes =
   | CardImageUrlActionType
   | EmployeeIDActionType
   | DtoToFormActionType
-  | SetAllActionType;
+  | SetAllActionType
+  | OwnerActionType
+  | EngineerOfficeActionType;
 
 export interface BaseContractType {
   code: string;
@@ -153,6 +173,8 @@ export interface BaseContractType {
   amount: number | null;
   period: number | null;
   cardImageUrl?: string;
+  engineering_office: string;
+  owner: string;
 }
 
 export type FormData = BaseContractType;
