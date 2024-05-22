@@ -63,7 +63,7 @@ function SoilDetails() {
 
         setSoilData(res.data.data);
         setItems(arr);
-        setReportFiles(res.data.file_visit);
+        setReportFiles(res.data.file_report);
         setIncomingFiles(res.data.incoming_fills);
         setVisitFiles(res.data.file_visit);
         setTaskFiles(res.data.file_task);
