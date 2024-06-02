@@ -19,6 +19,7 @@ import AutoAwesomeMosaicIcon from "@mui/icons-material/AutoAwesomeMosaic";
 import GroupIcon from "@mui/icons-material/Group";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import DesignServicesIcon from "@mui/icons-material/DesignServices";
 import BiotechIcon from "@mui/icons-material/Biotech";
@@ -231,6 +232,17 @@ const routesCollections: RoutesCollectionType[] = [
         path: "/services/design/structure",
         react: true,
         isPrivate: Permission.DESIGN_CREATE,
+      },
+    ],
+  },
+  {
+    name: "مكتبة البيانات",
+    icon: DashboardOutlinedIcon,
+    routes: [
+      {
+        name: "مشاريعي",
+        path: "/librariesAndDocs",
+        react: true,
       },
     ],
   },

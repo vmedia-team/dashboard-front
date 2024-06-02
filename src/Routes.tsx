@@ -48,7 +48,7 @@ import StoriesPage from "./pages/ApplicationSettings/stories/main";
 import SetStory from "./pages/ApplicationSettings/stories/set-story";
 import MobileServicesMainPage from "./pages/ApplicationSettings/services/main";
 import SetMobileServicePage from "./pages/ApplicationSettings/services/set-service";
-
+import LibrariesAndDocsMainIndex from "./pages/librariesAndDocs/main";
 
 function RoutesComponent() {
   const { hasPermission, hasAnyOfPermissions } = usePermissions();
@@ -126,6 +126,10 @@ function RoutesComponent() {
             <Route path="details/:id" element={<WorkOrdersTypesDetails />} />
           </Route>
           <Route path="FollowUpEmployees" element={<FollowUpEmployees />} />
+        </Route>
+
+        <Route path="librariesAndDocs">
+          <Route path="" element={<LibrariesAndDocsMainIndex />} />
         </Route>
         {hasAnyOfPermissions([
           Permission.TENDERS_SHOW,
