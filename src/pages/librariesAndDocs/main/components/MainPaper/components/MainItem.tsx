@@ -1,11 +1,10 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { LibrariesMainPageMainItemType } from "./MianItemsData";
-import "./styles.scss";
 
 export default function MainItem(props: PropsType) {
   return (
-    <Stack justifyContent={"center"} alignItems={"center"} className="fadeInUp">
+    <Stack justifyContent={"center"} alignItems={"center"}>
       <Stack
         sx={{
           bgcolor: "#92AFCF",
@@ -22,6 +21,7 @@ export default function MainItem(props: PropsType) {
             transform: "scale(1.1)",
           },
         }}
+        onClick={() => props.handleClick(props.item)}
       >
         {/* Edit Button */}
         <IconButton
@@ -66,4 +66,5 @@ export default function MainItem(props: PropsType) {
 
 type PropsType = {
   item: LibrariesMainPageMainItemType;
+  handleClick: (item: LibrariesMainPageMainItemType | undefined) => void;
 };

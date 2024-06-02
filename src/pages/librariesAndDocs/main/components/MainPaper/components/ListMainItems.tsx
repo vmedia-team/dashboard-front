@@ -9,14 +9,27 @@ import imgSrc5 from "../../../../../../assets/images/librariesAndDocs/lib5.png";
 import imgSrc6 from "../../../../../../assets/images/librariesAndDocs/lib6.png";
 import imgSrc7 from "../../../../../../assets/images/librariesAndDocs/lib7.png";
 import imgSrc8 from "../../../../../../assets/images/librariesAndDocs/lib8.png";
+import { useState } from "react";
+import AddEditLibDialog from "../../Dialog";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
+  const [openDialog, setOpenDialog] = useState(false);
+  const [clickedMainItem, setClickedMainItem] = useState<
+    LibrariesMainPageMainItemType | undefined
+  >();
+
   // TODO::declare and define component methods
+  const handleClick = (item: LibrariesMainPageMainItemType | undefined) => {
+    setClickedMainItem(item);
+    console.log("Active Item::", item?.text);
+    setOpenDialog(true);
+  };
+
   const GridItem = ({ item }: { item: LibrariesMainPageMainItemType }) => {
     return (
       <Grid item xs={3}>
-        <MainItem item={item} />
+        <MainItem item={item} handleClick={handleClick} />
       </Grid>
     );
   };
@@ -26,6 +39,7 @@ export default function ListMainItems() {
       {MainItemsDataList.map((item) => (
         <GridItem key={item.id} item={item} />
       ))}
+      <AddEditLibDialog open={openDialog} setOpen={setOpenDialog} />
     </Grid>
   );
 }
