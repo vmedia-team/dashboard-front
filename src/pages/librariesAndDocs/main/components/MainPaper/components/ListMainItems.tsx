@@ -2,10 +2,9 @@ import { Grid } from "@mui/material";
 import MainItem from "./MainItem";
 import { LibrariesMainPageItemType } from "./MianItemsData";
 import imgSrc7 from "../../../../../../assets/images/librariesAndDocs/lib7.png";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AddEditLibDialog from "../../Dialog";
-import axios from "axios";
-import { Api } from "../../../../../../constants";
+import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
@@ -13,9 +12,7 @@ export default function ListMainItems() {
   const [clickedMainItem, setClickedMainItem] = useState<
     LibrariesMainPageItemType | undefined
   >();
-  const [mainPageItems, setMainPageItems] = useState<
-    LibrariesMainPageItemType[]
-  >([]);
+  const { mainPageItems } = useContext(LibraryMainPageContext);
   const addDirectoryItem: LibrariesMainPageItemType = {
     id: "add_new_directory_113",
     name: "اضافة فولدر / تعديل",
@@ -25,32 +22,18 @@ export default function ListMainItems() {
     updated_at: "",
   };
 
-  // TODO::fetch directories data from server
-  useEffect(() => {
-    axios
-      .get<{ folders: LibrariesMainPageItemType[] }>(
-        Api(`employee/library/folder`)
-      )
-      .then((response) => {
-        setMainPageItems(response.data.folders);
-      })
-      .catch((err) => {
-        console.log("Error in fetch directories data::", err);
-      });
-  }, []);
-
   // TODO::declare and define component methods
-  const handleClick = (item: LibrariesMainPageItemType | undefined) => {
+  const handleClick = (
+    item: LibrariesMainPageItemType | undefined,
+    editMode?: boolean
+  ) => {
     setClickedMainItem(item);
     console.log("Active Item::", item);
-    switch (item?.id) {
-      case "add_new_directory_113":
-        //create new directory.
-        setOpenDialog(true);
-        break;
-      default:
-        //edit or open
-        break;
+    if (item?.id == "add_new_directory_113" || editMode) {
+      //create new directory or edit existting one.
+      setOpenDialog(true);
+    } else {
+      //navigate to specific page
     }
   };
 
@@ -71,8 +54,8 @@ export default function ListMainItems() {
       <GridItem item={addDirectoryItem} />
       <AddEditLibDialog
         open={openDialog}
+        clickedMainItem={clickedMainItem}
         setOpen={setOpenDialog}
-        setMainPageItems={setMainPageItems}
       />
     </Grid>
   );

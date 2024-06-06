@@ -6,6 +6,6 @@ export type LibrariesMainPageItemType = {
   type: number;
   created_at: string;
   updated_at: string;
-  media: Media[] | { original_url: string }[];
+  media: Media[] | { original_url: string; name?: string }[];
   employees?: number[];
 };

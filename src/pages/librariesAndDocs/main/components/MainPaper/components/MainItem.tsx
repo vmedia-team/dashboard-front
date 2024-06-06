@@ -3,6 +3,15 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { LibrariesMainPageItemType } from "./MianItemsData";
 
 export default function MainItem(props: PropsType) {
+  // todo::declare and define helper methods
+  const handleEditDirectory = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    props.handleClick(props.item, true);
+  };
+
+  // *return our component ui.
   return (
     <Stack justifyContent={"center"} alignItems={"center"}>
       <Stack
@@ -24,17 +33,20 @@ export default function MainItem(props: PropsType) {
         onClick={() => props.handleClick(props.item)}
       >
         {/* Edit Button */}
-        <IconButton
-          size="small"
-          sx={{
-            color: "#fff",
-            position: "absolute",
-            top: "5%",
-            right: "5%",
-          }}
-        >
-          <SettingsOutlinedIcon />
-        </IconButton>
+        {props.item.id != "add_new_directory_113" && (
+          <IconButton
+            size="small"
+            sx={{
+              color: "#fff",
+              position: "absolute",
+              top: "5%",
+              right: "5%",
+            }}
+            onClick={handleEditDirectory}
+          >
+            <SettingsOutlinedIcon />
+          </IconButton>
+        )}
         {/* Type public or private */}
         <Box
           sx={{
@@ -51,7 +63,7 @@ export default function MainItem(props: PropsType) {
           {props.item.type == 1 ? "علني" : "مخصص"}
         </Box>
         <img
-          src={props.item?.media[0]?.original_url ?? ""}
+          src={props.item?.media?.[0]?.original_url ?? ""}
           width={92}
           height={92}
           alt={`icon for ${props.item.name}`}
@@ -66,5 +78,8 @@ export default function MainItem(props: PropsType) {
 
 type PropsType = {
   item: LibrariesMainPageItemType;
-  handleClick: (item: LibrariesMainPageItemType | undefined) => void;
+  handleClick: (
+    item: LibrariesMainPageItemType | undefined,
+    editMode?: boolean
+  ) => void;
 };

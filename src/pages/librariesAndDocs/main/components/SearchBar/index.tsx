@@ -1,11 +1,20 @@
 import { Stack, TextField, Button } from "@mui/material";
-import AddLabelToEl from "../../../../../components/AddLabelToEl";
 import SelectWithFilter from "../../../../../components/SelectWithFilter";
+import { useContext, useState } from "react";
+import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
 
 export default function SearchBar(props: PropsType) {
   // TODO::declare and define component state and variables
   const dummyOptions = [{ label: "نوع المستند", value: 0 }];
+  const [name, setName] = useState("");
+  const { handleSearch } = useContext(LibraryMainPageContext);
+
   // TODO::declare and define component methods
+  const handleSearchFun = () => {
+    if (name) {
+      handleSearch(name);
+    }
+  };
   // * Return Component UI
   return (
     <>
@@ -44,13 +53,12 @@ export default function SearchBar(props: PropsType) {
           // value={props.search}
           size="small"
           sx={{ width: "28%" }}
-          onChange={() => {}}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <Button
           variant="contained"
-          onClick={() => {
-            console.log("Handle Search Click");
-          }}
+          onClick={handleSearchFun}
           sx={{
             flexGrow: 1,
           }}

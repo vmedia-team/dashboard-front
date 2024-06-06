@@ -6,15 +6,17 @@ import {
   DialogActions,
   DialogContent,
   FormControlLabel,
+  IconButton,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import AddLabelToEl from "../../../../../components/AddLabelToEl";
 import CustomFilePond from "../../../../../components/CustomFilepond";
 import { FileBondState } from "../../../../../types/FileBondState";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Api } from "../../../../../constants";
 import { z } from "zod";
@@ -23,23 +25,44 @@ import { useForm } from "react-hook-form";
 import { serialize } from "object-to-formdata";
 import { useSnackbar } from "notistack";
 import { LibrariesMainPageItemType } from "../MainPaper/components/MianItemsData";
+import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 export default function AddEditLibDialog(props: dialogProps) {
   // TODO::declare and define state and variables
+  // detect create or edit case??
+  const isEdit =
+    props.clickedMainItem?.id != "add_new_directory_113" &&
+    props.clickedMainItem != undefined;
+
   const [file, setFile] = useState<FileBondState>([]);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<userT[]>([]);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<userT[]>([]);
+  const [isPrivate, setIsPrivate] = useState(
+    !isEdit ? false : props.clickedMainItem?.type == 0
+  );
   const { enqueueSnackbar } = useSnackbar();
-  let defaultValues = { name: "", type: 1, employees: [] };
-  const { register, handleSubmit, reset, setValue } = useForm<DialogFormType>({
-    resolver: zodResolver(FormTypeSchema),
-    defaultValues: defaultValues,
-  });
+  let defaultValues = {
+    name: isEdit ? props.clickedMainItem?.name : "",
+    type: isEdit ? props.clickedMainItem?.type : 1,
+    employees: isEdit ? props.clickedMainItem?.employees ?? [] : [],
+  };
+  const { register, handleSubmit, reset, setValue } = useForm<FormTypeSchema>();
+  const { addNewDirectory, editExistDirectory } = useContext(
+    LibraryMainPageContext
+  );
 
-  // TODO::fetch data of selects
+  // TODO::fetch data of selects & set data of directory in edit case
   useEffect(() => {
-    setLoading(true);
+    reset({
+      name: isEdit ? props.clickedMainItem?.name : "",
+      type: isEdit ? props.clickedMainItem?.type : 1,
+      employees: isEdit ? props.clickedMainItem?.employees ?? [] : [],
+    });
+    setIsPrivate(!isEdit ? false : props.clickedMainItem?.type == 0);
+    console.log("props.clickedMainItem", props.clickedMainItem);
     axios
       .post<{ data: userT[] }>(Api(`employee/employees`))
       .then((res) => {
@@ -47,27 +70,60 @@ export default function AddEditLibDialog(props: dialogProps) {
       })
       .catch((err) => {
         console.log("Error in fetch data:", err);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+      });
+  }, [props.open]);
+  // useEffect(() => {
+  //   console.log(
+  //     "kkkk",
+  //     props.open,
+  //     props.clickedMainItem?.employees,
+  //     users,
+  //     users.filter(
+  //       (ele) =>
+  //         props.clickedMainItem?.employees &&
+  //         props.clickedMainItem?.employees.indexOf(ele.id) != -1
+  //     )
+  //   );
+  //   setSelectedUsers(
+  //     users.filter(
+  //       (ele) =>
+  //         props.clickedMainItem?.employees &&
+  //         props.clickedMainItem?.employees.indexOf(ele.id) != -1
+  //     )
+  //   );
+  // }, [props.open, users]);
 
   // TODO::declare and define helper methods
   const handleClose = () => {
     props.setOpen(false);
   };
+
   const onSubmit = handleSubmit(async (data) => {
     let body = {
       ...data,
       image: file[0],
     };
+
+    // return;
     setLoading(true);
     axios
       .post<{ folder: LibrariesMainPageItemType }>(
-        Api("employee/library/folder/store"),
+        Api(
+          isEdit
+            ? `employee/library/folder/update/${props.clickedMainItem?.id}`
+            : "employee/library/folder/store"
+        ),
         serialize(body)
       )
       .then((response) => {
-        props.setMainPageItems((prev) => [...prev, response.data.folder]);
+        console.log("response 1033", response);
+        if (!isEdit) {
+          // create
+          addNewDirectory(response.data.folder);
+        } else {
+          // edit
+          editExistDirectory(response.data.folder);
+        }
         enqueueSnackbar("تم الحفظ بنجاح");
         handleClose();
         // clear content of form
@@ -112,6 +168,46 @@ export default function AddEditLibDialog(props: dialogProps) {
         </AddLabelToEl>
         {/* directory icon */}
         <AddLabelToEl label="الايقون">
+          {isEdit &&
+            props.clickedMainItem?.media &&
+            props.clickedMainItem?.media?.length > 0 && (
+              <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                sx={{
+                  padding: " 2px 10px",
+                  border: "1px solid #808080b8",
+                  margin: "5px auto",
+                  borderRadius: "12px",
+                  width: "100%",
+                }}
+              >
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  sx={{ cursor: "pointer" }}
+                  component={`a`}
+                  href={`${props.clickedMainItem?.media?.[0]?.original_url}`}
+                  target="_blank"
+                  download
+                >
+                  <AttachFileIcon />
+                  <Typography
+                    variant="body2"
+                    fontWeight={500}
+                    sx={{
+                      textDecoration: "underline",
+                    }}
+                  >
+                    {props.clickedMainItem?.media?.[0]?.name}
+                  </Typography>
+                </Stack>
+                <IconButton color="error">
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
+            )}
           <CustomFilePond
             files={file}
             disabled={loading}
@@ -169,12 +265,14 @@ export default function AddEditLibDialog(props: dialogProps) {
             disabled={loading}
             id="tags-outlined"
             options={users}
+            value={selectedUsers}
             onChange={(e, newVal) => {
               console.log("newVal", newVal);
               setValue(
                 "employees",
                 newVal.map((ele) => ele.id)
               );
+              setSelectedUsers(newVal);
               return "";
             }}
             getOptionLabel={(option) => option.full_name}
@@ -200,18 +298,14 @@ export default function AddEditLibDialog(props: dialogProps) {
 
 // declare needed types
 type userT = { id: number; full_name: string };
-const FormTypeSchema = z.object({
-  name: z.string().min(2),
-  type: z.number(),
-  employees: z.number().array().optional(),
-});
-
-type DialogFormType = z.infer<typeof FormTypeSchema>;
+type FormTypeSchema = {
+  name: string;
+  type: number;
+  employees?: number[];
+};
 
 type dialogProps = {
   open: boolean;
+  clickedMainItem: LibrariesMainPageItemType | undefined;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setMainPageItems: React.Dispatch<
-    React.SetStateAction<LibrariesMainPageItemType[]>
-  >;
 };
