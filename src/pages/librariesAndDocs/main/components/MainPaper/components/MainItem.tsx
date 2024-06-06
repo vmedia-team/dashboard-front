@@ -54,7 +54,7 @@ export default function MainItem(props: PropsType) {
           src={props.item?.media[0]?.original_url ?? ""}
           width={92}
           height={92}
-          alt="libraries and docs"
+          alt={`icon for ${props.item.name}`}
         />
       </Stack>
       <Typography variant="body2" fontSize={18} textAlign={"center"} my={2}>

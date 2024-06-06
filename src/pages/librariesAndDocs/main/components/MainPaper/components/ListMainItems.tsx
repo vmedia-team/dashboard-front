@@ -1,16 +1,11 @@
 import { Grid } from "@mui/material";
 import MainItem from "./MainItem";
 import { LibrariesMainPageItemType } from "./MianItemsData";
-import imgSrc1 from "../../../../../../assets/images/librariesAndDocs/lib1.png";
-import imgSrc2 from "../../../../../../assets/images/librariesAndDocs/lib2.png";
-import imgSrc3 from "../../../../../../assets/images/librariesAndDocs/lib3.png";
-import imgSrc4 from "../../../../../../assets/images/librariesAndDocs/lib4.png";
-import imgSrc5 from "../../../../../../assets/images/librariesAndDocs/lib5.png";
-import imgSrc6 from "../../../../../../assets/images/librariesAndDocs/lib6.png";
 import imgSrc7 from "../../../../../../assets/images/librariesAndDocs/lib7.png";
-import imgSrc8 from "../../../../../../assets/images/librariesAndDocs/lib8.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddEditLibDialog from "../../Dialog";
+import axios from "axios";
+import { Api } from "../../../../../../constants";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
@@ -22,7 +17,7 @@ export default function ListMainItems() {
     LibrariesMainPageItemType[]
   >([]);
   const addDirectoryItem: LibrariesMainPageItemType = {
-    id: 190999,
+    id: "add_new_directory_113",
     name: "اضافة فولدر / تعديل",
     type: 1,
     media: [{ original_url: imgSrc7 }],
@@ -30,11 +25,33 @@ export default function ListMainItems() {
     updated_at: "",
   };
 
+  // TODO::fetch directories data from server
+  useEffect(() => {
+    axios
+      .get<{ folders: LibrariesMainPageItemType[] }>(
+        Api(`employee/library/folder`)
+      )
+      .then((response) => {
+        setMainPageItems(response.data.folders);
+      })
+      .catch((err) => {
+        console.log("Error in fetch directories data::", err);
+      });
+  }, []);
+
   // TODO::declare and define component methods
   const handleClick = (item: LibrariesMainPageItemType | undefined) => {
     setClickedMainItem(item);
-    console.log("Active Item::", item?.name);
-    setOpenDialog(true);
+    console.log("Active Item::", item);
+    switch (item?.id) {
+      case "add_new_directory_113":
+        //create new directory.
+        setOpenDialog(true);
+        break;
+      default:
+        //edit or open
+        break;
+    }
   };
 
   const GridItem = ({ item }: { item: LibrariesMainPageItemType }) => {
@@ -52,7 +69,11 @@ export default function ListMainItems() {
         <GridItem key={item.id} item={item} />
       ))}
       <GridItem item={addDirectoryItem} />
-      <AddEditLibDialog open={openDialog} setOpen={setOpenDialog} />
+      <AddEditLibDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        setMainPageItems={setMainPageItems}
+      />
     </Grid>
   );
 }
