@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import MainItem from "./MainItem";
-import { LibrariesMainPageMainItemType } from "./MianItemsData";
+import { LibrariesMainPageItemType } from "./MianItemsData";
 import imgSrc1 from "../../../../../../assets/images/librariesAndDocs/lib1.png";
 import imgSrc2 from "../../../../../../assets/images/librariesAndDocs/lib2.png";
 import imgSrc3 from "../../../../../../assets/images/librariesAndDocs/lib3.png";
@@ -16,41 +16,43 @@ export default function ListMainItems() {
   // TODO::declare and define component state and variables
   const [openDialog, setOpenDialog] = useState(false);
   const [clickedMainItem, setClickedMainItem] = useState<
-    LibrariesMainPageMainItemType | undefined
+    LibrariesMainPageItemType | undefined
   >();
+  const [mainPageItems, setMainPageItems] = useState<
+    LibrariesMainPageItemType[]
+  >([]);
+  const addDirectoryItem: LibrariesMainPageItemType = {
+    id: 190999,
+    name: "اضافة فولدر / تعديل",
+    type: 1,
+    media: [{ original_url: imgSrc7 }],
+    created_at: "",
+    updated_at: "",
+  };
 
   // TODO::declare and define component methods
-  const handleClick = (item: LibrariesMainPageMainItemType | undefined) => {
+  const handleClick = (item: LibrariesMainPageItemType | undefined) => {
     setClickedMainItem(item);
-    console.log("Active Item::", item?.text);
+    console.log("Active Item::", item?.name);
     setOpenDialog(true);
   };
 
-  const GridItem = ({ item }: { item: LibrariesMainPageMainItemType }) => {
+  const GridItem = ({ item }: { item: LibrariesMainPageItemType }) => {
     return (
       <Grid item xs={3}>
         <MainItem item={item} handleClick={handleClick} />
       </Grid>
     );
   };
+
   // * Return Component Ui.
   return (
     <Grid container>
-      {MainItemsDataList.map((item) => (
+      {mainPageItems.map((item) => (
         <GridItem key={item.id} item={item} />
       ))}
+      <GridItem item={addDirectoryItem} />
       <AddEditLibDialog open={openDialog} setOpen={setOpenDialog} />
     </Grid>
   );
 }
-
-export const MainItemsDataList: LibrariesMainPageMainItemType[] = [
-  { id: "LMI-1", text: "مستندات المكاتب", isPublic: true, imgSrc: imgSrc1 },
-  { id: "LMI-2", text: "عروض اسعار", isPublic: true, imgSrc: imgSrc2 },
-  { id: "LMI-3", text: "عقود", isPublic: false, imgSrc: imgSrc3 },
-  { id: "LMI-4", text: "خطابات", isPublic: false, imgSrc: imgSrc4 },
-  { id: "LMI-5", text: "مستندات الموظفين", isPublic: true, imgSrc: imgSrc5 },
-  { id: "LMI-6", text: "المشاريع", isPublic: true, imgSrc: imgSrc6 },
-  { id: "LMI-7", text: "اضافة ملف / تعديل", isPublic: true, imgSrc: imgSrc7 },
-  { id: "LMI-8", text: "ملفات خاصة", isPublic: true, imgSrc: imgSrc8 },
-];

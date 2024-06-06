@@ -1,6 +1,6 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { LibrariesMainPageMainItemType } from "./MianItemsData";
+import { LibrariesMainPageItemType } from "./MianItemsData";
 
 export default function MainItem(props: PropsType) {
   return (
@@ -41,30 +41,30 @@ export default function MainItem(props: PropsType) {
             position: "absolute",
             top: "10%",
             left: "0%",
-            bgcolor: props.item.isPublic ? "#fff" : "#004693 ",
-            color: props.item.isPublic ? "#000" : "#fff",
+            bgcolor: props.item.type == 1 ? "#fff" : "#004693 ",
+            color: props.item.type == 1 ? "#000" : "#fff",
             borderRadius: " 0 12px 12px 0",
             padding: "1px",
             boxShadow: "0px 1px 4px 2px lightgray",
           }}
         >
-          {props.item.isPublic ? "علني" : "مخصص"}
+          {props.item.type == 1 ? "علني" : "مخصص"}
         </Box>
         <img
-          src={props.item.imgSrc}
+          src={props.item?.media[0]?.original_url ?? ""}
           width={92}
           height={92}
           alt="libraries and docs"
         />
       </Stack>
       <Typography variant="body2" fontSize={18} textAlign={"center"} my={2}>
-        {props.item.text}
+        {props.item.name}
       </Typography>
     </Stack>
   );
 }
 
 type PropsType = {
-  item: LibrariesMainPageMainItemType;
-  handleClick: (item: LibrariesMainPageMainItemType | undefined) => void;
+  item: LibrariesMainPageItemType;
+  handleClick: (item: LibrariesMainPageItemType | undefined) => void;
 };
