@@ -19,8 +19,6 @@ import { FileBondState } from "../../../../../types/FileBondState";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Api } from "../../../../../constants";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { serialize } from "object-to-formdata";
 import { useSnackbar } from "notistack";
@@ -28,83 +26,66 @@ import { LibrariesMainPageItemType } from "../MainPaper/components/MianItemsData
 import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { useUser } from "../../../../../contexts/user/user";
 
 export default function AddEditLibDialog(props: dialogProps) {
   // TODO::declare and define state and variables
-  // detect create or edit case??
-  const isEdit =
-    props.clickedMainItem?.id != "add_new_directory_113" &&
-    props.clickedMainItem != undefined;
-
   const [file, setFile] = useState<FileBondState>([]);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<userT[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<userT[]>([]);
+  const { register, handleSubmit, reset, setValue } = useForm<FormTypeSchema>();
+  const { enqueueSnackbar } = useSnackbar();
+  const { user } = useUser();
+  const { addNewDirectory, editExistDirectory } = useContext(
+    LibraryMainPageContext
+  );
+  const isEdit =
+    props.clickedMainItem?.id != "add_new_directory_113" &&
+    props.clickedMainItem != undefined; // detect create or edit case??
   const [isPrivate, setIsPrivate] = useState(
     !isEdit ? false : props.clickedMainItem?.type == 0
   );
-  const { enqueueSnackbar } = useSnackbar();
   let defaultValues = {
     name: isEdit ? props.clickedMainItem?.name : "",
     type: isEdit ? props.clickedMainItem?.type : 1,
     employees: isEdit ? props.clickedMainItem?.employees ?? [] : [],
   };
-  const { register, handleSubmit, reset, setValue } = useForm<FormTypeSchema>();
-  const { addNewDirectory, editExistDirectory } = useContext(
-    LibraryMainPageContext
-  );
 
   // TODO::fetch data of selects & set data of directory in edit case
   useEffect(() => {
+    // * reset data in form
     reset({
       name: isEdit ? props.clickedMainItem?.name : "",
       type: isEdit ? props.clickedMainItem?.type : 1,
       employees: isEdit ? props.clickedMainItem?.employees ?? [] : [],
     });
     setIsPrivate(!isEdit ? false : props.clickedMainItem?.type == 0);
-    console.log("props.clickedMainItem", props.clickedMainItem);
+    // * get users data
     axios
       .post<{ data: userT[] }>(Api(`employee/employees`))
       .then((res) => {
         setUsers(res?.data?.data);
+        setSelectedUsers(props.clickedMainItem?.employees ?? []);
       })
       .catch((err) => {
         console.log("Error in fetch data:", err);
       });
   }, [props.open]);
-  // useEffect(() => {
-  //   console.log(
-  //     "kkkk",
-  //     props.open,
-  //     props.clickedMainItem?.employees,
-  //     users,
-  //     users.filter(
-  //       (ele) =>
-  //         props.clickedMainItem?.employees &&
-  //         props.clickedMainItem?.employees.indexOf(ele.id) != -1
-  //     )
-  //   );
-  //   setSelectedUsers(
-  //     users.filter(
-  //       (ele) =>
-  //         props.clickedMainItem?.employees &&
-  //         props.clickedMainItem?.employees.indexOf(ele.id) != -1
-  //     )
-  //   );
-  // }, [props.open, users]);
 
   // TODO::declare and define helper methods
   const handleClose = () => {
     props.setOpen(false);
   };
 
+  // * handle submit form...
   const onSubmit = handleSubmit(async (data) => {
     let body = {
       ...data,
+      employees: data.employees?.map((ele) => ele.id),
       image: file[0],
     };
 
-    // return;
     setLoading(true);
     axios
       .post<{ folder: LibrariesMainPageItemType }>(
@@ -116,15 +97,22 @@ export default function AddEditLibDialog(props: dialogProps) {
         serialize(body)
       )
       .then((response) => {
-        console.log("response 1033", response);
-        if (!isEdit) {
-          // create
-          addNewDirectory(response.data.folder);
-        } else {
-          // edit
-          editExistDirectory(response.data.folder);
+        // Appeand Condation
+        // directory is public -> ok or directory is private user one of directory user
+        if (
+          body.type == 1 ||
+          (user?.employee_id &&
+            body.employees?.indexOf(user?.employee_id) != -1)
+        ) {
+          if (!isEdit) {
+            // create
+            addNewDirectory(response.data.folder);
+          } else {
+            // edit
+            editExistDirectory(response.data.folder);
+          }
         }
-        enqueueSnackbar("تم الحفظ بنجاح");
+        enqueueSnackbar(isEdit ? "تم التعديل بنجاح" : "تم الحفظ بنجاح");
         handleClose();
         // clear content of form
         setFile([]);
@@ -267,11 +255,7 @@ export default function AddEditLibDialog(props: dialogProps) {
             options={users}
             value={selectedUsers}
             onChange={(e, newVal) => {
-              console.log("newVal", newVal);
-              setValue(
-                "employees",
-                newVal.map((ele) => ele.id)
-              );
+              setValue("employees", newVal);
               setSelectedUsers(newVal);
               return "";
             }}
@@ -301,7 +285,7 @@ type userT = { id: number; full_name: string };
 type FormTypeSchema = {
   name: string;
   type: number;
-  employees?: number[];
+  employees?: { id: number; full_name: string }[];
 };
 
 type dialogProps = {
