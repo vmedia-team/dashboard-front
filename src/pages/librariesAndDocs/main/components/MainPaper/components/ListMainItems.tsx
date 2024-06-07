@@ -5,14 +5,16 @@ import imgSrc7 from "../../../../../../assets/images/librariesAndDocs/lib7.png";
 import { useContext, useEffect, useState } from "react";
 import AddEditLibDialog from "../../Dialog";
 import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
+import { useNavigate } from "react-router-dom";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
+  const navigator = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const { mainPageItems } = useContext(LibraryMainPageContext);
   const [clickedMainItem, setClickedMainItem] = useState<
     LibrariesMainPageItemType | undefined
   >();
-  const { mainPageItems } = useContext(LibraryMainPageContext);
   const addDirectoryItem: LibrariesMainPageItemType = {
     id: "add_new_directory_113",
     name: "اضافة فولدر / تعديل",
@@ -34,6 +36,11 @@ export default function ListMainItems() {
       setOpenDialog(true);
     } else {
       //navigate to specific page
+      switch (item?.id) {
+        case 1: //'مستندات المكاتب'
+          navigator(`/react/librariesAndDocs/librariesDocs`);
+          break;
+      }
     }
   };
 

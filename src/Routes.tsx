@@ -131,7 +131,7 @@ function RoutesComponent() {
 
         <Route path="librariesAndDocs">
           <Route path="" element={<LibrariesAndDocsMainIndex />} />
-          <Route path=":libraryId" element={<LibraryDocsIndex />} />
+          <Route path="librariesDocs" element={<LibraryDocsIndex />} />
         </Route>
         {hasAnyOfPermissions([
           Permission.TENDERS_SHOW,
