@@ -10,6 +10,8 @@
 
 # production
 /build
+# remove pdftron files
+/public/lib
 
 # IDE
 /.vscode
