@@ -25,7 +25,11 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
   function getFoldersData(name?: string) {
     axios
       .get<{ folders: LibrariesMainPageItemType[] }>(
-        Api(`employee/library/folder${name ? "?name=" + name : ""}`)
+        Api(
+          `employee/library/folder${
+            name && name?.length > 0 ? "?name=" + name : ""
+          }`
+        )
       )
       .then((response) => {
         setMainPageItems(response.data.folders);

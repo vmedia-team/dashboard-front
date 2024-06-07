@@ -11,9 +11,7 @@ export default function SearchBar(props: PropsType) {
 
   // TODO::declare and define component methods
   const handleSearchFun = () => {
-    if (name) {
-      handleSearch(name);
-    }
+    handleSearch(name);
   };
   // * Return Component UI
   return (
