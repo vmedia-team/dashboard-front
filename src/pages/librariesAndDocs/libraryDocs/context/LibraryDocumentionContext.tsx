@@ -19,6 +19,8 @@ export const LibraryDocumentionContext =
     selectedFilesIds: [],
     checkedFileIdInSelectedFiles: (id) => true,
     toggleFileIdFormSelectedFiles: (id) => {},
+    activeFileToShow: undefined,
+    handleSetActiveFile: (file) => {},
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -28,6 +30,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   const [files, setFiles] = useState<DocumentationFileType[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedFilesIds, setSelectedFilesIds] = useState<number[]>([]);
+  const [activeFileToShow, setActiveFileToShow] = useState<
+    DocumentationFileType | undefined
+  >(undefined);
 
   useEffect(() => getLibraryDocs(), [libraryId]);
   // TODO::declare and define our helper methods
@@ -71,11 +76,16 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
 
   function toggleFileIdFormSelectedFiles(id: number) {
     let exist = checkedFileIdInSelectedFiles(id);
+    console.log(id, exist);
     if (exist) {
       setSelectedFilesIds((prev) => prev.filter((ele) => ele != id));
     } else {
       setSelectedFilesIds((prev) => [...prev, id]);
     }
+  }
+
+  function handleSetActiveFile(file: DocumentationFileType | undefined) {
+    setActiveFileToShow(file);
   }
 
   function handleSearch(name: string) {}
@@ -94,6 +104,8 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         selectedFilesIds,
         checkedFileIdInSelectedFiles,
         toggleFileIdFormSelectedFiles,
+        activeFileToShow,
+        handleSetActiveFile,
       }}
     >
       {children}
@@ -118,4 +130,6 @@ type LibraryDocumentionContextType = {
   selectedFilesIds: number[];
   checkedFileIdInSelectedFiles(id: number): boolean;
   toggleFileIdFormSelectedFiles(id: number): void;
+  activeFileToShow: DocumentationFileType | undefined;
+  handleSetActiveFile(file: DocumentationFileType | undefined): void;
 };

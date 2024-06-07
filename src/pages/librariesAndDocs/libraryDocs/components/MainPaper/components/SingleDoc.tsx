@@ -3,16 +3,31 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import fileImg from "../../../../../../assets/images/fileImg.png";
 import { Checkbox } from "@mui/material";
 import { DocumentationFileType } from "../../../../../../types/librariesAndDocs/DocumentationFile";
+import { useContext } from "react";
+import { LibraryDocumentionContext } from "../../../context/LibraryDocumentionContext";
 
 export default function SingleDoc(props: PropsType) {
+  const {
+    handleSetActiveFile,
+    checkedFileIdInSelectedFiles,
+    toggleFileIdFormSelectedFiles,
+  } = useContext(LibraryDocumentionContext);
+
   return (
     <Stack
       spacing={1}
       alignItems={"center"}
       sx={{ p: 3, position: "relative", cursor: "pointer" }}
+      onClick={(e) => {
+        handleSetActiveFile(props.file);
+      }}
     >
       {/* checkbox */}
       <Checkbox
+        checked={checkedFileIdInSelectedFiles(props.file.id)}
+        onChange={(e) => {
+          toggleFileIdFormSelectedFiles(props.file.id);
+        }}
         sx={{
           position: "absolute",
           top: "5%",
