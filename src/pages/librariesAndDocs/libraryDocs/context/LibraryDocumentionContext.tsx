@@ -21,6 +21,7 @@ export const LibraryDocumentionContext =
     toggleFileIdFormSelectedFiles: (id) => {},
     activeFileToShow: undefined,
     handleSetActiveFile: (file) => {},
+    handleSearch: (name) => {},
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -36,10 +37,14 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
 
   useEffect(() => getLibraryDocs(), [libraryId]);
   // TODO::declare and define our helper methods
-  function getLibraryDocs() {
+  function getLibraryDocs(name?: string) {
     axios
       .get<{ files: DocumentationFileType[] }>(
-        Api(`employee/library/file/files-by-folder/${libraryId}`)
+        Api(
+          `employee/library/file/files-by-folder/${libraryId}${
+            name ? "?name=" + name : ""
+          }`
+        )
       )
       .then((response) => {
         console.log("response ", response.data.files);
@@ -88,7 +93,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     setActiveFileToShow(file);
   }
 
-  function handleSearch(name: string) {}
+  function handleSearch(name: string) {
+    getLibraryDocs(name);
+  }
 
   return (
     <LibraryDocumentionContext.Provider
@@ -106,6 +113,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         toggleFileIdFormSelectedFiles,
         activeFileToShow,
         handleSetActiveFile,
+        handleSearch,
       }}
     >
       {children}
@@ -132,4 +140,5 @@ type LibraryDocumentionContextType = {
   toggleFileIdFormSelectedFiles(id: number): void;
   activeFileToShow: DocumentationFileType | undefined;
   handleSetActiveFile(file: DocumentationFileType | undefined): void;
+  handleSearch(name: string): void;
 };

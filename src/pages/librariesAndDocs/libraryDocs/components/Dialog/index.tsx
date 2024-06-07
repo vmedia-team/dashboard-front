@@ -126,7 +126,7 @@ export default function AddEditLibDocDialog(props: dialogProps) {
         انشاء مستند جديد
       </Typography>
       <DialogContent>
-        <Grid container xs={12}>
+        <Grid container>
           {/* directory name */}
           <Grid item xs={6} px={2}>
             <AddLabelToEl label="الاسم">

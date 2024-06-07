@@ -1,8 +1,12 @@
 import { Button, Stack, TextField } from "@mui/material";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import { useContext, useState } from "react";
+import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 
 export default function LibraryDocsSearch() {
   // TODO::declare and define component state and variables
+  const [name, setName] = useState("");
+  const { handleSearch } = useContext(LibraryDocumentionContext);
   // TODO::declare and define component methods
   // TODO::return component view
   return (
@@ -20,24 +24,18 @@ export default function LibraryDocsSearch() {
         // value={props.search}
         size="small"
         sx={{ flexGrow: 1 }}
-        onChange={() => {}}
+        onChange={(e) => setName(e.target.value)}
       />
 
       <Button
         variant="contained"
         onClick={() => {
-          console.log("Handle Search Click");
+          handleSearch(name);
         }}
       >
         بحث
       </Button>
-      <Button
-        variant="outlined"
-        startIcon={<FilterAltIcon />}
-        onClick={() => {
-          console.log("Handle Search Click");
-        }}
-      >
+      <Button variant="outlined" startIcon={<FilterAltIcon />}>
         فلتر
       </Button>
     </Stack>

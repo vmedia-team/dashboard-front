@@ -13,7 +13,7 @@ export default function MainContentIndex() {
   //   handleSetActiveFile(undefined);
   // }, []);
   return (
-    <Grid container xs={12}>
+    <Grid container>
       <Grid item xs={activeFileToShow ? 6 : 12}>
         <LibraryDocsMainPaper width={"100%"} />
       </Grid>
