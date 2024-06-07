@@ -79,7 +79,7 @@ export default function AddEditLibDocDialog(props: dialogProps) {
   const onSubmit = handleSubmit(async (data) => {
     let body = {
       ...data,
-      employees: data.employees?.map((ele) => ele.id),
+      employees: data.type == 1 ? [] : data.employees?.map((ele) => ele.id),
       image: file[0],
       library_folder_id: libraryId,
     };
