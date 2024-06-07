@@ -2,8 +2,9 @@ import { Box, Stack, Typography } from "@mui/material";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import fileImg from "../../../../../../assets/images/fileImg.png";
 import { Checkbox } from "@mui/material";
+import { DocumentationFileType } from "../../../../../../types/librariesAndDocs/DocumentationFile";
 
-export default function SingleDoc() {
+export default function SingleDoc(props: PropsType) {
   return (
     <Stack
       spacing={1}
@@ -20,9 +21,9 @@ export default function SingleDoc() {
       />
       {/* doc info */}
       <img src={fileImg} width={80} height={80} alt="file name" />
-      <Typography variant="body1">سجل تجاري</Typography>
+      <Typography variant="body1">{props.file?.name}</Typography>
       <Typography variant="body1" color={"error"}>
-        24098824
+        {props.file?.reference_number}
       </Typography>
       <Stack
         direction={"row"}
@@ -30,9 +31,13 @@ export default function SingleDoc() {
         alignItems={"center"}
       >
         <CalendarMonthOutlinedIcon />
-        <Typography variant="body2">24/09/24</Typography>
+        <Typography variant="body2">{props.file?.end_date}</Typography>
       </Stack>
       <Box bgcolor={"#D2DCEA"}>عدد التحميل : 22</Box>
     </Stack>
   );
 }
+
+type PropsType = {
+  file: DocumentationFileType;
+};

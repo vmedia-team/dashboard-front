@@ -38,7 +38,7 @@ export default function ListMainItems() {
       //navigate to specific page
       switch (item?.id) {
         case 1: //'مستندات المكاتب'
-          navigator(`/react/librariesAndDocs/librariesDocs`);
+          navigator(`/react/librariesAndDocs/${item.id}`);
           break;
       }
     }

@@ -1,7 +1,17 @@
 import { Button, Stack } from "@mui/material";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
+import AddEditLibDocDialog from "../Dialog";
+import { useContext } from "react";
+import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 
 export default function BranchesBtns() {
+  // TODO::declare and define state and variables.
+  const { openDialog, handleOenDialog } = useContext(LibraryDocumentionContext);
+  // TODO::declare and define helper method.
+  const handleClick = () => {
+    handleOenDialog(true);
+  };
+  // TODO::return componsnt view.
   return (
     <Stack
       direction={"row"}
@@ -14,8 +24,9 @@ export default function BranchesBtns() {
           variant="text"
           sx={{
             fontWeight: 600,
-            bgcolor: "none",
-            color: "text.secondary",
+            borderRadius: 0,
+            bgcolor: "background.paper",
+            color: "primary.main",
           }}
         >
           الكل
@@ -24,9 +35,8 @@ export default function BranchesBtns() {
           variant="text"
           sx={{
             fontWeight: 600,
-            bgcolor: "background.paper",
-            color: "primary.main",
-            borderRadius: 0,
+            bgcolor: "none",
+            color: "text.secondary",
           }}
         >
           فرع مكة
@@ -66,12 +76,14 @@ export default function BranchesBtns() {
       <Button
         variant="contained"
         startIcon={<AddBoxOutlinedIcon />}
+        onClick={handleClick}
         sx={{
           fontWeight: 600,
         }}
       >
         أنشاء
       </Button>
+      <AddEditLibDocDialog open={openDialog} />
     </Stack>
   );
 }

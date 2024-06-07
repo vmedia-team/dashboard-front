@@ -1,12 +1,20 @@
 import { Stack } from "@mui/material";
 import SingleDoc from "./SingleDoc";
+import { useParams } from "react-router-dom";
+import { useContext, useState } from "react";
+import { LibraryDocumentionContext } from "../../../context/LibraryDocumentionContext";
+import AddEditLibDocDialog from "../../Dialog";
 
 export default function ListOfLibraryDocs() {
-  let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  // TODO::define and declare component state and variables
+  let { libraryId } = useParams();
+  const { files } = useContext(LibraryDocumentionContext);
+  const [open, setOpen] = useState(false);
+
   return (
     <Stack direction={"row"} flexWrap={"wrap"} spacing={2} width={"100%"}>
-      {arr.map((ele) => (
-        <SingleDoc key={ele} />
+      {files.map((ele) => (
+        <SingleDoc file={ele} key={ele.id} />
       ))}
     </Stack>
   );
