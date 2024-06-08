@@ -5,8 +5,10 @@ import { Checkbox } from "@mui/material";
 import { DocumentationFileType } from "../../../../../../types/librariesAndDocs/DocumentationFile";
 import { useContext } from "react";
 import { LibraryDocumentionContext } from "../../../context/LibraryDocumentionContext";
+import { useSnackbar } from "notistack";
 
 export default function SingleDoc(props: PropsType) {
+  const { enqueueSnackbar } = useSnackbar();
   const {
     handleSetActiveFile,
     checkedFileIdInSelectedFiles,
@@ -20,6 +22,9 @@ export default function SingleDoc(props: PropsType) {
       sx={{ p: 3, position: "relative", cursor: "pointer" }}
       onClick={(e) => {
         handleSetActiveFile(props.file);
+        enqueueSnackbar(`تم عرض محتوي ملف ${props.file.name}`, {
+          variant: "info",
+        });
       }}
     >
       {/* checkbox */}

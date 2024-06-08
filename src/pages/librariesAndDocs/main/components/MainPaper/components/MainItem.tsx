@@ -25,7 +25,7 @@ export default function MainItem(props: PropsType) {
           justifyContent: "center",
           alignItems: "center",
           cursor: "pointer",
-          transition: "all 0.2s ease",
+          transition: "all 0.2s ease-in-out",
           ":hover": {
             boxShadow: "2px 2px 4px 4px lightgray",
             transform: "scale(1.1)",

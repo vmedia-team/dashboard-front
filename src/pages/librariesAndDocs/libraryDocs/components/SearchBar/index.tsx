@@ -32,10 +32,25 @@ export default function LibraryDocsSearch() {
         onClick={() => {
           handleSearch(name);
         }}
+        sx={{
+          transition: "transform 0.2s ease-in-out",
+          ":hover": {
+            transform: "scale(1.0789)",
+          },
+        }}
       >
         بحث
       </Button>
-      <Button variant="outlined" startIcon={<FilterAltIcon />}>
+      <Button
+        variant="outlined"
+        startIcon={<FilterAltIcon />}
+        sx={{
+          transition: "transform 0.2s ease-in-out",
+          ":hover": {
+            transform: "scale(1.0789)",
+          },
+        }}
+      >
         فلتر
       </Button>
     </Stack>

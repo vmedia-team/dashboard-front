@@ -50,9 +50,13 @@ export default function ConfirmFileProccess(props: PropsType) {
       })
       .then((response) => {
         enqueueSnackbar("تم اجراء العملية بنجاح");
+        handleClose();
       })
       .catch((err) => {
-        enqueueSnackbar("تعذر اتمام العملية", { variant: "error" });
+        let errMsg = "تعذر اتمام العملية";
+        if (err.response.data.msg == "Undefined array key 0")
+          errMsg = "يجب ان تكون كل الملفات من نوع pdf";
+        enqueueSnackbar(errMsg, { variant: "error" });
       })
       .finally(() => setLoading(false));
   };
@@ -79,6 +83,11 @@ export default function ConfirmFileProccess(props: PropsType) {
               سوف تقوم بعملية {props.operationType} للملفات الاتية
             </Typography>
             <List>
+              {filesList.length == 0 && (
+                <Typography variant="body2" color={"warning"}>
+                  انت لم تقوم باختيار اي ملف
+                </Typography>
+              )}
               {filesList.map((ele) => (
                 <ListItem key={ele.id} disablePadding>
                   <ListItemIcon>
@@ -94,7 +103,7 @@ export default function ConfirmFileProccess(props: PropsType) {
       <DialogActions>
         {loading && (
           <Typography sx={{ flexGrow: 1 }} px={5}>
-            جاري اجراء العملية...
+            جاري تنفيذ العملية...
           </Typography>
         )}
         <Button

@@ -205,7 +205,7 @@ export default function AddEditLibDocDialog(props: dialogProps) {
           >
             {/* icon */}
             <Grid item xs={6} px={2}>
-              <AddLabelToEl label="الايقون">
+              <AddLabelToEl label="الايقون" required>
                 <CustomFilePond
                   files={file}
                   disabled={loading}

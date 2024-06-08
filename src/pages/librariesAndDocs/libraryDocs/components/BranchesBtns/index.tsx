@@ -79,6 +79,10 @@ export default function BranchesBtns() {
         onClick={handleClick}
         sx={{
           fontWeight: 600,
+          transition: "transform 0.2s ease-in-out",
+          ":hover": {
+            transform: "scale(1.0789)",
+          },
         }}
       >
         أنشاء
