@@ -1,13 +1,11 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { LibrariesMainPageItemType } from "./MianItemsData";
 import folderImg from "../../../../../../assets/images/librariesAndDocs/folder.png";
+import SettingBtn from "./SettingBtn";
 
 export default function MainItem(props: PropsType) {
   // todo::declare and define helper methods
-  const handleEditDirectory = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleEditDirectory = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     props.handleClick(props.item, true);
   };
@@ -35,18 +33,10 @@ export default function MainItem(props: PropsType) {
       >
         {/* Edit Button */}
         {props.item.id != "add_new_directory_113" && (
-          <IconButton
-            size="small"
-            sx={{
-              color: "#fff",
-              position: "absolute",
-              top: "5%",
-              right: "5%",
-            }}
-            onClick={handleEditDirectory}
-          >
-            <SettingsOutlinedIcon />
-          </IconButton>
+          <SettingBtn
+            handleEditDirectory={handleEditDirectory}
+            item={props.item}
+          />
         )}
         {/* Type public or private */}
         <Box

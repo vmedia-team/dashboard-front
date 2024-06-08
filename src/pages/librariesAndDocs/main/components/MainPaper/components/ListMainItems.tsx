@@ -22,6 +22,8 @@ export default function ListMainItems() {
     id: "add_new_directory_113",
     name: "اضافة فولدر / تعديل",
     type: 1,
+    files_count: 0,
+    is_deletable: 0,
     media: [{ original_url: imgSrc7 }],
     created_at: "",
     updated_at: "",
@@ -64,7 +66,7 @@ export default function ListMainItems() {
 
   // * Return Component Ui.
   return (
-    <Grid container  className="fadeInUp">
+    <Grid container className="fadeInUp">
       {loading && <LibrariesLoading />}
       {!loading && (
         <>

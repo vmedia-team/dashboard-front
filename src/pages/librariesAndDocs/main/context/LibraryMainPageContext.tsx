@@ -11,6 +11,7 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     addNewDirectory: (directory) => {},
     editExistDirectory: (directory) => {},
     handleSearch: (params) => {},
+    deleteDirectory: (directory) => {},
   }
 );
 
@@ -32,6 +33,7 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         )
       )
       .then((response) => {
+        console.log("responseVV", response);
         setMainPageItems(response.data.folders);
       })
       .catch((err) => {
@@ -51,6 +53,11 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
     setMainPageItems(arr);
   }
 
+  function deleteDirectory(directory: LibrariesMainPageItemType) {
+    let arr = (mainPageItems ?? []).filter((ele) => ele.id != directory.id);
+    setMainPageItems(arr);
+  }
+
   function handleSearch(params: string) {
     getFoldersData(params);
   }
@@ -62,6 +69,7 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         addNewDirectory,
         editExistDirectory,
         handleSearch,
+        deleteDirectory,
       }}
     >
       {children}
@@ -79,4 +87,5 @@ type LibraryMainPageContextType = {
   addNewDirectory(directory: LibrariesMainPageItemType): void;
   editExistDirectory(directory: LibrariesMainPageItemType): void;
   handleSearch(params: string): void;
+  deleteDirectory(directory: LibrariesMainPageItemType): void;
 };
