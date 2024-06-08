@@ -22,6 +22,7 @@ export default function SingleDoc(props: PropsType) {
       sx={{ p: 3, position: "relative", cursor: "pointer" }}
       onClick={(e) => {
         handleSetActiveFile(props.file);
+        window.scrollTo({ top: 0, behavior: "smooth" });
         enqueueSnackbar(`تم عرض محتوي ملف ${props.file.name}`, {
           variant: "info",
         });
@@ -53,7 +54,7 @@ export default function SingleDoc(props: PropsType) {
         <CalendarMonthOutlinedIcon />
         <Typography variant="body2">{props.file?.end_date}</Typography>
       </Stack>
-      <Box bgcolor={"#D2DCEA"}>عدد التحميل : 22</Box>
+      <Box bgcolor={"#D2DCEA"}>عدد التحميل : {props.file?.downloaded}</Box>
     </Stack>
   );
 }
