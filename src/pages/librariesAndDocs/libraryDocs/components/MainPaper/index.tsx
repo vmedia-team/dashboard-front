@@ -23,12 +23,18 @@ export default function LibraryDocsMainPaper(props: PropsType) {
       <FormControlLabel
         control={
           <Checkbox
-            checked={selectedFilesIds?.length == files?.length}
+            checked={
+              selectedFilesIds?.length == files?.length && files?.length != 0
+            }
             onChange={() => SelectAll()}
             name="select_all"
           />
         }
-        label={(selectedFilesIds?.length == files?.length && files?.length != 0)?"ازالة تحديد الكل":"تحديد الكل"}
+        label={
+          selectedFilesIds?.length == files?.length && files?.length != 0
+            ? "ازالة تحديد الكل"
+            : "تحديد الكل"
+        }
       />
       <ListOfLibraryDocs />
     </Paper>
