@@ -7,6 +7,7 @@ import AddEditLibDialog from "../../Dialog";
 import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
 import { useNavigate } from "react-router-dom";
 import LibrariesLoading from "../../loading";
+import "./styles.scss";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
@@ -44,11 +45,12 @@ export default function ListMainItems() {
       setOpenDialog(true);
     } else {
       //navigate to specific page
-      switch (item?.id) {
-        case 1: //'مستندات المكاتب'
-          navigator(`/react/librariesAndDocs/${item.id}`);
-          break;
-      }
+      if (item?.id) navigator(`/react/librariesAndDocs/${item?.id}`);
+      // switch (item?.id) {
+      //   case 1: //'مستندات المكاتب'
+      //     navigator(`/react/librariesAndDocs/${item.id}`);
+      //     break;
+      // }
     }
   };
 
@@ -62,7 +64,7 @@ export default function ListMainItems() {
 
   // * Return Component Ui.
   return (
-    <Grid container>
+    <Grid container  className="fadeInUp">
       {loading && <LibrariesLoading />}
       {!loading && (
         <>

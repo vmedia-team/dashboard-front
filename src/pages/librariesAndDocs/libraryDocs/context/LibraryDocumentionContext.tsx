@@ -65,7 +65,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   }
 
   function addNewDocumentation(file: DocumentationFileType) {
-    setFiles((prev) => [...prev, file]);
+    let arr = files ?? [];
+    arr.push(file);
+    setFiles(arr);
   }
 
   function editExistDocumentation(file: DocumentationFileType) {
