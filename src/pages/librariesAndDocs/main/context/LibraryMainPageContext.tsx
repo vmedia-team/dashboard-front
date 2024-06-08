@@ -10,7 +10,7 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     mainPageItems: [],
     addNewDirectory: (directory) => {},
     editExistDirectory: (directory) => {},
-    handleSearch: (name) => {},
+    handleSearch: (params) => {},
   }
 );
 
@@ -22,12 +22,12 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
 
   useEffect(getFoldersData, []);
   // TODO::declare and define our helper methods
-  function getFoldersData(name?: string) {
+  function getFoldersData(params?: string) {
     axios
       .get<{ folders: LibrariesMainPageItemType[] }>(
         Api(
           `employee/library/folder${
-            name && name?.length > 0 ? "?name=" + name : ""
+            params && params?.length > 0 ? "?" + params : ""
           }`
         )
       )
@@ -51,8 +51,8 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
     setMainPageItems(arr);
   }
 
-  function handleSearch(name: string) {
-    getFoldersData(name);
+  function handleSearch(params: string) {
+    getFoldersData(params);
   }
 
   return (
@@ -78,5 +78,5 @@ type LibraryMainPageContextType = {
   mainPageItems: LibrariesMainPageItemType[];
   addNewDirectory(directory: LibrariesMainPageItemType): void;
   editExistDirectory(directory: LibrariesMainPageItemType): void;
-  handleSearch(name: string): void;
+  handleSearch(params: string): void;
 };

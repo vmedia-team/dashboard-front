@@ -5,13 +5,26 @@ import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
 
 export default function SearchBar(props: PropsType) {
   // TODO::declare and define component state and variables
-  const dummyOptions = [{ label: "نوع المستند", value: 0 }];
   const [name, setName] = useState("");
   const { handleSearch } = useContext(LibraryMainPageContext);
+  const [directoryType, setDirectoryType] = useState(-1);
+  const dummyOptions = [
+    { label: "الكل", value: -1 },
+    { label: "علني", value: 1 },
+    { label: "مخصص", value: 0 },
+  ];
 
   // TODO::declare and define component methods
   const handleSearchFun = () => {
-    handleSearch(name);
+    let params = "";
+    if (name) params += `name=${name}`;
+    if (directoryType != -1) {
+      if (params.length > 0) {
+        params += "&";
+      }
+      params += `type=${directoryType}`;
+    }
+    handleSearch(params);
   };
   // * Return Component UI
   return (
@@ -28,10 +41,11 @@ export default function SearchBar(props: PropsType) {
           options={dummyOptions}
           placeholder="نوع المستند"
           size="small"
-          defaultValue={0}
+          defaultValue={-1}
           select
-          onChange={() => {
-            console.log("Handle Change");
+          onChange={(e) => {
+            console.log("e.target.value", e.target.value);
+            setDirectoryType(+e.target.value);
           }}
           sx={{
             width: "28%",
