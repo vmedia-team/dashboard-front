@@ -2,7 +2,7 @@ import { Box, IconButton, Stack, Typography } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { LibrariesMainPageItemType } from "./MianItemsData";
 import folderImg from "../../../../../../assets/images/librariesAndDocs/folder.png";
-
+import "./styles.scss";
 export default function MainItem(props: PropsType) {
   // todo::declare and define helper methods
   const handleEditDirectory = (
@@ -14,7 +14,7 @@ export default function MainItem(props: PropsType) {
 
   // *return our component ui.
   return (
-    <Stack justifyContent={"center"} alignItems={"center"}>
+    <Stack justifyContent={"center"} alignItems={"center"} className="fadeInUp">
       <Stack
         sx={{
           bgcolor: "#92AFCF",
@@ -25,7 +25,7 @@ export default function MainItem(props: PropsType) {
           justifyContent: "center",
           alignItems: "center",
           cursor: "pointer",
-          transition: "all 0.5s ease",
+          transition: "all 0.2s ease",
           ":hover": {
             boxShadow: "2px 2px 4px 4px lightgray",
             transform: "scale(1.1)",

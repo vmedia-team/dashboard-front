@@ -1,6 +1,5 @@
 import { Paper } from "@mui/material";
 import ListMainItems from "./components/ListMainItems";
-import "./components/styles.scss";
 
 export default function MainPaper() {
   return (
@@ -11,7 +10,6 @@ export default function MainPaper() {
         mt: 10,
         p: 5,
       }}
-      className="fadeInUp"
     >
       <ListMainItems />
     </Paper>

@@ -6,11 +6,13 @@ import { useContext, useEffect, useState } from "react";
 import AddEditLibDialog from "../../Dialog";
 import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
 import { useNavigate } from "react-router-dom";
+import LibrariesLoading from "../../loading";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
   const navigator = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { mainPageItems } = useContext(LibraryMainPageContext);
   const [clickedMainItem, setClickedMainItem] = useState<
     LibrariesMainPageItemType | undefined
@@ -24,6 +26,12 @@ export default function ListMainItems() {
     updated_at: "",
   };
 
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
   // TODO::declare and define component methods
   const handleClick = (
     item: LibrariesMainPageItemType | undefined,
@@ -55,15 +63,20 @@ export default function ListMainItems() {
   // * Return Component Ui.
   return (
     <Grid container>
-      {mainPageItems.map((item) => (
-        <GridItem key={item.id} item={item} />
-      ))}
-      <GridItem item={addDirectoryItem} />
-      <AddEditLibDialog
-        open={openDialog}
-        clickedMainItem={clickedMainItem}
-        setOpen={setOpenDialog}
-      />
+      {loading && <LibrariesLoading />}
+      {!loading && (
+        <>
+          {mainPageItems.map((item) => (
+            <GridItem key={item.id} item={item} />
+          ))}
+          <GridItem item={addDirectoryItem} />
+          <AddEditLibDialog
+            open={openDialog}
+            clickedMainItem={clickedMainItem}
+            setOpen={setOpenDialog}
+          />
+        </>
+      )}
     </Grid>
   );
 }
