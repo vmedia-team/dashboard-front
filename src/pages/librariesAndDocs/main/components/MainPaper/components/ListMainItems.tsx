@@ -30,7 +30,7 @@ export default function ListMainItems() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 4000);
   }, []);
   // TODO::declare and define component methods
   const handleClick = (

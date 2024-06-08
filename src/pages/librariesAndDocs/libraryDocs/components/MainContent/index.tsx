@@ -1,28 +1,37 @@
 import { Grid } from "@mui/material";
 import LibraryDocsMainPaper from "../MainPaper";
 import ILovePdfFrameIndex from "../ILovePdfFrame";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
+import LibrariesLoading from "../../../main/components/loading";
 
 export default function MainContentIndex() {
+  const [loading, setLoading] = useState(false);
   const { activeFileToShow, handleSetActiveFile } = useContext(
     LibraryDocumentionContext
   );
 
-  // useEffect(() => {
-  //   handleSetActiveFile(undefined);
-  // }, []);
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 4000);
+  }, []);
+  
   return (
     <Grid container>
-      <Grid item xs={activeFileToShow ? 6 : 12}>
-        <LibraryDocsMainPaper width={"100%"} />
-      </Grid>
-      {activeFileToShow && (
-        <Grid item xs={6} sx={{ position: "relative" }}>
-          <ILovePdfFrameIndex
-            fileUrl={activeFileToShow?.media?.[0]?.original_url}
-          />
-        </Grid>
+      {loading && <LibrariesLoading />}
+      {!loading && (
+        <>
+          <Grid item xs={activeFileToShow ? 6 : 12}>
+            <LibraryDocsMainPaper width={"100%"} />
+          </Grid>
+          {activeFileToShow && (
+            <Grid item xs={6} sx={{ position: "relative" }}>
+              <ILovePdfFrameIndex
+                fileUrl={activeFileToShow?.media?.[0]?.original_url}
+              />
+            </Grid>
+          )}
+        </>
       )}
     </Grid>
   );
