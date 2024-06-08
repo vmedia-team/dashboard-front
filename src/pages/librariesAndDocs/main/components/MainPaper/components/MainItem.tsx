@@ -1,9 +1,16 @@
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
 import { LibrariesMainPageItemType } from "./MianItemsData";
 import folderImg from "../../../../../../assets/images/librariesAndDocs/folder.png";
 import SettingBtn from "./SettingBtn";
+import { useContext } from "react";
+import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
 
 export default function MainItem(props: PropsType) {
+  // TODO::declare and define state and variables
+  const {
+    toggleDirectoryIdFormSelectedDirectories,
+    checkedDirectoryIdInSelectedDirectories,
+  } = useContext(LibraryMainPageContext);
   // todo::declare and define helper methods
   const handleEditDirectory = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -13,6 +20,17 @@ export default function MainItem(props: PropsType) {
   // *return our component ui.
   return (
     <Stack justifyContent={"center"} alignItems={"center"}>
+      <Checkbox
+        checked={checkedDirectoryIdInSelectedDirectories(+props.item.id)}
+        onChange={() =>
+          toggleDirectoryIdFormSelectedDirectories(+props.item.id)
+        }
+        sx={{
+          alignSelf: "start",
+          px: 3,
+          display: props.item.id != "add_new_directory_113" ? "block" : "none",
+        }}
+      />
       <Stack
         sx={{
           bgcolor: "#92AFCF",
@@ -23,6 +41,7 @@ export default function MainItem(props: PropsType) {
           justifyContent: "center",
           alignItems: "center",
           cursor: "pointer",
+          mt: props.item.id != "add_new_directory_113" ? 0 : 6.5,
           transition: "all 0.2s ease-in-out",
           ":hover": {
             boxShadow: "2px 2px 4px 4px lightgray",

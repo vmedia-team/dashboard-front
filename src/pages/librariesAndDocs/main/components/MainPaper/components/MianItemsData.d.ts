@@ -1,3 +1,4 @@
+import { DocumentationFileType } from "../../../../../../types/librariesAndDocs/DocumentationFile";
 import { Media } from "./../../../../../../types/Media";
 
 export type LibrariesMainPageItemType = {
@@ -10,4 +11,5 @@ export type LibrariesMainPageItemType = {
   is_deletable: number;
   media: Media[] | { original_url: string; name?: string }[];
   employees?: { id: number; name: string }[];
+  files?: DocumentationFileType[];
 };

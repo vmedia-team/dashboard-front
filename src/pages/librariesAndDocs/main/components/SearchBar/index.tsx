@@ -6,18 +6,29 @@ import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
 export default function SearchBar(props: PropsType) {
   // TODO::declare and define component state and variables
   const [name, setName] = useState("");
-  const { handleSearch, directoriesNames } = useContext(LibraryMainPageContext);
-  const [directoryType, setDirectoryType] = useState(-1);
+  const [reference_number, setReference_number] = useState("");
+  const [file_name, setFile_name] = useState("");
+  const { handleSearch, directoriesNames, handleSetSearchInfiles } = useContext(
+    LibraryMainPageContext
+  );
+
   // TODO::declare and define component methods
   const handleSearchFun = () => {
-    let params = "";
+    let params = "",
+      count = 0;
     if (name && name != "الكل") params += `name=${name}`;
-    if (directoryType != -1) {
-      if (params.length > 0) {
-        params += "&";
-      }
-      params += `type=${directoryType}`;
-    }
+    if (reference_number) {
+      if (params.length) params += "&";
+      params += `reference_number=${reference_number}`;
+    } else count++;
+    if (file_name) {
+      if (params.length) params += "&";
+      params += `file_name=${file_name}`;
+    } else count++;
+
+    if (count < 2) handleSetSearchInfiles(true);
+    else handleSetSearchInfiles(false);
+    
     handleSearch(params);
   };
   // * Return Component UI
@@ -53,7 +64,7 @@ export default function SearchBar(props: PropsType) {
           // value={props.search}
           size="small"
           sx={{ width: "28%" }}
-          onChange={() => {}}
+          onChange={(e) => setReference_number(e.target.value)}
         />
         {/* doc name */}
         <TextField
@@ -61,7 +72,7 @@ export default function SearchBar(props: PropsType) {
           // value={props.search}
           size="small"
           sx={{ width: "28%" }}
-          onChange={(e) => {}}
+          onChange={(e) => setFile_name(e.target.value)}
         />
         <Button
           variant="contained"

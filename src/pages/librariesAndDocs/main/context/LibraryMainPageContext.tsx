@@ -14,16 +14,25 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     handleSearch: (params) => {},
     deleteDirectory: (directory) => {},
     directoriesNames: [],
+    selectedDirectoriedIds: [],
+    toggleDirectoryIdFormSelectedDirectories: (id) => {},
+    checkedDirectoryIdInSelectedDirectories: (id) => true,
+    searchInfiles: false,
+    handleSetSearchInfiles: (searchState) => {},
   }
 );
 
 export function LibraryMainPageContextProvider({ children }: PropsType) {
   // TODO::declare and define our state and variables
+  const [searchInfiles, setSearchInfiles] = useState(false);
   const [mainPageItems, setMainPageItems] = useState<
     LibrariesMainPageItemType[]
   >([]);
   const [directoriesNames, setDirectoriesNames] = useState<
     { value: number; label: string }[]
+  >([]);
+  const [selectedDirectoriedIds, setSelectedDirectoriedIds] = useState<
+    number[]
   >([]);
 
   useEffect(getFoldersData, []);
@@ -38,6 +47,7 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         )
       )
       .then((response) => {
+        console.log("responseresponse", response);
         if (!params) {
           let namesSet = new Set<string>();
           let names = response.data.folders
@@ -80,6 +90,24 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
     getFoldersData(params);
   }
 
+  function checkedDirectoryIdInSelectedDirectories(id: number) {
+    return selectedDirectoriedIds.indexOf(id) != -1;
+  }
+
+  function toggleDirectoryIdFormSelectedDirectories(id: number) {
+    let exist = checkedDirectoryIdInSelectedDirectories(id);
+    console.log(id, exist);
+    if (exist) {
+      setSelectedDirectoriedIds((prev) => prev.filter((ele) => ele != id));
+    } else {
+      setSelectedDirectoriedIds((prev) => [...prev, id]);
+    }
+  }
+
+  function handleSetSearchInfiles(searchState: boolean) {
+    setSearchInfiles(searchState);
+  }
+
   return (
     <LibraryMainPageContext.Provider
       value={{
@@ -89,6 +117,11 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         handleSearch,
         deleteDirectory,
         directoriesNames,
+        selectedDirectoriedIds,
+        toggleDirectoryIdFormSelectedDirectories,
+        checkedDirectoryIdInSelectedDirectories,
+        searchInfiles,
+        handleSetSearchInfiles,
       }}
     >
       {children}
@@ -111,4 +144,9 @@ type LibraryMainPageContextType = {
     value: number;
     label: string;
   }[];
+  selectedDirectoriedIds: number[];
+  toggleDirectoryIdFormSelectedDirectories(id: number): void;
+  checkedDirectoryIdInSelectedDirectories(id: number): boolean;
+  searchInfiles: boolean;
+  handleSetSearchInfiles(searchState: boolean): void;
 };

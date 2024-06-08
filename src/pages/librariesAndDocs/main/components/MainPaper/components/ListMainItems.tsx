@@ -8,13 +8,14 @@ import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext"
 import { useNavigate } from "react-router-dom";
 import LibrariesLoading from "../../loading";
 import "./styles.scss";
+import SearchByFileNameAndRefNum from "./SearchByFileNameAndRefNum";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
   const navigator = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { mainPageItems } = useContext(LibraryMainPageContext);
+  const { mainPageItems, searchInfiles } = useContext(LibraryMainPageContext);
   const [clickedMainItem, setClickedMainItem] = useState<
     LibrariesMainPageItemType | undefined
   >();
@@ -33,7 +34,7 @@ export default function ListMainItems() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 4000);
+    }, 2500);
   }, []);
   // TODO::declare and define component methods
   const handleClick = (
@@ -68,19 +69,22 @@ export default function ListMainItems() {
   return (
     <Grid container className="fadeInUp">
       {loading && <LibrariesLoading />}
-      {!loading && (
-        <>
-          {mainPageItems.map((item) => (
-            <GridItem key={item.id} item={item} />
-          ))}
-          <GridItem item={addDirectoryItem} />
-          <AddEditLibDialog
-            open={openDialog}
-            clickedMainItem={clickedMainItem}
-            setOpen={setOpenDialog}
-          />
-        </>
-      )}
+      {!loading &&
+        (searchInfiles ? (
+          <SearchByFileNameAndRefNum />
+        ) : (
+          <>
+            {mainPageItems.map((item) => (
+              <GridItem key={item.id} item={item} />
+            ))}
+            <GridItem item={addDirectoryItem} />
+            <AddEditLibDialog
+              open={openDialog}
+              clickedMainItem={clickedMainItem}
+              setOpen={setOpenDialog}
+            />
+          </>
+        ))}
     </Grid>
   );
 }
