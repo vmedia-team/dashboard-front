@@ -1,6 +1,7 @@
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { LibrariesMainPageItemType } from "./MianItemsData";
+import folderImg from "../../../../../../assets/images/librariesAndDocs/folder.png";
 
 export default function MainItem(props: PropsType) {
   // todo::declare and define helper methods
@@ -63,9 +64,9 @@ export default function MainItem(props: PropsType) {
           {props.item.type == 1 ? "علني" : "مخصص"}
         </Box>
         <img
-          src={props.item?.media?.[0]?.original_url ?? ""}
-          width={92}
-          height={92}
+          src={props.item?.media?.[0]?.original_url ?? folderImg}
+          width={!props.item?.media?.[0]?.original_url ? 120 : 92}
+          height={!props.item?.media?.[0]?.original_url ? 120 : 92}
           alt={`icon for ${props.item.name}`}
         />
       </Stack>
