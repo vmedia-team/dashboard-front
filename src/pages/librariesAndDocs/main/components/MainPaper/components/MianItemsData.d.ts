@@ -7,5 +7,5 @@ export type LibrariesMainPageItemType = {
   created_at: string;
   updated_at: string;
   media: Media[] | { original_url: string; name?: string }[];
-  employees?: { id: number; full_name: string }[];
+  employees?: { id: number; name: string }[];
 };

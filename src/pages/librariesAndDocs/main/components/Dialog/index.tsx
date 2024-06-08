@@ -259,7 +259,7 @@ export default function AddEditLibDialog(props: dialogProps) {
               setSelectedUsers(newVal);
               return "";
             }}
-            getOptionLabel={(option) => option.full_name}
+            getOptionLabel={(option) => option.name}
             filterSelectedOptions
             renderInput={(params) => (
               <TextField
@@ -281,11 +281,11 @@ export default function AddEditLibDialog(props: dialogProps) {
 }
 
 // declare needed types
-type userT = { id: number; full_name: string };
+type userT = { id: number; name: string };
 type FormTypeSchema = {
   name: string;
   type: number;
-  employees?: { id: number; full_name: string }[];
+  employees?: userT[];
 };
 
 type dialogProps = {

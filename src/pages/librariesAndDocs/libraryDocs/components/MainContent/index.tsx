@@ -18,7 +18,7 @@ export default function MainContentIndex() {
         <LibraryDocsMainPaper width={"100%"} />
       </Grid>
       {activeFileToShow && (
-        <Grid item xs={6}>
+        <Grid item xs={6} sx={{ position: "relative" }}>
           <ILovePdfFrameIndex
             fileUrl={activeFileToShow?.media?.[0]?.original_url}
           />
