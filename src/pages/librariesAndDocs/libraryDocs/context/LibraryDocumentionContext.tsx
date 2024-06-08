@@ -22,6 +22,7 @@ export const LibraryDocumentionContext =
     activeFileToShow: undefined,
     handleSetActiveFile: (file) => {},
     handleSearch: (name) => {},
+    SelectAll: () => {},
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -97,6 +98,15 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     getLibraryDocs(name);
   }
 
+  function SelectAll() {
+    if (files.length == selectedFilesIds.length) {
+      setSelectedFilesIds([]);
+      return;
+    }
+    let ids = files.map((ele) => ele.id);
+    setSelectedFilesIds(ids);
+  }
+
   return (
     <LibraryDocumentionContext.Provider
       value={{
@@ -114,6 +124,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         activeFileToShow,
         handleSetActiveFile,
         handleSearch,
+        SelectAll,
       }}
     >
       {children}
@@ -141,4 +152,5 @@ type LibraryDocumentionContextType = {
   activeFileToShow: DocumentationFileType | undefined;
   handleSetActiveFile(file: DocumentationFileType | undefined): void;
   handleSearch(name: string): void;
+  SelectAll(): void;
 };
