@@ -4,6 +4,7 @@ import axios from "axios";
 import { LibrariesMainPageItemType } from "../components/MainPaper/components/MianItemsData";
 import { Api } from "../../../../constants";
 import { Value } from "sass";
+import { DocumentationFileType } from "../../../../types/librariesAndDocs/DocumentationFile";
 
 // * create context
 export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
@@ -19,12 +20,16 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     checkedDirectoryIdInSelectedDirectories: (id) => true,
     searchInfiles: false,
     handleSetSearchInfiles: (searchState) => {},
+    selectedResultFile: undefined,
+    handleSetSelectedResultFile: (file) => {},
   }
 );
 
 export function LibraryMainPageContextProvider({ children }: PropsType) {
   // TODO::declare and define our state and variables
   const [searchInfiles, setSearchInfiles] = useState(false);
+  const [selectedResultFile, setSelectedResultFile] =
+    useState<DocumentationFileType>();
   const [mainPageItems, setMainPageItems] = useState<
     LibrariesMainPageItemType[]
   >([]);
@@ -108,6 +113,12 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
     setSearchInfiles(searchState);
   }
 
+  function handleSetSelectedResultFile(
+    file: DocumentationFileType | undefined
+  ) {
+    setSelectedResultFile(file);
+  }
+
   return (
     <LibraryMainPageContext.Provider
       value={{
@@ -122,6 +133,8 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         checkedDirectoryIdInSelectedDirectories,
         searchInfiles,
         handleSetSearchInfiles,
+        selectedResultFile,
+        handleSetSelectedResultFile,
       }}
     >
       {children}
@@ -149,4 +162,6 @@ type LibraryMainPageContextType = {
   checkedDirectoryIdInSelectedDirectories(id: number): boolean;
   searchInfiles: boolean;
   handleSetSearchInfiles(searchState: boolean): void;
+  selectedResultFile: DocumentationFileType | undefined;
+  handleSetSelectedResultFile(file: DocumentationFileType | undefined): void;
 };
