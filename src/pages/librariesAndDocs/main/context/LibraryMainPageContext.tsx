@@ -22,12 +22,14 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     handleSetSearchInfiles: (searchState) => {},
     selectedResultFile: undefined,
     handleSetSelectedResultFile: (file) => {},
+    searchState: false,
   }
 );
 
 export function LibraryMainPageContextProvider({ children }: PropsType) {
   // TODO::declare and define our state and variables
   const [searchInfiles, setSearchInfiles] = useState(false);
+  const [searchState, setSearchState] = useState(false);
   const [selectedResultFile, setSelectedResultFile] =
     useState<DocumentationFileType>();
   const [mainPageItems, setMainPageItems] = useState<
@@ -43,6 +45,7 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
   useEffect(getFoldersData, []);
   // TODO::declare and define our helper methods
   function getFoldersData(params?: string) {
+    setSearchState(true);
     axios
       .get<{ folders: LibrariesMainPageItemType[] }>(
         Api(
@@ -71,7 +74,8 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
       })
       .catch((err) => {
         console.log("Error in fetch directories data::", err);
-      });
+      })
+      .finally(() => setSearchState(false));
   }
 
   function addNewDirectory(directory: LibrariesMainPageItemType) {
@@ -135,6 +139,7 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         handleSetSearchInfiles,
         selectedResultFile,
         handleSetSelectedResultFile,
+        searchState,
       }}
     >
       {children}
@@ -164,4 +169,5 @@ type LibraryMainPageContextType = {
   handleSetSearchInfiles(searchState: boolean): void;
   selectedResultFile: DocumentationFileType | undefined;
   handleSetSelectedResultFile(file: DocumentationFileType | undefined): void;
+  searchState: boolean;
 };

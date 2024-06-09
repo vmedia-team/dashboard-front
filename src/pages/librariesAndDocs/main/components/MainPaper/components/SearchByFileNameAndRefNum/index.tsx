@@ -3,9 +3,12 @@ import FilesList from "./components/FilesList";
 import ShowFileContent from "./components/ShowFileContent";
 import { useContext } from "react";
 import { LibraryMainPageContext } from "../../../../context/LibraryMainPageContext";
+import SearchLoading from "../../../loading/SearchLoading";
 
 export default function SearchByFileNameAndRefNum() {
-  const { selectedResultFile } = useContext(LibraryMainPageContext);
+  const { selectedResultFile, searchState } = useContext(
+    LibraryMainPageContext
+  );
 
   return (
     <Grid container>
@@ -14,13 +17,21 @@ export default function SearchByFileNameAndRefNum() {
           نتائج البحث
         </Typography>
       </Grid>
-      <Grid xs={selectedResultFile ? 6 : 12}>
-        <FilesList />
-      </Grid>
-      {selectedResultFile && (
-        <Grid xs={6}>
-          <ShowFileContent url={selectedResultFile?.media?.[0]?.original_url} />
-        </Grid>
+      {searchState ? (
+        <SearchLoading />
+      ) : (
+        <>
+          <Grid xs={selectedResultFile ? 6 : 12}>
+            <FilesList />
+          </Grid>
+          {selectedResultFile && (
+            <Grid xs={6}>
+              <ShowFileContent
+                url={selectedResultFile?.media?.[0]?.original_url}
+              />
+            </Grid>
+          )}
+        </>
       )}
     </Grid>
   );

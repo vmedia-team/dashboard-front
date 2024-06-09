@@ -9,13 +9,16 @@ import { useNavigate } from "react-router-dom";
 import LibrariesLoading from "../../loading";
 import "./styles.scss";
 import SearchByFileNameAndRefNum from "./SearchByFileNameAndRefNum";
+import SearchLoading from "../../loading/SearchLoading";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
   const navigator = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { mainPageItems, searchInfiles } = useContext(LibraryMainPageContext);
+  const { mainPageItems, searchInfiles, searchState } = useContext(
+    LibraryMainPageContext
+  );
   const [clickedMainItem, setClickedMainItem] = useState<
     LibrariesMainPageItemType | undefined
   >();
@@ -68,11 +71,17 @@ export default function ListMainItems() {
   // * Return Component Ui.
   return (
     <Grid container className="fadeInUp">
+      {/* case::loading data when page is open */}
       {loading && <LibrariesLoading />}
       {!loading &&
         (searchInfiles ? (
+          // screen when search by filename of refrance number
           <SearchByFileNameAndRefNum />
+        ) : searchState ? (
+          // search loading
+          <SearchLoading />
         ) : (
+          // data arrived
           <>
             {mainPageItems.map((item) => (
               <GridItem key={item.id} item={item} />
