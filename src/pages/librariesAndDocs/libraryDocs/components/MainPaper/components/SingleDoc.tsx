@@ -33,9 +33,6 @@ export default function SingleDoc(props: PropsType) {
       onClick={(e) => {
         handleSetActiveFile(props.file);
         window.scrollTo({ top: 0, behavior: "smooth" });
-        enqueueSnackbar(`تم عرض محتوي ملف ${props.file.name}`, {
-          variant: "info",
-        });
       }}
     >
       {/* checkbox */}
