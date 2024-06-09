@@ -114,7 +114,14 @@ export default function ConfirmFileProccess(props: PropsType) {
         >
           متابعة
         </Button>
-        <Button disabled={loading} variant="text" onClick={handleClose}>
+        <Button
+          disabled={loading}
+          variant="text"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleClose();
+          }}
+        >
           رجوع
         </Button>
       </DialogActions>
