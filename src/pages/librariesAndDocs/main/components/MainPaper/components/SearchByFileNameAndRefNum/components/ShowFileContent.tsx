@@ -1,11 +1,7 @@
 import { Stack } from "@mui/material";
-import { useContext, useEffect } from "react";
-import { LibraryMainPageContext } from "../../../../../context/LibraryMainPageContext";
+import { useEffect } from "react";
 
 export default function ShowFileContent(props: PropsType) {
-  const { selectedResultFile } = useContext(LibraryMainPageContext);
-  console.log("selectedResultFile", selectedResultFile);
-
   useEffect(() => {}, [props.url]);
   return (
     <Stack justifyContent={"center"} alignItems={"center"}>

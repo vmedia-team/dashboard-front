@@ -4,9 +4,19 @@ import { DocumentationFileType } from "../../../../../../../../types/librariesAn
 import { LibrariesMainPageItemType } from "../../MianItemsData";
 import { useContext } from "react";
 import { LibraryMainPageContext } from "../../../../../context/LibraryMainPageContext";
+import { useNavigate } from "react-router-dom";
 
 export default function SingleFileRow(props: PropsType) {
   const { handleSetSelectedResultFile } = useContext(LibraryMainPageContext);
+  const navigator = useNavigate();
+
+  const handleClick = () => {
+    navigator(`${props.directory?.id ?? ""}`, {
+      state: {
+        activeFile: props.file,
+      },
+    });
+  };
 
   return (
     <Stack
@@ -36,7 +46,7 @@ export default function SingleFileRow(props: PropsType) {
           {props.directory?.name} / {props.file?.name}
         </Typography>
       </Stack>
-      <Button variant="outlined" color="info">
+      <Button variant="outlined" color="info" onClick={handleClick}>
         التفاصيل
       </Button>
     </Stack>

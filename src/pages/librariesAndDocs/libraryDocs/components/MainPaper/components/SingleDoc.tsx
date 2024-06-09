@@ -3,17 +3,27 @@ import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined
 import fileImg from "../../../../../../assets/images/fileImg.png";
 import { Checkbox } from "@mui/material";
 import { DocumentationFileType } from "../../../../../../types/librariesAndDocs/DocumentationFile";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LibraryDocumentionContext } from "../../../context/LibraryDocumentionContext";
 import { useSnackbar } from "notistack";
+import { useLocation } from "react-router-dom";
 
 export default function SingleDoc(props: PropsType) {
   const { enqueueSnackbar } = useSnackbar();
+  const location = useLocation();
+  console.log("location", location.state);
   const {
     handleSetActiveFile,
     checkedFileIdInSelectedFiles,
     toggleFileIdFormSelectedFiles,
   } = useContext(LibraryDocumentionContext);
+
+  // TODO::if comming from file_name/refrance num search result show selected file
+  useEffect(() => {
+    if (location.state?.activeFile) {
+      handleSetActiveFile(location.state?.activeFile);
+    }
+  }, []);
 
   return (
     <Stack
