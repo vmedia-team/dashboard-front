@@ -13,7 +13,7 @@ export default function ListOfLibraryDocs() {
   const [open, setOpen] = useState(false);
 
   return (
-    <Stack direction={"row"} flexWrap={"wrap"} spacing={2} width={"100%"}>
+    <Stack direction={"row"} flexWrap={"wrap"} width={"100%"}>
       {files?.map((ele) => (
         <SingleDoc file={ele} key={ele.id} />
       ))}
