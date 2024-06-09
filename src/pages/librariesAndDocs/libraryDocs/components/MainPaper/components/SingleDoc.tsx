@@ -22,6 +22,7 @@ export default function SingleDoc(props: PropsType) {
     toggleFileIdFormSelectedFiles,
     handleOenDialog,
     handleSetEditFile,
+    typeOfSelectedFiles,
   } = useContext(LibraryDocumentionContext); //get needed data from our context
   //* get and prepare file extention
   let extention = "null";
@@ -34,12 +35,16 @@ export default function SingleDoc(props: PropsType) {
     ".pdf"
   )
     ? "PDF"
-    : "Image";
+    : extention != "null"
+    ? "Image"
+    : "Unkown";
   //* prepare file name
   let fileName =
     props.file?.name?.length > 11
       ? `${props.file?.name?.slice(0, 11)}...`
       : props.file?.name;
+
+  console.log("typeOfSelectedFiles", typeOfSelectedFiles);
 
   // TODO::if comming from file_name/refrance num search result show selected file
   useEffect(() => {
@@ -65,7 +70,7 @@ export default function SingleDoc(props: PropsType) {
 
   const handleEdit = () => {
     handleSetEditFile(true);
-    console.log("breakpoint1999 file",props.file)
+    console.log("breakpoint1999 file", props.file);
     handleSetActiveFile(props.file);
     handleOenDialog(true);
   };
@@ -79,6 +84,9 @@ export default function SingleDoc(props: PropsType) {
     >
       {/* checkbox */}
       <Checkbox
+        disabled={
+          typeOfSelectedFiles != undefined && typeOfSelectedFiles != fileType
+        }
         checked={checkedFileIdInSelectedFiles(props.file.id)}
         onChange={(e) => {
           toggleFileIdFormSelectedFiles(props.file.id);
@@ -196,7 +204,7 @@ export default function SingleDoc(props: PropsType) {
   );
 }
 
-type MediaType = "Image" | "PDF";
+type MediaType = "Image" | "PDF" | "Unkown";
 type PropsType = {
   file: DocumentationFileType;
 };
