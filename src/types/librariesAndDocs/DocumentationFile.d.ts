@@ -12,4 +12,5 @@ export type DocumentationFileType = {
   updated_at: string;
   downloaded: number;
   media: Media[];
+  employees?: { id: number; name: string }[];
 };

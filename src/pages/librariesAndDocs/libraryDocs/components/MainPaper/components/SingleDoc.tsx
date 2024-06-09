@@ -11,6 +11,7 @@ import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import axios from "axios";
 import { Api } from "../../../../../../constants";
+import { ConstructionOutlined } from "@mui/icons-material";
 
 export default function SingleDoc(props: PropsType) {
   // TODO::declare and define component state and variables
@@ -19,6 +20,8 @@ export default function SingleDoc(props: PropsType) {
     handleSetActiveFile,
     checkedFileIdInSelectedFiles,
     toggleFileIdFormSelectedFiles,
+    handleOenDialog,
+    handleSetEditFile,
   } = useContext(LibraryDocumentionContext); //get needed data from our context
   //* get and prepare file extention
   let extention = "null";
@@ -58,6 +61,13 @@ export default function SingleDoc(props: PropsType) {
         })
         .catch((err) => {});
     }
+  };
+
+  const handleEdit = () => {
+    handleSetEditFile(true);
+    console.log("breakpoint1999 file",props.file)
+    handleSetActiveFile(props.file);
+    handleOenDialog(true);
   };
 
   //*return component state
@@ -152,6 +162,7 @@ export default function SingleDoc(props: PropsType) {
             boxShadow: "0px 4px 9.5px 0px #0000001F",
             borderRadius: "3px",
           }}
+          onClick={() => handleEdit()}
         >
           <BorderColorOutlinedIcon />
         </IconButton>
