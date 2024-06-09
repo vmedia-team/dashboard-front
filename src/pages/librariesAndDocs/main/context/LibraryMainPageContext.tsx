@@ -23,6 +23,7 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     selectedResultFile: undefined,
     handleSetSelectedResultFile: (file) => {},
     searchState: false,
+    SelectAllDirectories: () => {},
   }
 );
 
@@ -112,6 +113,14 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
       setSelectedDirectoriedIds((prev) => [...prev, id]);
     }
   }
+  function SelectAllDirectories() {
+    if (mainPageItems.length == selectedDirectoriedIds.length) {
+      setSelectedDirectoriedIds([]);
+      return;
+    }
+    let ids = mainPageItems.map((ele) => +ele.id);
+    setSelectedDirectoriedIds(ids);
+  }
 
   function handleSetSearchInfiles(searchState: boolean) {
     setSearchInfiles(searchState);
@@ -140,6 +149,7 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         selectedResultFile,
         handleSetSelectedResultFile,
         searchState,
+        SelectAllDirectories,
       }}
     >
       {children}
@@ -170,4 +180,5 @@ type LibraryMainPageContextType = {
   selectedResultFile: DocumentationFileType | undefined;
   handleSetSelectedResultFile(file: DocumentationFileType | undefined): void;
   searchState: boolean;
+  SelectAllDirectories(): void;
 };

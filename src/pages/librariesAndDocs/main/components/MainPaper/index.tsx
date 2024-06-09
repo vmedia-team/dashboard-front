@@ -7,7 +7,7 @@ export default function MainPaper() {
       elevation={2}
       sx={{
         bgcolor: "background.paper",
-        mt: 10,
+        mt: 1,
         p: 5,
       }}
     >
