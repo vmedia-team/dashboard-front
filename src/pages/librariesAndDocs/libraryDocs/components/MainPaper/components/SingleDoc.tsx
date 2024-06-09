@@ -9,6 +9,8 @@ import { useLocation } from "react-router-dom";
 import { Chip } from "@mui/material";
 import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
+import axios from "axios";
+import { Api } from "../../../../../../constants";
 
 export default function SingleDoc(props: PropsType) {
   // TODO::declare and define component state and variables
@@ -42,6 +44,21 @@ export default function SingleDoc(props: PropsType) {
       handleSetActiveFile(location.state?.activeFile);
     }
   }, []);
+
+  // TODO::declare and define helper methods
+  const handleDownloadFile = () => {
+    if (props.file?.media?.[0]?.original_url) {
+      axios
+        .get<{ file: DocumentationFileType }>(
+          Api(`employee/library/file/show/${props.file?.id}`)
+        )
+        .then((response) => {
+          handleSetActiveFile(response.data.file);
+          window.open(props.file?.media?.[0]?.original_url, "_blank");
+        })
+        .catch((err) => {});
+    }
+  };
 
   //*return component state
   return (
@@ -122,6 +139,7 @@ export default function SingleDoc(props: PropsType) {
             boxShadow: "0px 4px 9.5px 0px #0000001F",
             borderRadius: "3px",
           }}
+          onClick={() => handleDownloadFile()}
         >
           <CloudDownloadOutlinedIcon />
         </IconButton>
