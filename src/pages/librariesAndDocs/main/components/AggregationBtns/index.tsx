@@ -6,8 +6,12 @@ import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
 
 export default function AggregationBtns() {
   // TODO::declare and define component state and variables
-  const { mainPageItems, selectedDirectoriedIds, SelectAllDirectories } =
-    useContext(LibraryMainPageContext);
+  const {
+    mainPageItems,
+    selectedDirectoriedIds,
+    SelectAllDirectories,
+    handleSetOpenEditDialog,
+  } = useContext(LibraryMainPageContext);
 
   return (
     <Stack
@@ -39,6 +43,7 @@ export default function AggregationBtns() {
         color="info"
         variant="outlined"
         endIcon={<EditIcon />}
+        onClick={() => handleSetOpenEditDialog(true)}
       >
         تعديل
       </Button>

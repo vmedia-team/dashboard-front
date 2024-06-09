@@ -14,14 +14,15 @@ import SearchLoading from "../../loading/SearchLoading";
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
   const navigator = useNavigate();
-  const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { mainPageItems, searchInfiles, searchState } = useContext(
-    LibraryMainPageContext
-  );
-  const [clickedMainItem, setClickedMainItem] = useState<
-    LibrariesMainPageItemType | undefined
-  >();
+  const {
+    mainPageItems,
+    searchInfiles,
+    searchState,
+    openEditDialog,
+    handleSetOpenEditDialog,
+    handleSetSelectedDirectoryToEdit,
+  } = useContext(LibraryMainPageContext);
   const addDirectoryItem: LibrariesMainPageItemType = {
     id: "add_new_directory_113",
     name: "اضافة فولدر / تعديل",
@@ -44,19 +45,13 @@ export default function ListMainItems() {
     item: LibrariesMainPageItemType | undefined,
     editMode?: boolean
   ) => {
-    setClickedMainItem(item);
-    console.log("Active Item::", item);
+    handleSetSelectedDirectoryToEdit(item);
     if (item?.id == "add_new_directory_113" || editMode) {
       //create new directory or edit existting one.
-      setOpenDialog(true);
+      handleSetOpenEditDialog(true);
     } else {
       //navigate to specific page
       if (item?.id) navigator(`/react/librariesAndDocs/${item?.id}`);
-      // switch (item?.id) {
-      //   case 1: //'مستندات المكاتب'
-      //     navigator(`/react/librariesAndDocs/${item.id}`);
-      //     break;
-      // }
     }
   };
 
@@ -87,11 +82,7 @@ export default function ListMainItems() {
               <GridItem key={item.id} item={item} />
             ))}
             <GridItem item={addDirectoryItem} />
-            <AddEditLibDialog
-              open={openDialog}
-              clickedMainItem={clickedMainItem}
-              setOpen={setOpenDialog}
-            />
+            <AddEditLibDialog open={openEditDialog} />
           </>
         ))}
     </Grid>

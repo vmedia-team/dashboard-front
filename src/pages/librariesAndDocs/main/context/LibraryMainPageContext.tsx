@@ -24,27 +24,41 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     handleSetSelectedResultFile: (file) => {},
     searchState: false,
     SelectAllDirectories: () => {},
+    openEditDialog: false,
+    handleSetOpenEditDialog: (open) => {},
+    selectedDirectoryToEdit: undefined,
+    handleSetSelectedDirectoryToEdit: (directory) => {},
   }
 );
 
 export function LibraryMainPageContextProvider({ children }: PropsType) {
   // TODO::declare and define our state and variables
-  const [searchInfiles, setSearchInfiles] = useState(false);
-  const [searchState, setSearchState] = useState(false);
+  const [searchInfiles, setSearchInfiles] = useState(false); //to know search on type or in file_name | refrance number
+  const [searchState, setSearchState] = useState(false); //to control search state
+  const [openEditDialog, setOpenEditDialog] = useState(false); //to control edit dialog.
+  const [selectedDirectoryToEdit, setSelectedDirectoryToEdit] = useState<
+    LibrariesMainPageItemType | undefined
+  >(); //clicked (selected) clicked which will update
   const [selectedResultFile, setSelectedResultFile] =
-    useState<DocumentationFileType>();
+    useState<DocumentationFileType>(); //file on search result which you clicked
   const [mainPageItems, setMainPageItems] = useState<
     LibrariesMainPageItemType[]
-  >([]);
+  >([]); //data of directories from back-end
   const [directoriesNames, setDirectoriesNames] = useState<
     { value: number; label: string }[]
-  >([]);
+  >([]); //names of directories ,i use in search field type in search bar
   const [selectedDirectoriedIds, setSelectedDirectoriedIds] = useState<
     number[]
-  >([]);
+  >([]); //to control and handle selected directories
 
+  // * handle when component loaded.
   useEffect(getFoldersData, []);
+
   // TODO::declare and define our helper methods
+  /**
+   * get directories data from back-end
+   * @param params search parameters
+   */
   function getFoldersData(params?: string) {
     setSearchState(true);
     axios
@@ -79,10 +93,18 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
       .finally(() => setSearchState(false));
   }
 
+  /**
+   * add new directory to directories
+   * @param directory created directory
+   */
   function addNewDirectory(directory: LibrariesMainPageItemType) {
     setMainPageItems((prev) => [...prev, directory]);
   }
 
+  /**
+   * edit existing directory
+   * @param directory directory after edit
+   */
   function editExistDirectory(directory: LibrariesMainPageItemType) {
     let arr = mainPageItems.map((ele) => {
       if (ele.id == directory.id) return directory;
@@ -91,28 +113,67 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
     setMainPageItems(arr);
   }
 
+  /**
+   * delete directory
+   * @param directory directory which will delete
+   */
   function deleteDirectory(directory: LibrariesMainPageItemType) {
     let arr = (mainPageItems ?? []).filter((ele) => ele.id != directory.id);
     setMainPageItems(arr);
   }
 
+  /**
+   * handle search in directories
+   * @param params search parameters
+   */
   function handleSearch(params: string) {
     getFoldersData(params);
   }
 
+  /**
+   * check incomming id in selected directories or not
+   * @param id directory id
+   * @returns boolean
+   */
   function checkedDirectoryIdInSelectedDirectories(id: number) {
     return selectedDirectoriedIds.indexOf(id) != -1;
   }
 
+  /**
+   * toggle directory id in selected directories
+   * @param id directory id
+   */
   function toggleDirectoryIdFormSelectedDirectories(id: number) {
     let exist = checkedDirectoryIdInSelectedDirectories(id);
-    console.log(id, exist);
+
     if (exist) {
+      if (selectedDirectoriedIds?.length > 1) {
+        let selectedId =
+          selectedDirectoriedIds[0] != id
+            ? selectedDirectoriedIds[0]
+            : selectedDirectoriedIds[1];
+        // first one may be edit
+        let directory = mainPageItems.find((ele) => ele.id == selectedId);
+
+        setSelectedDirectoryToEdit(directory);
+      } else {
+        setSelectedDirectoryToEdit(undefined);
+      }
+
       setSelectedDirectoriedIds((prev) => prev.filter((ele) => ele != id));
     } else {
       setSelectedDirectoriedIds((prev) => [...prev, id]);
+
+      // first one may be edit
+      let directory = mainPageItems.find((ele) => ele.id == id);
+      setSelectedDirectoryToEdit(directory);
     }
   }
+
+  /**
+   * handle click on select all button
+   * @returns
+   */
   function SelectAllDirectories() {
     if (mainPageItems.length == selectedDirectoriedIds.length) {
       setSelectedDirectoriedIds([]);
@@ -122,14 +183,40 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
     setSelectedDirectoriedIds(ids);
   }
 
+  /**
+   * set value of search state which control search state
+   * @param searchState boolean
+   */
   function handleSetSearchInfiles(searchState: boolean) {
     setSearchInfiles(searchState);
   }
 
+  /**
+   * set file which selected to preview on search result
+   * @param file
+   */
   function handleSetSelectedResultFile(
     file: DocumentationFileType | undefined
   ) {
     setSelectedResultFile(file);
+  }
+
+  /**
+   * control open/close edit directory dialog
+   * @param open boolean
+   */
+  function handleSetOpenEditDialog(open: boolean) {
+    setOpenEditDialog(open);
+  }
+
+  /**
+   * set clicked(selected) directory which will update
+   * @param directory LibrariesMainPageItemType | undefined
+   */
+  function handleSetSelectedDirectoryToEdit(
+    directory: LibrariesMainPageItemType | undefined
+  ) {
+    setSelectedDirectoryToEdit(directory);
   }
 
   return (
@@ -150,6 +237,10 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         handleSetSelectedResultFile,
         searchState,
         SelectAllDirectories,
+        openEditDialog,
+        handleSetOpenEditDialog,
+        selectedDirectoryToEdit,
+        handleSetSelectedDirectoryToEdit,
       }}
     >
       {children}
@@ -181,4 +272,10 @@ type LibraryMainPageContextType = {
   handleSetSelectedResultFile(file: DocumentationFileType | undefined): void;
   searchState: boolean;
   SelectAllDirectories(): void;
+  openEditDialog: boolean;
+  handleSetOpenEditDialog(open: boolean): void;
+  selectedDirectoryToEdit: LibrariesMainPageItemType | undefined;
+  handleSetSelectedDirectoryToEdit(
+    directory: LibrariesMainPageItemType | undefined
+  ): void;
 };

@@ -37,36 +37,39 @@ export default function AddEditLibDialog(props: dialogProps) {
   const { register, handleSubmit, reset, setValue } = useForm<FormTypeSchema>();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
-  const { addNewDirectory, editExistDirectory } = useContext(
-    LibraryMainPageContext
-  );
+  const {
+    addNewDirectory,
+    editExistDirectory,
+    handleSetOpenEditDialog,
+    selectedDirectoryToEdit,
+  } = useContext(LibraryMainPageContext);
   const isEdit =
-    props.clickedMainItem?.id != "add_new_directory_113" &&
-    props.clickedMainItem != undefined; // detect create or edit case??
+    selectedDirectoryToEdit?.id != "add_new_directory_113" &&
+    selectedDirectoryToEdit != undefined; // detect create or edit case??
   const [isPrivate, setIsPrivate] = useState(
-    !isEdit ? false : props.clickedMainItem?.type == 0
+    !isEdit ? false : selectedDirectoryToEdit?.type == 0
   );
   let defaultValues = {
-    name: isEdit ? props.clickedMainItem?.name : "",
-    type: isEdit ? props.clickedMainItem?.type : 1,
-    employees: isEdit ? props.clickedMainItem?.employees ?? [] : [],
+    name: isEdit ? selectedDirectoryToEdit?.name : "",
+    type: isEdit ? selectedDirectoryToEdit?.type : 1,
+    employees: isEdit ? selectedDirectoryToEdit?.employees ?? [] : [],
   };
 
   // TODO::fetch data of selects & set data of directory in edit case
   useEffect(() => {
     // * reset data in form
     reset({
-      name: isEdit ? props.clickedMainItem?.name : "",
-      type: isEdit ? props.clickedMainItem?.type : 1,
-      employees: isEdit ? props.clickedMainItem?.employees ?? [] : [],
+      name: isEdit ? selectedDirectoryToEdit?.name : "",
+      type: isEdit ? selectedDirectoryToEdit?.type : 1,
+      employees: isEdit ? selectedDirectoryToEdit?.employees ?? [] : [],
     });
-    setIsPrivate(!isEdit ? false : props.clickedMainItem?.type == 0);
+    setIsPrivate(!isEdit ? false : selectedDirectoryToEdit?.type == 0);
     // * get users data
     axios
       .post<{ data: userT[] }>(Api(`employee/employees`))
       .then((res) => {
         setUsers(res?.data?.data);
-        setSelectedUsers(props.clickedMainItem?.employees ?? []);
+        setSelectedUsers(selectedDirectoryToEdit?.employees ?? []);
       })
       .catch((err) => {
         console.log("Error in fetch data:", err);
@@ -75,7 +78,7 @@ export default function AddEditLibDialog(props: dialogProps) {
 
   // TODO::declare and define helper methods
   const handleClose = () => {
-    props.setOpen(false);
+    handleSetOpenEditDialog(false);
   };
 
   // * handle submit form...
@@ -91,7 +94,7 @@ export default function AddEditLibDialog(props: dialogProps) {
       .post<{ folder: LibrariesMainPageItemType }>(
         Api(
           isEdit
-            ? `employee/library/folder/update/${props.clickedMainItem?.id}`
+            ? `employee/library/folder/update/${selectedDirectoryToEdit?.id}`
             : "employee/library/folder/store"
         ),
         serialize(body)
@@ -157,8 +160,8 @@ export default function AddEditLibDialog(props: dialogProps) {
         {/* directory icon */}
         <AddLabelToEl label="الايقون">
           {isEdit &&
-            props.clickedMainItem?.media &&
-            props.clickedMainItem?.media?.length > 0 && (
+            selectedDirectoryToEdit?.media &&
+            selectedDirectoryToEdit?.media?.length > 0 && (
               <Stack
                 direction={"row"}
                 justifyContent={"space-between"}
@@ -176,7 +179,7 @@ export default function AddEditLibDialog(props: dialogProps) {
                   alignItems={"center"}
                   sx={{ cursor: "pointer" }}
                   component={`a`}
-                  href={`${props.clickedMainItem?.media?.[0]?.original_url}`}
+                  href={`${selectedDirectoryToEdit?.media?.[0]?.original_url}`}
                   target="_blank"
                   download
                 >
@@ -188,7 +191,7 @@ export default function AddEditLibDialog(props: dialogProps) {
                       textDecoration: "underline",
                     }}
                   >
-                    {props.clickedMainItem?.media?.[0]?.name}
+                    {selectedDirectoryToEdit?.media?.[0]?.name}
                   </Typography>
                 </Stack>
                 <IconButton color="error">
@@ -290,6 +293,4 @@ type FormTypeSchema = {
 
 type dialogProps = {
   open: boolean;
-  clickedMainItem: LibrariesMainPageItemType | undefined;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
