@@ -26,12 +26,16 @@ export const LibraryDocumentionContext =
     editFile: false,
     handleSetEditFile: (isEdit) => {},
     deleteFile: (id) => {},
+    typeOfSelectedFiles: undefined,
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
   // TODO::declare and define our state and variables
   let { libraryId } = useParams(); //current library id comming from url
   const [activeBranchId, setActiveBranchId] = useState<string | number>("all"); //to control active branch
+  const [typeOfSelectedFiles, setTypeOfSelectedFiles] = useState<
+    "PDF" | "Image" | undefined
+  >(undefined); //handle and control selected files  types
   const [files, setFiles] = useState<DocumentationFileType[]>([]); //files data comming from server
   const [openDialog, setOpenDialog] = useState(false); //to handle and control add/edit dialog
   const [editFile, setEditFile] = useState(false); //to control state of dialog edit or create
@@ -41,6 +45,22 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   >(undefined); //active file which will show in iframe
 
   useEffect(() => getLibraryDocs(), [libraryId]);
+  useEffect(() => {
+    if (selectedFilesIds.length == 1) {
+      let file = files?.find((ele) => ele.id == selectedFilesIds[0]);
+      if (file) {
+        if (file?.media?.[0]?.original_url) {
+          if (file?.media?.[0]?.original_url.includes(".pdf")) {
+            setTypeOfSelectedFiles("PDF");
+          } else {
+            setTypeOfSelectedFiles("Image");
+          }
+        }
+      }
+    } else if (selectedFilesIds.length == 0) {
+      setTypeOfSelectedFiles(undefined);
+    }
+  }, [selectedFilesIds]);
   // TODO::declare and define our helper methods
   /**
    * get files data from server
@@ -188,6 +208,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         editFile,
         handleSetEditFile,
         deleteFile,
+        typeOfSelectedFiles,
       }}
     >
       {children}
@@ -219,4 +240,5 @@ type LibraryDocumentionContextType = {
   editFile: boolean;
   handleSetEditFile(isEdit: boolean): void;
   deleteFile(id: number): void;
+  typeOfSelectedFiles: "PDF" | "Image" | undefined;
 };

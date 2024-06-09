@@ -130,7 +130,9 @@ export default function AddEditLibDocDialog(props: dialogProps) {
         } else {
           //private
           if (user?.employee_id) {
-            if (body?.employees?.indexOf(user?.employee_id) != -1) {
+            if (body?.employees?.indexOf(user?.employee_id) == -1) {
+              if (activeFileToShow?.id) deleteFile(activeFileToShow?.id);
+            } else {
               if (editFile) {
                 editExistDocumentation(response.data.file);
               } else {
@@ -139,7 +141,7 @@ export default function AddEditLibDocDialog(props: dialogProps) {
             }
           } else {
             //hide doc
-            deleteFile(response.data.file?.id);
+            if (activeFileToShow?.id) deleteFile(activeFileToShow?.id);
           }
         }
         enqueueSnackbar("تم الحفظ بنجاح");

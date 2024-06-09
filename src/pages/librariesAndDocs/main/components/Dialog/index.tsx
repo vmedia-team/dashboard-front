@@ -41,6 +41,7 @@ export default function AddEditLibDialog(props: dialogProps) {
     addNewDirectory,
     editExistDirectory,
     handleSetOpenEditDialog,
+    deleteDirectory,
     selectedDirectoryToEdit,
   } = useContext(LibraryMainPageContext);
   const isEdit =
@@ -101,20 +102,33 @@ export default function AddEditLibDialog(props: dialogProps) {
       )
       .then((response) => {
         // Appeand Condation
-        // directory is public -> ok or directory is private user one of directory user
-        if (
-          body.type == 1 ||
-          (user?.employee_id &&
-            body.employees?.indexOf(user?.employee_id) != -1)
-        ) {
-          if (!isEdit) {
-            // create
-            addNewDirectory(response.data.folder);
-          } else {
-            // edit
+        if (body.type == 1) {
+          //public
+          if (isEdit) {
             editExistDirectory(response.data.folder);
+          } else {
+            addNewDirectory(response.data.folder);
+          }
+        } else {
+          //private
+          if (user?.employee_id) {
+            if (body?.employees?.indexOf(user?.employee_id) == -1) {
+              if (selectedDirectoryToEdit?.id)
+                deleteDirectory(selectedDirectoryToEdit);
+            } else {
+              if (isEdit) {
+                editExistDirectory(response.data.folder);
+              } else {
+                addNewDirectory(response.data.folder);
+              }
+            }
+          } else {
+            //hide doc
+            if (selectedDirectoryToEdit?.id)
+              deleteDirectory(selectedDirectoryToEdit);
           }
         }
+
         enqueueSnackbar(isEdit ? "تم التعديل بنجاح" : "تم الحفظ بنجاح");
         handleClose();
         // clear content of form
