@@ -28,6 +28,9 @@ export const LibraryMainPageContext = createContext<LibraryMainPageContextType>(
     handleSetOpenEditDialog: (open) => {},
     selectedDirectoryToEdit: undefined,
     handleSetSelectedDirectoryToEdit: (directory) => {},
+    deleteMultiDirectories: () => {},
+    openDeleteDialog: false,
+    handleSetOpenDeleteDialog: (open) => {},
   }
 );
 
@@ -36,6 +39,7 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
   const [searchInfiles, setSearchInfiles] = useState(false); //to know search on type or in file_name | refrance number
   const [searchState, setSearchState] = useState(false); //to control search state
   const [openEditDialog, setOpenEditDialog] = useState(false); //to control edit dialog.
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false); //to control delete dialog (aggreguation delete dialog).
   const [selectedDirectoryToEdit, setSelectedDirectoryToEdit] = useState<
     LibrariesMainPageItemType | undefined
   >(); //clicked (selected) clicked which will update
@@ -120,6 +124,17 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
   function deleteDirectory(directory: LibrariesMainPageItemType) {
     let arr = (mainPageItems ?? []).filter((ele) => ele.id != directory.id);
     setMainPageItems(arr);
+  }
+
+  /**
+   * removes all selected directories
+   */
+  function deleteMultiDirectories() {
+    let arr = (mainPageItems ?? []).filter(
+      (ele) => selectedDirectoriedIds.indexOf(+ele.id) == -1
+    );
+    setMainPageItems(arr);
+    setSelectedDirectoriedIds([]);
   }
 
   /**
@@ -219,6 +234,14 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
     setSelectedDirectoryToEdit(directory);
   }
 
+  /**
+   * handle and control open confirm delete dialog
+   * @param open boolean
+   */
+  function handleSetOpenDeleteDialog(open: boolean) {
+    setOpenDeleteDialog(open);
+  }
+
   return (
     <LibraryMainPageContext.Provider
       value={{
@@ -241,6 +264,9 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
         handleSetOpenEditDialog,
         selectedDirectoryToEdit,
         handleSetSelectedDirectoryToEdit,
+        deleteMultiDirectories,
+        openDeleteDialog,
+        handleSetOpenDeleteDialog,
       }}
     >
       {children}
@@ -278,4 +304,7 @@ type LibraryMainPageContextType = {
   handleSetSelectedDirectoryToEdit(
     directory: LibrariesMainPageItemType | undefined
   ): void;
+  deleteMultiDirectories(): void;
+  openDeleteDialog: boolean;
+  handleSetOpenDeleteDialog(open: boolean): void;
 };
