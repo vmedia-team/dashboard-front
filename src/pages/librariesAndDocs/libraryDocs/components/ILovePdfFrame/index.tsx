@@ -1,13 +1,11 @@
-import { Button, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CompressIcon from "@mui/icons-material/Compress";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 import ConfirmFileProccess from "../ConfirmFileProccess";
-import GetAppOutlinedIcon from "@mui/icons-material/GetAppOutlined";
-import axios from "axios";
-import { Api } from "../../../../../constants";
-import { DocumentationFileType } from "../../../../../types/librariesAndDocs/DocumentationFile";
+import mergeImg from "../../../../../assets/images/librariesAndDocs/mergePDf.png";
+import compressImg from "../../../../../assets/images/librariesAndDocs/compressPDF.png";
 
 export default function ILovePdfFrameIndex(props: PropsType) {
   // TODO::declare and define component state and variables
@@ -15,27 +13,13 @@ export default function ILovePdfFrameIndex(props: PropsType) {
   const [operationType, setOperationType] = useState<"Merge" | "Compress">(
     "Merge"
   );
-  const { activeFileToShow, selectedFilesIds, handleSetActiveFile } =
+  const { activeFileToShow, selectedFilesIds, typeOfSelectedFiles } =
     useContext(LibraryDocumentionContext);
 
   // TODO::declare and define helper methods
   const handleClick = (type: "Merge" | "Compress") => {
     setOperationType(type);
     setOpenConfirmDialog(true);
-  };
-
-  const handleDownloadFile = () => {
-    if (activeFileToShow?.media?.[0]?.original_url) {
-      axios
-        .get<{ file: DocumentationFileType }>(
-          Api(`employee/library/file/show/${activeFileToShow.id}`)
-        )
-        .then((response) => {
-          handleSetActiveFile(response.data.file);
-          window.open(activeFileToShow?.media?.[0]?.original_url, "_blank");
-        })
-        .catch((err) => {});
-    }
   };
 
   useEffect(() => {}, [props.fileUrl]);
@@ -59,50 +43,63 @@ export default function ILovePdfFrameIndex(props: PropsType) {
           borderRadius: "12px",
         }}
       ></iframe>
-      <Grid container>
-        <Grid item xs={6} p={2} textAlign={"center"}>
-          <Button
+      {typeOfSelectedFiles == "PDF" && (
+        <Stack
+          width={"98%"}
+          direction={"row"}
+          justifyContent={"space-around"}
+          alignItems={"center"}
+        >
+          <Stack
+            spacing={1}
+            sx={{
+              p: 2,
+              cursor: "pointer",
+              border: "2px solid gold",
+              borderRadius: "12px",
+            }}
             onClick={() => handleClick("Merge")}
-            variant="contained"
-            startIcon={<ContentCopyIcon />}
           >
-            <Stack spacing={1}>
-              <Typography variant="subtitle1">Merge Files</Typography>
-              <Typography variant="body2" fontSize={10}>
-                عدد الملفات المحددة : {selectedFilesIds.length} ملفات
-              </Typography>
-            </Stack>
-          </Button>
-        </Grid>
-        <Grid item xs={6} p={2} textAlign={"center"}>
-          <Button
+            <img
+              src={mergeImg}
+              width={68}
+              height={68}
+              alt="merge pdf"
+              style={{
+                width: "94px",
+                height: "77px",
+              }}
+            />
+            <Typography variant="body2" fontSize={10}>
+              عدد الملفات المحددة : {selectedFilesIds.length} ملفات
+            </Typography>
+          </Stack>
+          <Stack
+            spacing={1}
+            sx={{
+              p: 2,
+              cursor: "pointer",
+              border: "2px solid gold",
+              borderRadius: "12px",
+            }}
             onClick={() => handleClick("Compress")}
-            variant="contained"
-            startIcon={<CompressIcon />}
           >
-            <Stack spacing={1}>
-              <Typography variant="subtitle1">Compress Files</Typography>
-              <Typography variant="body2" fontSize={10}>
-                عدد الملفات المحددة : {selectedFilesIds.length} ملفات
-              </Typography>
-            </Stack>
-          </Button>
-        </Grid>
-        <Grid item xs={6} p={2} textAlign={"center"}>
-          <Button
-            onClick={handleDownloadFile}
-            variant="contained"
-            startIcon={<GetAppOutlinedIcon />}
-          >
-            <Stack spacing={1}>
-              <Typography variant="subtitle1">Download File</Typography>
-              <Typography variant="body2" fontSize={10}>
-                عدد التحميلات لملف : {activeFileToShow?.downloaded ?? 0}
-              </Typography>
-            </Stack>
-          </Button>
-        </Grid>
-      </Grid>
+            <img
+              src={compressImg}
+              width={68}
+              height={68}
+              alt="merge pdf"
+              style={{
+                width: "94px",
+                height: "77px",
+              }}
+            />
+            <Typography variant="body2" fontSize={10}>
+              عدد الملفات المحددة : {selectedFilesIds.length} ملفات
+            </Typography>
+          </Stack>
+        </Stack>
+      )}
       <ConfirmFileProccess
         open={openConfirmDialog}
         setOpen={setOpenConfirmDialog}
