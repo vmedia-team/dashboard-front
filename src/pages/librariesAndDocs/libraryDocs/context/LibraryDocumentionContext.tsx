@@ -38,11 +38,13 @@ export const LibraryDocumentionContext =
     branchesData: [],
     activeBranchId: -1,
     handleSetActiveBranchId: (id) => {},
+    searchLoadingState: false,
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
   // TODO::declare and define our state and variables
   let { libraryId } = useParams(); //current library id comming from url
+  const [searchLoadingState, setSearchLoadingState] = useState(false); //to control state of loading during fetching data
   const [typeOfSelectedFiles, setTypeOfSelectedFiles] = useState<
     "PDF" | "Image" | undefined
   >(undefined); //handle and control selected files  types
@@ -97,6 +99,8 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
    * @param params search params used to search if exist
    */
   function getLibraryDocs(params?: string) {
+    setSearchLoadingState(true);
+
     axios
       .get<{
         files: DocumentationFileType[];
@@ -117,7 +121,8 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
       })
       .catch((err) => {
         console.log("error in fetch files::", err);
-      });
+      })
+      .finally(() => setSearchLoadingState(false));
   }
 
   /**
@@ -298,6 +303,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         branchesData,
         activeBranchId,
         handleSetActiveBranchId,
+        searchLoadingState,
       }}
     >
       {children}
@@ -342,4 +348,5 @@ type LibraryDocumentionContextType = {
     name: string;
   }[];
   handleSetActiveBranchId(id: number): void;
+  searchLoadingState: boolean;
 };

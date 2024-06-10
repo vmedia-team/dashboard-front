@@ -7,7 +7,7 @@ import LibrariesLoading from "../../../main/components/loading";
 
 export default function MainContentIndex() {
   const [loading, setLoading] = useState(false);
-  const { activeFileToShow, handleSetActiveFile } = useContext(
+  const { activeFileToShow, searchLoadingState } = useContext(
     LibraryDocumentionContext
   );
 
@@ -15,24 +15,27 @@ export default function MainContentIndex() {
     setLoading(true);
     setTimeout(() => setLoading(false), 4000);
   }, []);
-  
+
   return (
     <Grid container>
       {loading && <LibrariesLoading />}
-      {!loading && (
-        <>
-          <Grid item xs={activeFileToShow ? 6 : 12}>
-            <LibraryDocsMainPaper width={"100%"} />
-          </Grid>
-          {activeFileToShow && (
-            <Grid item xs={6} sx={{ position: "relative" }}>
-              <ILovePdfFrameIndex
-                fileUrl={activeFileToShow?.media?.[0]?.original_url}
-              />
+      {!loading &&
+        (searchLoadingState ? (
+          <LibrariesLoading />
+        ) : (
+          <>
+            <Grid item xs={activeFileToShow ? 6 : 12}>
+              <LibraryDocsMainPaper width={"100%"} />
             </Grid>
-          )}
-        </>
-      )}
+            {activeFileToShow && (
+              <Grid item xs={6} sx={{ position: "relative" }}>
+                <ILovePdfFrameIndex
+                  fileUrl={activeFileToShow?.media?.[0]?.original_url}
+                />
+              </Grid>
+            )}
+          </>
+        ))}
     </Grid>
   );
 }
