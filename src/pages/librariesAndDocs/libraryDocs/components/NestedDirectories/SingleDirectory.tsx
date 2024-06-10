@@ -1,7 +1,6 @@
 import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
-import folderImg from "../../../../../../assets/images/librariesAndDocs/folder.png";
-import { LibrariesMainPageItemType } from "../../../../main/components/MainPaper/components/MianItemsData";
-import { useContext } from "react";
+import folderImg from "../../../../../assets/images/librariesAndDocs/folder.png";
+import { LibrariesMainPageItemType } from "../../../main/components/MainPaper/components/MianItemsData";
 
 export default function NestedDirectoryItem(props: PropsType) {
   // TODO::declare and define state and variables

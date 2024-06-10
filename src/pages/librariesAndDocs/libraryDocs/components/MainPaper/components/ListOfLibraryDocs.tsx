@@ -3,7 +3,7 @@ import SingleDoc from "./SingleDoc";
 import { useContext, useEffect } from "react";
 import { LibraryDocumentionContext } from "../../../context/LibraryDocumentionContext";
 import { Typography } from "@mui/material";
-import NestedDirectoryItem from "./SingleDirectory";
+import NestedDirectoryItem from "../../NestedDirectories/SingleDirectory";
 
 export default function ListOfLibraryDocs() {
   // TODO::define and declare component state and variables
