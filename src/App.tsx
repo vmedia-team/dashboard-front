@@ -14,31 +14,31 @@ import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { UserContextProvider } from "./contexts/user/user";
+import { MainBreadCrumbContextProvider } from "./layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 function App() {
   return (
-
     <QueryParamProvider adapter={ReactRouter6Adapter}>
       <ThemeProvider theme={theme}>
-      
-        <UserContextProvider>
-          <SnackbarProvider
-            transitionDuration={{ appear: 500, exit: 500, enter: 300 }}
-            anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-            TransitionComponent={Grow}
-            variant="success"
-            autoHideDuration={10000}
-          >
-            <PermissionsContextProvider>
-              <MainLayout>
-                <RoutesComponent />
-              </MainLayout>
-            </PermissionsContextProvider>
-          </SnackbarProvider>
-        </UserContextProvider>
-      
+        <MainBreadCrumbContextProvider>
+          <UserContextProvider>
+            <SnackbarProvider
+              transitionDuration={{ appear: 500, exit: 500, enter: 300 }}
+              anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+              TransitionComponent={Grow}
+              variant="success"
+              autoHideDuration={10000}
+            >
+              <PermissionsContextProvider>
+                <MainLayout>
+                  <RoutesComponent />
+                </MainLayout>
+              </PermissionsContextProvider>
+            </SnackbarProvider>
+          </UserContextProvider>
+        </MainBreadCrumbContextProvider>
       </ThemeProvider>
     </QueryParamProvider>
   );

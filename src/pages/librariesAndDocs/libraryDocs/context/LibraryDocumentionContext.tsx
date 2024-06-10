@@ -39,6 +39,7 @@ export const LibraryDocumentionContext =
     activeBranchId: -1,
     handleSetActiveBranchId: (id) => {},
     searchLoadingState: false,
+    mainDirectory: undefined,
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -48,6 +49,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   const [typeOfSelectedFiles, setTypeOfSelectedFiles] = useState<
     "PDF" | "Image" | undefined
   >(undefined); //handle and control selected files  types
+  const [mainDirectory, setMainDirectory] = useState<
+    LibrariesMainPageItemType | undefined
+  >(undefined); //directory how we browse its file
   const [files, setFiles] = useState<DocumentationFileType[]>([]); //files data comming from server
   const [nestedDirectories, setNestedDirectories] = useState<
     LibrariesMainPageItemType[]
@@ -75,6 +79,17 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         if (response?.branches) setBranchesData(response?.branches);
       })
       .catch(() => {});
+    //get main directory data
+    axios
+      .get<{
+        folder?: LibrariesMainPageItemType;
+      }>(Api(`employee/library/folder/show/${libraryId}`))
+      .then((response) => {
+        if (response.data?.folder) {
+          setMainDirectory(response.data.folder);
+        }
+      })
+      .catch((err) => {});
   }, []);
   useEffect(() => getLibraryDocs(), [libraryId]);
   useEffect(() => {
@@ -113,15 +128,12 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         )
       )
       .then((response) => {
-        console.log("breakpoint1999 response ", response.data.files);
         setFiles(response.data.files);
         if (response.data?.folders) {
           setNestedDirectories(response.data.folders);
         }
       })
-      .catch((err) => {
-        console.log("error in fetch files::", err);
-      })
+      .catch((err) => {})
       .finally(() => setSearchLoadingState(false));
   }
 
@@ -178,7 +190,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
    */
   function toggleFileIdFormSelectedFiles(id: number) {
     let exist = checkedFileIdInSelectedFiles(id);
-    console.log(id, exist);
+    
     if (exist) {
       setSelectedFilesIds((prev) => prev.filter((ele) => ele != id));
     } else {
@@ -304,6 +316,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         activeBranchId,
         handleSetActiveBranchId,
         searchLoadingState,
+        mainDirectory,
       }}
     >
       {children}
@@ -349,4 +362,5 @@ type LibraryDocumentionContextType = {
   }[];
   handleSetActiveBranchId(id: number): void;
   searchLoadingState: boolean;
+  mainDirectory: LibrariesMainPageItemType | undefined;
 };

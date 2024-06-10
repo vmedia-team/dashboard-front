@@ -4,17 +4,29 @@ import ILovePdfFrameIndex from "../ILovePdfFrame";
 import { useContext, useEffect, useState } from "react";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 import LibrariesLoading from "../../../main/components/loading";
+import { MainBreadCrumbContext } from "../../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 export default function MainContentIndex() {
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
   const [loading, setLoading] = useState(false);
-  const { activeFileToShow, searchLoadingState } = useContext(
+  const { activeFileToShow, searchLoadingState, mainDirectory } = useContext(
     LibraryDocumentionContext
   );
 
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 4000);
-  }, []);
+    // set breadcrumb terms
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "مكتبة البيانات",
+      path: "/react/librariesAndDocs",
+    });
+    handleAddNewTerm({
+      title: mainDirectory?.name ?? "",
+      path: "/",
+    });
+  }, [mainDirectory]);
 
   return (
     <Grid container>
