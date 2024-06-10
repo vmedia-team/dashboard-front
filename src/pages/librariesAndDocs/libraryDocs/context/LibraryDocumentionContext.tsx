@@ -5,12 +5,11 @@ import { useParams } from "react-router-dom";
 import { Api } from "../../../../constants";
 import { DocumentationFileType } from "../../../../types/librariesAndDocs/DocumentationFile";
 import { LibrariesMainPageItemType } from "../../main/components/MainPaper/components/MianItemsData";
+import { getUseData } from "../../../../methods/getUseData";
 
 // * create context
 export const LibraryDocumentionContext =
   createContext<LibraryDocumentionContextType>({
-    activeBranchId: "all",
-    SetActiveBranchId: (id) => {},
     libraryId: 1,
     files: [],
     openDialog: false,
@@ -36,12 +35,14 @@ export const LibraryDocumentionContext =
     addNewDirectory: (directory) => {},
     editExistDirectory: (directory) => {},
     deleteDirectory: (directory) => {},
+    branchesData: [],
+    activeBranchId: -1,
+    handleSetActiveBranchId: (id) => {},
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
   // TODO::declare and define our state and variables
   let { libraryId } = useParams(); //current library id comming from url
-  const [activeBranchId, setActiveBranchId] = useState<string | number>("all"); //to control active branch
   const [typeOfSelectedFiles, setTypeOfSelectedFiles] = useState<
     "PDF" | "Image" | undefined
   >(undefined); //handle and control selected files  types
@@ -60,7 +61,19 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   const [activeFileToShow, setActiveFileToShow] = useState<
     DocumentationFileType | undefined
   >(undefined); //active file which will show in iframe
+  const [branchesData, setBranchesData] = useState<
+    { id: number; name: string }[]
+  >([]); //to store branches data
+  const [activeBranchId, setActiveBranchId] = useState(-1); //to control current active button
 
+  useEffect(() => {
+    // * get branches data
+    getUseData()
+      .then((response) => {
+        if (response?.branches) setBranchesData(response?.branches);
+      })
+      .catch(() => {});
+  }, []);
   useEffect(() => getLibraryDocs(), [libraryId]);
   useEffect(() => {
     if (selectedFilesIds.length == 1) {
@@ -81,9 +94,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   // TODO::declare and define our helper methods
   /**
    * get files data from server
-   * @param name file name used to search if exist
+   * @param params search params used to search if exist
    */
-  function getLibraryDocs(name?: string) {
+  function getLibraryDocs(params?: string) {
     axios
       .get<{
         files: DocumentationFileType[];
@@ -91,7 +104,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
       }>(
         Api(
           `employee/library/file/files-by-folder/${libraryId}${
-            name ? "?name=" + name : ""
+            params ? "?" + params : ""
           }`
         )
       )
@@ -106,13 +119,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         console.log("error in fetch files::", err);
       });
   }
-  /**
-   * set active branch id
-   * @param id branch id
-   */
-  function SetActiveBranchId(id: string | number) {
-    setActiveBranchId(id);
-  }
+
   /**
    * handle and control show/hide add/edit dialog
    * @param open boolean
@@ -184,10 +191,10 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
 
   /**
    * get files data according name
-   * @param name file name
+   * @param params search params
    */
-  function handleSearch(name: string) {
-    getLibraryDocs(name);
+  function handleSearch(params: string) {
+    getLibraryDocs(params);
   }
 
   /**
@@ -252,11 +259,17 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     setNestedDirectories(arr);
   }
 
+  /**
+   * set current active branch
+   * @param name string
+   */
+  function handleSetActiveBranchId(id: number) {
+    setActiveBranchId(id);
+  }
+
   return (
     <LibraryDocumentionContext.Provider
       value={{
-        activeBranchId,
-        SetActiveBranchId,
         libraryId: libraryId ? +libraryId : 1,
         files,
         handleOenDialog,
@@ -282,6 +295,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         addNewDirectory,
         editExistDirectory,
         deleteDirectory,
+        branchesData,
+        activeBranchId,
+        handleSetActiveBranchId,
       }}
     >
       {children}
@@ -295,8 +311,6 @@ type PropsType = {
 };
 
 type LibraryDocumentionContextType = {
-  activeBranchId: string | number;
-  SetActiveBranchId(id: string | number): void;
   libraryId: number;
   files: DocumentationFileType[];
   openDialog: boolean;
@@ -322,4 +336,10 @@ type LibraryDocumentionContextType = {
   addNewDirectory(directory: LibrariesMainPageItemType): void;
   editExistDirectory(directory: LibrariesMainPageItemType): void;
   deleteDirectory(directory: LibrariesMainPageItemType): void;
+  activeBranchId: number;
+  branchesData: {
+    id: number;
+    name: string;
+  }[];
+  handleSetActiveBranchId(id: number): void;
 };
