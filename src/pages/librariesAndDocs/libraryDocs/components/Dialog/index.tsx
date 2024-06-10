@@ -93,8 +93,6 @@ export default function AddEditLibDocDialog(props: dialogProps) {
       });
   }, [props.open]);
 
-  console.log("activeFileToShow", activeFileToShow);
-
   // TODO::declare and define helper methods
   const handleClose = () => {
     handleSetEditFile(false);

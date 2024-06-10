@@ -1,15 +1,18 @@
 import { Button, Stack } from "@mui/material";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import AddEditLibDocDialog from "../Dialog";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
+import ChooseTypeDialog from "../ChooseTypeDialog";
 
 export default function BranchesBtns() {
   // TODO::declare and define state and variables.
-  const { openDialog, handleOenDialog } = useContext(LibraryDocumentionContext);
+  const [openChooseTypeDialog, setOpenChooseTypeDialog] = useState(false);
+  const { openDialog } = useContext(LibraryDocumentionContext);
   // TODO::declare and define helper method.
   const handleClick = () => {
-    handleOenDialog(true);
+    setOpenChooseTypeDialog(true);
+    // handleOenDialog(true);
   };
   // TODO::return componsnt view.
   return (
@@ -87,6 +90,10 @@ export default function BranchesBtns() {
       >
         أنشاء
       </Button>
+      <ChooseTypeDialog
+        open={openChooseTypeDialog}
+        setOpen={setOpenChooseTypeDialog}
+      />
       <AddEditLibDocDialog open={openDialog} />
     </Stack>
   );

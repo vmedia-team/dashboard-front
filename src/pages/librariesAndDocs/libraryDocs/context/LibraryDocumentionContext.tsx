@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Api } from "../../../../constants";
 import { DocumentationFileType } from "../../../../types/librariesAndDocs/DocumentationFile";
+import { LibrariesMainPageItemType } from "../../main/components/MainPaper/components/MianItemsData";
 
 // * create context
 export const LibraryDocumentionContext =
@@ -27,6 +28,7 @@ export const LibraryDocumentionContext =
     handleSetEditFile: (isEdit) => {},
     deleteFile: (id) => {},
     typeOfSelectedFiles: undefined,
+    nestedDirectories: [],
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -37,6 +39,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     "PDF" | "Image" | undefined
   >(undefined); //handle and control selected files  types
   const [files, setFiles] = useState<DocumentationFileType[]>([]); //files data comming from server
+  const [nestedDirectories, setNestedDirectories] = useState<
+    LibrariesMainPageItemType[]
+  >([]); //to store and controll nesteddirectories
   const [openDialog, setOpenDialog] = useState(false); //to handle and control add/edit dialog
   const [editFile, setEditFile] = useState(false); //to control state of dialog edit or create
   const [selectedFilesIds, setSelectedFilesIds] = useState<number[]>([]); //to control selected files
@@ -68,7 +73,10 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
    */
   function getLibraryDocs(name?: string) {
     axios
-      .get<{ files: DocumentationFileType[] }>(
+      .get<{
+        files: DocumentationFileType[];
+        folders?: LibrariesMainPageItemType[];
+      }>(
         Api(
           `employee/library/file/files-by-folder/${libraryId}${
             name ? "?name=" + name : ""
@@ -78,6 +86,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
       .then((response) => {
         console.log("breakpoint1999 response ", response.data.files);
         setFiles(response.data.files);
+        if (response.data?.folders) {
+          setNestedDirectories(response.data.folders);
+        }
       })
       .catch((err) => {
         console.log("error in fetch files::", err);
@@ -209,6 +220,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         handleSetEditFile,
         deleteFile,
         typeOfSelectedFiles,
+        nestedDirectories,
       }}
     >
       {children}
@@ -241,4 +253,5 @@ type LibraryDocumentionContextType = {
   handleSetEditFile(isEdit: boolean): void;
   deleteFile(id: number): void;
   typeOfSelectedFiles: "PDF" | "Image" | undefined;
+  nestedDirectories: LibrariesMainPageItemType[];
 };
