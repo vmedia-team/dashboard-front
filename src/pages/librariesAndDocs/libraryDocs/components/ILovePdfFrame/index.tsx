@@ -1,11 +1,17 @@
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import CompressIcon from "@mui/icons-material/Compress";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 import ConfirmFileProccess from "../ConfirmFileProccess";
 import mergeImg from "../../../../../assets/images/librariesAndDocs/mergePDf.png";
 import compressImg from "../../../../../assets/images/librariesAndDocs/compressPDF.png";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ILovePdfFrameIndex(props: PropsType) {
   // TODO::declare and define component state and variables
@@ -13,8 +19,12 @@ export default function ILovePdfFrameIndex(props: PropsType) {
   const [operationType, setOperationType] = useState<"Merge" | "Compress">(
     "Merge"
   );
-  const { activeFileToShow, selectedFilesIds, typeOfSelectedFiles } =
-    useContext(LibraryDocumentionContext);
+  const {
+    activeFileToShow,
+    handleSetActiveFile,
+    selectedFilesIds,
+    typeOfSelectedFiles,
+  } = useContext(LibraryDocumentionContext);
 
   // TODO::declare and define helper methods
   const handleClick = (type: "Merge" | "Compress") => {
@@ -32,9 +42,22 @@ export default function ILovePdfFrameIndex(props: PropsType) {
       mt={5}
       sx={{ height: "100vh", width: "100%" }}
     >
-      <Typography variant="subtitle1" my={2} textAlign={"left"}>
-        عرض ملف : {activeFileToShow?.name}
-      </Typography>
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        width={"94%"}
+      >
+        <Typography variant="subtitle1">
+          عرض ملف : {activeFileToShow?.name}
+        </Typography>
+        <IconButton
+          color="error"
+          onClick={() => handleSetActiveFile(undefined)}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Stack>
       <iframe
         src={props.fileUrl}
         width="94%"
