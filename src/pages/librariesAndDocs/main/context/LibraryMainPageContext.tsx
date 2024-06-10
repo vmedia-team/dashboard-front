@@ -103,6 +103,12 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
    */
   function addNewDirectory(directory: LibrariesMainPageItemType) {
     setMainPageItems((prev) => [...prev, directory]);
+    if (directoriesNames.findIndex((ele) => ele.value == directory.id) == -1) {
+      setDirectoriesNames((prev) => [
+        ...prev,
+        { label: directory.name, value: +directory.id },
+      ]);
+    }
   }
 
   /**
@@ -114,6 +120,16 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
       if (ele.id == directory.id) return directory;
       return ele;
     });
+
+    setDirectoriesNames((prev) => {
+      let arr = prev.map((ele) =>
+        ele.value == directory.id
+          ? { label: directory.name, value: +directory.id }
+          : ele
+      );
+      return arr;
+    });
+
     setMainPageItems(arr);
   }
 
@@ -123,6 +139,9 @@ export function LibraryMainPageContextProvider({ children }: PropsType) {
    */
   function deleteDirectory(directory: LibrariesMainPageItemType) {
     let arr = (mainPageItems ?? []).filter((ele) => ele.id != directory.id);
+    setDirectoriesNames((prev) =>
+      prev?.filter((ele) => ele.value != directory.id)
+    );
     setMainPageItems(arr);
   }
 

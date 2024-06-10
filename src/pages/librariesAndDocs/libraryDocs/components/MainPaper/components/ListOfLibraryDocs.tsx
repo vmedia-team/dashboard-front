@@ -18,7 +18,7 @@ export default function ListOfLibraryDocs() {
       {files?.map((ele) => (
         <SingleDoc file={ele} key={ele.id} />
       ))}
-      {files?.length == 0 && (
+      {files?.length == 0 && nestedDirectories.length == 0 && (
         <Stack
           justifyContent={"center"}
           alignItems={"center"}

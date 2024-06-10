@@ -7,10 +7,12 @@ import { useContext, useEffect } from "react";
 import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 export default function LibrariesAndDocsMainIndex() {
+  // todo::declare and define component state and variables
   const { handleAddNewTerm, handleClearLinks } = useContext(
     MainBreadCrumbContext
-  );
+  ); //get needed data from our context
 
+  // todo::set breadcrumb terms
   useEffect(() => {
     handleClearLinks();
     handleAddNewTerm({
@@ -23,6 +25,7 @@ export default function LibrariesAndDocsMainIndex() {
     });
   }, []);
 
+  //return our component ui.
   return (
     <Stack>
       <LibraryMainPageContextProvider>

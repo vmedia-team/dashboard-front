@@ -216,6 +216,7 @@ export default function AddEditLibDialog(props: dialogProps) {
           <CustomFilePond
             files={file}
             disabled={loading}
+            acceptedFileTypes={["image/jpeg"]}
             onupdatefiles={(fileItems) => {
               setFile(fileItems.map((fileItem) => fileItem.file));
             }}
