@@ -6,29 +6,28 @@ import {
   DialogActions,
   DialogContent,
   FormControlLabel,
-  IconButton,
   Radio,
   RadioGroup,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import AddLabelToEl from "../../../../../components/AddLabelToEl";
-import CustomFilePond from "../../../../../components/CustomFilepond";
-import { FileBondState } from "../../../../../types/FileBondState";
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { Api } from "../../../../../constants";
 import { useForm } from "react-hook-form";
-import { serialize } from "object-to-formdata";
 import { useSnackbar } from "notistack";
-import { LibrariesMainPageItemType } from "../MainPaper/components/MianItemsData";
-import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { FileBondState } from "../../../../../../types/FileBondState";
+import { useUser } from "../../../../../../contexts/user/user";
+import AddLabelToEl from "../../../../../../components/AddLabelToEl";
+import CustomFilePond from "../../../../../../components/CustomFilepond";
+import { LibraryDocumentionContext } from "../../../context/LibraryDocumentionContext";
+import axios from "axios";
+import { Api } from "../../../../../../constants";
+import { useParams } from "react-router-dom";
+import { LibrariesMainPageItemType } from "../../../../main/components/MainPaper/components/MianItemsData";
+import { serialize } from "object-to-formdata";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { useUser } from "../../../../../contexts/user/user";
 
-export default function AddEditLibDialog(props: dialogProps) {
+export default function NestedDirectoryDialog(props: dialogProps) {
   // TODO::declare and define state and variables
   const [file, setFile] = useState<FileBondState>([]);
   const [loading, setLoading] = useState(false);
@@ -37,55 +36,54 @@ export default function AddEditLibDialog(props: dialogProps) {
   const { register, handleSubmit, reset, setValue } = useForm<FormTypeSchema>();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
+  let { libraryId } = useParams();
   const {
+    handleSetNestedDirectoryOpenDialog,
+    selectedNestedDirectory,
     addNewDirectory,
     editExistDirectory,
-    handleSetOpenEditDialog,
     deleteDirectory,
-    selectedDirectoryToEdit,
-  } = useContext(LibraryMainPageContext);
-  const isEdit =
-    selectedDirectoryToEdit?.id != "add_new_directory_113" &&
-    selectedDirectoryToEdit != undefined; // detect create or edit case??
+  } = useContext(LibraryDocumentionContext);
+  let isEdit = selectedNestedDirectory ? true : false;
   const [isPrivate, setIsPrivate] = useState(
-    !isEdit ? false : selectedDirectoryToEdit?.type == 0
+    !isEdit ? false : selectedNestedDirectory?.type == 0
   );
   let defaultValues = {
-    name: isEdit ? selectedDirectoryToEdit?.name : "",
-    type: isEdit ? selectedDirectoryToEdit?.type : 1,
-    employees: isEdit ? selectedDirectoryToEdit?.employees ?? [] : [],
+    name: isEdit ? selectedNestedDirectory?.name : "",
+    type: isEdit ? selectedNestedDirectory?.type : 1,
+    employees: isEdit ? selectedNestedDirectory?.employees ?? [] : [],
   };
 
   // TODO::fetch data of selects & set data of directory in edit case
   useEffect(() => {
     // * reset data in form
     reset({
-      name: isEdit ? selectedDirectoryToEdit?.name : "",
-      type: isEdit ? selectedDirectoryToEdit?.type : 1,
-      employees: isEdit ? selectedDirectoryToEdit?.employees ?? [] : [],
+      name: isEdit ? selectedNestedDirectory?.name : "",
+      type: isEdit ? selectedNestedDirectory?.type : 1,
+      employees: isEdit ? selectedNestedDirectory?.employees ?? [] : [],
     });
-    setIsPrivate(!isEdit ? false : selectedDirectoryToEdit?.type == 0);
+    setIsPrivate(!isEdit ? false : selectedNestedDirectory?.type == 0);
     // * get users data
     axios
       .post<{ data: userT[] }>(Api(`employee/employees`))
       .then((res) => {
         setUsers(res?.data?.data);
-        setSelectedUsers(selectedDirectoryToEdit?.employees ?? []);
+        setSelectedUsers(selectedNestedDirectory?.employees ?? []);
       })
       .catch((err) => {
         console.log("Error in fetch data:", err);
       });
   }, [props.open]);
-
   // TODO::declare and define helper methods
   const handleClose = () => {
-    handleSetOpenEditDialog(false);
+    handleSetNestedDirectoryOpenDialog(false);
   };
 
   // * handle submit form...
   const onSubmit = handleSubmit(async (data) => {
     let body = {
       ...data,
+      library_folder_id: libraryId,
       employees: data.type == 1 ? [] : data.employees?.map((ele) => ele.id),
       image: file[0],
     };
@@ -95,7 +93,7 @@ export default function AddEditLibDialog(props: dialogProps) {
       .post<{ folder: LibrariesMainPageItemType }>(
         Api(
           isEdit
-            ? `employee/library/folder/update/${selectedDirectoryToEdit?.id}`
+            ? `employee/library/folder/update/${selectedNestedDirectory?.id}`
             : "employee/library/folder/store"
         ),
         serialize(body)
@@ -113,8 +111,8 @@ export default function AddEditLibDialog(props: dialogProps) {
           //private
           if (user?.employee_id) {
             if (body?.employees?.indexOf(user?.employee_id) == -1) {
-              if (selectedDirectoryToEdit?.id)
-                deleteDirectory(selectedDirectoryToEdit);
+              if (selectedNestedDirectory?.id)
+                deleteDirectory(selectedNestedDirectory);
             } else {
               if (isEdit) {
                 editExistDirectory(response.data.folder);
@@ -124,8 +122,8 @@ export default function AddEditLibDialog(props: dialogProps) {
             }
           } else {
             //hide doc
-            if (selectedDirectoryToEdit?.id)
-              deleteDirectory(selectedDirectoryToEdit);
+            if (selectedNestedDirectory?.id)
+              deleteDirectory(selectedNestedDirectory);
           }
         }
 
@@ -174,8 +172,8 @@ export default function AddEditLibDialog(props: dialogProps) {
         {/* directory icon */}
         <AddLabelToEl label="الايقون">
           {isEdit &&
-            selectedDirectoryToEdit?.media &&
-            selectedDirectoryToEdit?.media?.length > 0 && (
+            selectedNestedDirectory?.media &&
+            selectedNestedDirectory?.media?.length > 0 && (
               <Stack
                 direction={"row"}
                 justifyContent={"space-between"}
@@ -193,7 +191,7 @@ export default function AddEditLibDialog(props: dialogProps) {
                   alignItems={"center"}
                   sx={{ cursor: "pointer" }}
                   component={`a`}
-                  href={`${selectedDirectoryToEdit?.media?.[0]?.original_url}`}
+                  href={`${selectedNestedDirectory?.media?.[0]?.original_url}`}
                   target="_blank"
                   download
                 >
@@ -205,18 +203,14 @@ export default function AddEditLibDialog(props: dialogProps) {
                       textDecoration: "underline",
                     }}
                   >
-                    {selectedDirectoryToEdit?.media?.[0]?.name}
+                    {selectedNestedDirectory?.media?.[0]?.name}
                   </Typography>
                 </Stack>
-                <IconButton color="error">
-                  <DeleteIcon />
-                </IconButton>
               </Stack>
             )}
           <CustomFilePond
             files={file}
             disabled={loading}
-            acceptedFileTypes={["image/jpeg"]}
             onupdatefiles={(fileItems) => {
               setFile(fileItems.map((fileItem) => fileItem.file));
             }}

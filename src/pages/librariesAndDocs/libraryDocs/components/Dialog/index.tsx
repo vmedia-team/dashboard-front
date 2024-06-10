@@ -29,6 +29,8 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 import { DocumentationFileType } from "../../../../../types/librariesAndDocs/DocumentationFile";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { getUseData } from "../../../../../methods/getUseData";
 
 export default function AddEditLibDocDialog(props: dialogProps) {
   // TODO::declare and define state and variables
@@ -41,24 +43,46 @@ export default function AddEditLibDocDialog(props: dialogProps) {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
   const [isPrivate, setIsPrivate] = useState(false);
-  const { handleOenDialog, libraryId, addNewDocumentation } = useContext(
-    LibraryDocumentionContext
-  );
+  const {
+    handleOenDialog,
+    libraryId,
+    addNewDocumentation,
+    activeFileToShow,
+    handleSetEditFile,
+    editFile,
+    editExistDocumentation,
+    deleteFile,
+  } = useContext(LibraryDocumentionContext);
 
   // TODO::fetch data of selects & set data of directory in edit case
   useEffect(() => {
     // clear form data
-    setFile([]);
-    setIsPrivate(false);
-    setSelectedUsers([]);
-    reset({
-      name: "",
-      reference_number: "",
-      end_date: "",
-      notify_date: "",
-      type: 1,
-      employees: [],
-    });
+    if (!editFile) {
+      //create
+      setFile([]);
+      setIsPrivate(false);
+      setSelectedUsers([]);
+      reset({
+        name: "",
+        reference_number: "",
+        end_date: "",
+        notify_date: "",
+        type: 1,
+        employees: [],
+      });
+    } else {
+      //edit
+      reset({
+        name: activeFileToShow?.name,
+        reference_number: activeFileToShow?.reference_number,
+        end_date: activeFileToShow?.end_date,
+        notify_date: activeFileToShow?.notify_date,
+        type: activeFileToShow?.type,
+        employees: activeFileToShow?.employees ?? [],
+      });
+      setSelectedUsers(activeFileToShow?.employees ?? []);
+      setIsPrivate(activeFileToShow?.type == 0 ? true : false);
+    }
     // * get users data
     axios
       .post<{ data: userT[] }>(Api(`employee/employees`))
@@ -72,6 +96,7 @@ export default function AddEditLibDocDialog(props: dialogProps) {
 
   // TODO::declare and define helper methods
   const handleClose = () => {
+    handleSetEditFile(false);
     handleOenDialog(false);
   };
 
@@ -86,21 +111,43 @@ export default function AddEditLibDocDialog(props: dialogProps) {
     setLoading(true);
     axios
       .post<{ file: DocumentationFileType }>(
-        Api("employee/library/file/store"),
+        Api(
+          editFile
+            ? `employee/library/file/update/${activeFileToShow?.id}`
+            : "employee/library/file/store"
+        ),
         serialize(body)
       )
       .then((response) => {
-        if (
-          body.type == 1 ||
-          (user?.employee_id &&
-            body.employees?.indexOf(user?.employee_id) != -1)
-        ) {
-          addNewDocumentation(response.data.file);
+        if (body.type == 1) {
+          //public
+          if (editFile) {
+            editExistDocumentation(response.data.file);
+          } else {
+            addNewDocumentation(response.data.file);
+          }
+        } else {
+          //private
+          if (user?.employee_id) {
+            if (body?.employees?.indexOf(user?.employee_id) == -1) {
+              if (activeFileToShow?.id) deleteFile(activeFileToShow?.id);
+            } else {
+              if (editFile) {
+                editExistDocumentation(response.data.file);
+              } else {
+                addNewDocumentation(response.data.file);
+              }
+            }
+          } else {
+            //hide doc
+            if (activeFileToShow?.id) deleteFile(activeFileToShow?.id);
+          }
         }
         enqueueSnackbar("تم الحفظ بنجاح");
         handleClose();
       })
       .catch((err) => {
+        console.log("errrr", err);
         enqueueSnackbar("تعذر الحفظ", { variant: "error" });
       })
       .finally(() => setLoading(false));
@@ -205,7 +252,52 @@ export default function AddEditLibDocDialog(props: dialogProps) {
           >
             {/* icon */}
             <Grid item xs={6} px={2}>
-              <AddLabelToEl label="الايقون">
+              <AddLabelToEl label="الايقون" required>
+                {editFile &&
+                  activeFileToShow?.media &&
+                  activeFileToShow?.media?.length > 0 && (
+                    <Stack
+                      direction={"row"}
+                      justifyContent={"space-between"}
+                      alignItems={"center"}
+                      sx={{
+                        padding: " 2px 10px",
+                        border: "1px solid #808080b8",
+                        margin: "5px auto",
+                        borderRadius: "12px",
+                        width: "100%",
+                      }}
+                    >
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        sx={{ cursor: "pointer" }}
+                        component={`a`}
+                        href={`${activeFileToShow?.media?.[0]?.original_url}`}
+                        target="_blank"
+                        download
+                      >
+                        <AttachFileIcon />
+                        <Typography
+                          variant="body2"
+                          fontWeight={500}
+                          sx={{
+                            textDecoration: "underline",
+                          }}
+                        >
+                          {activeFileToShow?.media?.[0]?.name?.length ?? 0 > 8
+                            ? activeFileToShow?.media?.[0]?.name?.substring(
+                                0,
+                                8
+                              )
+                            : activeFileToShow?.media?.[0]?.name}
+                        </Typography>
+                      </Stack>
+                      <IconButton color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Stack>
+                  )}
                 <CustomFilePond
                   files={file}
                   disabled={loading}
@@ -274,7 +366,7 @@ export default function AddEditLibDocDialog(props: dialogProps) {
                   setSelectedUsers(newVal);
                   return "";
                 }}
-                getOptionLabel={(option) => option.full_name}
+                getOptionLabel={(option) => option.name}
                 filterSelectedOptions
                 renderInput={(params) => (
                   <TextField
@@ -298,14 +390,14 @@ export default function AddEditLibDocDialog(props: dialogProps) {
 }
 
 // declare needed types
-type userT = { id: number; full_name: string };
+type userT = { id: number; name: string };
 type FormTypeSchema = {
   name: string;
   reference_number: number | string;
   end_date: string;
   notify_date: string;
   type: number;
-  employees?: { id: number; full_name: string }[];
+  employees?: userT[];
 };
 
 type dialogProps = {

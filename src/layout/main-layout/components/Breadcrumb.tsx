@@ -4,20 +4,22 @@ import { useContext } from "react";
 import { BreadCrumbContext } from "../BreadCrumbContext";
 import { Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { MainBreadCrumbContext } from "../BreadCrumbContext/BreadCrumbContext";
 
 function Breadcrumb() {
   const breadcrumbContext = useContext(BreadCrumbContext);
+  const { links } = useContext(MainBreadCrumbContext);
 
   return (
     <Breadcrumbs separator={<NavigateBeforeIcon />}>
-      {breadcrumbContext.links.map((link, index, arr) => (
+      {links?.map((term, idx) => (
         <Button
-          disabled={exclude.includes(link.title) || index === arr.length - 1}
+          disabled={idx == links.length - 1}
           component={NavLink}
           sx={{ fontWeight: 700 }}
-          to={link.path}
+          to={term.path}
         >
-          {link.title}
+          {term.title}
         </Button>
       ))}
     </Breadcrumbs>

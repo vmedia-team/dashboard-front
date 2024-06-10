@@ -5,13 +5,31 @@ import { LibraryMainPageContext } from "../../context/LibraryMainPageContext";
 
 export default function SearchBar(props: PropsType) {
   // TODO::declare and define component state and variables
-  const dummyOptions = [{ label: "نوع المستند", value: 0 }];
   const [name, setName] = useState("");
-  const { handleSearch } = useContext(LibraryMainPageContext);
+  const [reference_number, setReference_number] = useState("");
+  const [file_name, setFile_name] = useState("");
+  const { handleSearch, directoriesNames, handleSetSearchInfiles } = useContext(
+    LibraryMainPageContext
+  );
 
   // TODO::declare and define component methods
   const handleSearchFun = () => {
-    handleSearch(name);
+    let params = "",
+      count = 0;
+    if (name && name != "الكل") params += `name=${name}`;
+    if (reference_number) {
+      if (params.length) params += "&";
+      params += `reference_number=${reference_number}`;
+    } else count++;
+    if (file_name) {
+      if (params.length) params += "&";
+      params += `file_name=${file_name}`;
+    } else count++;
+
+    if (count < 2) handleSetSearchInfiles(true);
+    else handleSetSearchInfiles(false);
+    
+    handleSearch(params);
   };
   // * Return Component UI
   return (
@@ -25,13 +43,16 @@ export default function SearchBar(props: PropsType) {
         gap={1}
       >
         <SelectWithFilter
-          options={dummyOptions}
+          options={directoriesNames}
           placeholder="نوع المستند"
           size="small"
-          defaultValue={0}
+          defaultValue={-1}
           select
-          onChange={() => {
-            console.log("Handle Change");
+          onChange={(e) => {
+            setName(
+              directoriesNames.find((ele) => ele.value == +e.target.value)
+                ?.label ?? ""
+            );
           }}
           sx={{
             width: "28%",
@@ -43,7 +64,7 @@ export default function SearchBar(props: PropsType) {
           // value={props.search}
           size="small"
           sx={{ width: "28%" }}
-          onChange={() => {}}
+          onChange={(e) => setReference_number(e.target.value)}
         />
         {/* doc name */}
         <TextField
@@ -51,8 +72,7 @@ export default function SearchBar(props: PropsType) {
           // value={props.search}
           size="small"
           sx={{ width: "28%" }}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setFile_name(e.target.value)}
         />
         <Button
           variant="contained"

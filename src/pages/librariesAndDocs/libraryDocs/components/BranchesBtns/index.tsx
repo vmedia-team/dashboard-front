@@ -1,16 +1,31 @@
 import { Button, Stack } from "@mui/material";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import AddEditLibDocDialog from "../Dialog";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
+import ChooseTypeDialog from "../ChooseTypeDialog";
+import NestedDirectoryDialog from "../NestedDirectories/Dialog";
 
 export default function BranchesBtns() {
   // TODO::declare and define state and variables.
-  const { openDialog, handleOenDialog } = useContext(LibraryDocumentionContext);
+  const [openChooseTypeDialog, setOpenChooseTypeDialog] = useState(false);
+  const {
+    openDialog,
+    NestedDirectoryOpenDialog,
+    branchesData,
+    activeBranchId,
+    handleSetActiveBranchId,
+  } = useContext(LibraryDocumentionContext);
+
   // TODO::declare and define helper method.
-  const handleClick = () => {
-    handleOenDialog(true);
+  const handleCreateClick = () => {
+    setOpenChooseTypeDialog(true);
+    // handleOenDialog(true);
   };
+  const handleClickBranch = (id: number) => {
+    handleSetActiveBranchId(id);
+  };
+
   // TODO::return componsnt view.
   return (
     <Stack
@@ -25,65 +40,50 @@ export default function BranchesBtns() {
           sx={{
             fontWeight: 600,
             borderRadius: 0,
-            bgcolor: "background.paper",
-            color: "primary.main",
+            bgcolor: -1 == activeBranchId ? "background.paper" : "none",
+            color: -1 == activeBranchId ? "primary.main" : "text.secondary",
           }}
+          onClick={() => handleClickBranch(-1)}
         >
           الكل
         </Button>
-        <Button
-          variant="text"
-          sx={{
-            fontWeight: 600,
-            bgcolor: "none",
-            color: "text.secondary",
-          }}
-        >
-          فرع مكة
-        </Button>
-        <Button
-          variant="text"
-          sx={{
-            fontWeight: 600,
-            bgcolor: "none",
-            color: "text.secondary",
-          }}
-        >
-          فرع جدة
-        </Button>
-        <Button
-          variant="text"
-          sx={{
-            fontWeight: 600,
-            bgcolor: "none",
-            color: "text.secondary",
-          }}
-        >
-          فرع الرياض
-        </Button>
-        <Button
-          variant="text"
-          sx={{
-            fontWeight: 600,
-            color: "text.secondary",
-            bgcolor: "none",
-          }}
-        >
-          فرع القاهرة
-        </Button>
+        {branchesData?.map((btn) => (
+          <Button
+            key={btn.id}
+            variant="text"
+            sx={{
+              fontWeight: 600,
+              bgcolor: btn.id == activeBranchId ? "background.paper" : "none",
+              color:
+                btn.id == activeBranchId ? "primary.main" : "text.secondary",
+            }}
+            onClick={() => handleClickBranch(btn.id)}
+          >
+            {btn.name}
+          </Button>
+        ))}
       </Stack>
       {/* create documentation btn */}
       <Button
         variant="contained"
         startIcon={<AddBoxOutlinedIcon />}
-        onClick={handleClick}
+        onClick={handleCreateClick}
         sx={{
           fontWeight: 600,
+          transition: "transform 0.2s ease-in-out",
+          ":hover": {
+            transform: "scale(1.0789)",
+          },
         }}
       >
         أنشاء
       </Button>
+      <ChooseTypeDialog
+        open={openChooseTypeDialog}
+        setOpen={setOpenChooseTypeDialog}
+      />
       <AddEditLibDocDialog open={openDialog} />
+      <NestedDirectoryDialog open={NestedDirectoryOpenDialog} />
     </Stack>
   );
 }

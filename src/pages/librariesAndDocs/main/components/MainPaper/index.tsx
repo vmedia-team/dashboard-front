@@ -1,6 +1,5 @@
 import { Paper } from "@mui/material";
 import ListMainItems from "./components/ListMainItems";
-import "./components/styles.scss";
 
 export default function MainPaper() {
   return (
@@ -8,10 +7,9 @@ export default function MainPaper() {
       elevation={2}
       sx={{
         bgcolor: "background.paper",
-        mt: 10,
+        mt: 1,
         p: 5,
       }}
-      className="fadeInUp"
     >
       <ListMainItems />
     </Paper>

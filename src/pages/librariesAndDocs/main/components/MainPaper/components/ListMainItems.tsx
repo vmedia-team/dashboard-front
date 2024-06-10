@@ -6,41 +6,52 @@ import { useContext, useEffect, useState } from "react";
 import AddEditLibDialog from "../../Dialog";
 import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
 import { useNavigate } from "react-router-dom";
+import LibrariesLoading from "../../loading";
+import "./styles.scss";
+import SearchByFileNameAndRefNum from "./SearchByFileNameAndRefNum";
+import SearchLoading from "../../loading/SearchLoading";
 
 export default function ListMainItems() {
   // TODO::declare and define component state and variables
   const navigator = useNavigate();
-  const [openDialog, setOpenDialog] = useState(false);
-  const { mainPageItems } = useContext(LibraryMainPageContext);
-  const [clickedMainItem, setClickedMainItem] = useState<
-    LibrariesMainPageItemType | undefined
-  >();
+  const [loading, setLoading] = useState(false);
+  const {
+    mainPageItems,
+    searchInfiles,
+    searchState,
+    openEditDialog,
+    handleSetOpenEditDialog,
+    handleSetSelectedDirectoryToEdit,
+  } = useContext(LibraryMainPageContext);
   const addDirectoryItem: LibrariesMainPageItemType = {
     id: "add_new_directory_113",
     name: "اضافة فولدر / تعديل",
     type: 1,
+    files_count: 0,
+    is_deletable: 0,
     media: [{ original_url: imgSrc7 }],
     created_at: "",
     updated_at: "",
   };
 
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+  }, []);
   // TODO::declare and define component methods
   const handleClick = (
     item: LibrariesMainPageItemType | undefined,
     editMode?: boolean
   ) => {
-    setClickedMainItem(item);
-    console.log("Active Item::", item);
+    handleSetSelectedDirectoryToEdit(item);
     if (item?.id == "add_new_directory_113" || editMode) {
       //create new directory or edit existting one.
-      setOpenDialog(true);
+      handleSetOpenEditDialog(true);
     } else {
       //navigate to specific page
-      switch (item?.id) {
-        case 1: //'مستندات المكاتب'
-          navigator(`/react/librariesAndDocs/${item.id}`);
-          break;
-      }
+      if (item?.id) navigator(`/react/librariesAndDocs/${item?.id}`);
     }
   };
 
@@ -54,16 +65,26 @@ export default function ListMainItems() {
 
   // * Return Component Ui.
   return (
-    <Grid container>
-      {mainPageItems.map((item) => (
-        <GridItem key={item.id} item={item} />
-      ))}
-      <GridItem item={addDirectoryItem} />
-      <AddEditLibDialog
-        open={openDialog}
-        clickedMainItem={clickedMainItem}
-        setOpen={setOpenDialog}
-      />
+    <Grid container className="fadeInUp">
+      {/* case::loading data when page is open */}
+      {loading && <LibrariesLoading />}
+      {!loading &&
+        (searchInfiles ? (
+          // screen when search by filename of refrance number
+          <SearchByFileNameAndRefNum />
+        ) : searchState ? (
+          // search loading
+          <SearchLoading />
+        ) : (
+          // data arrived
+          <>
+            {mainPageItems.map((item) => (
+              <GridItem key={item.id} item={item} />
+            ))}
+            <GridItem item={addDirectoryItem} />
+            <AddEditLibDialog open={openEditDialog} />
+          </>
+        ))}
     </Grid>
   );
 }

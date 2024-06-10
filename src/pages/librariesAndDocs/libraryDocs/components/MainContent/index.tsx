@@ -1,29 +1,53 @@
 import { Grid } from "@mui/material";
 import LibraryDocsMainPaper from "../MainPaper";
 import ILovePdfFrameIndex from "../ILovePdfFrame";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
+import LibrariesLoading from "../../../main/components/loading";
+import { MainBreadCrumbContext } from "../../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 export default function MainContentIndex() {
-  const { activeFileToShow, handleSetActiveFile } = useContext(
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
+  const [loading, setLoading] = useState(false);
+  const { activeFileToShow, searchLoadingState, mainDirectory } = useContext(
     LibraryDocumentionContext
   );
 
-  // useEffect(() => {
-  //   handleSetActiveFile(undefined);
-  // }, []);
+  useEffect(() => {
+    // set breadcrumb terms
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "مكتبة البيانات",
+      path: "/react/librariesAndDocs",
+    });
+    handleAddNewTerm({
+      title: mainDirectory?.name ?? "",
+      path: "/",
+    });
+  }, [mainDirectory]);
+
   return (
     <Grid container>
-      <Grid item xs={activeFileToShow ? 6 : 12}>
-        <LibraryDocsMainPaper width={"100%"} />
-      </Grid>
-      {activeFileToShow && (
-        <Grid item xs={6}>
-          <ILovePdfFrameIndex
-            fileUrl={activeFileToShow?.media?.[0]?.original_url}
-          />
-        </Grid>
-      )}
+      {loading && <LibrariesLoading />}
+      {!loading &&
+        (searchLoadingState ? (
+          <LibrariesLoading />
+        ) : (
+          <>
+            <Grid item xs={activeFileToShow ? 6 : 12}>
+              <LibraryDocsMainPaper width={"100%"} />
+            </Grid>
+            {activeFileToShow && (
+              <Grid item xs={6} sx={{ position: "relative" }}>
+                <ILovePdfFrameIndex
+                  fileUrl={activeFileToShow?.media?.[0]?.original_url}
+                />
+              </Grid>
+            )}
+          </>
+        ))}
     </Grid>
   );
 }

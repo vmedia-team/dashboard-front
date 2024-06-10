@@ -1,36 +1,33 @@
 import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
-import { LibrariesMainPageItemType } from "./MianItemsData";
-import folderImg from "../../../../../../assets/images/librariesAndDocs/folder.png";
+import folderImg from "../../../../../assets/images/librariesAndDocs/folder.png";
+import { LibrariesMainPageItemType } from "../../../main/components/MainPaper/components/MianItemsData";
 import SettingBtn from "./SettingBtn";
 import { useContext } from "react";
-import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
+import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
+import { useNavigate } from "react-router-dom";
 
-export default function MainItem(props: PropsType) {
+export default function NestedDirectoryItem(props: PropsType) {
   // TODO::declare and define state and variables
   const {
-    toggleDirectoryIdFormSelectedDirectories,
-    checkedDirectoryIdInSelectedDirectories,
-  } = useContext(LibraryMainPageContext);
+    handleSetSelectedNestedDirectory,
+    handleSetNestedDirectoryOpenDialog,
+  } = useContext(LibraryDocumentionContext);
+  const navigator = useNavigate();
+
   // todo::declare and define helper methods
   const handleEditDirectory = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    props.handleClick(props.item, true);
+    handleSetSelectedNestedDirectory(props.item);
+    handleSetNestedDirectoryOpenDialog(true);
+  };
+  const handleClick = () => {
+    handleSetSelectedNestedDirectory(props.item);
+    if (props.item?.id) navigator(`/react/librariesAndDocs/${props.item?.id}`);
   };
 
   // *return our component ui.
   return (
     <Stack justifyContent={"center"} alignItems={"center"}>
-      <Checkbox
-        checked={checkedDirectoryIdInSelectedDirectories(+props.item.id)}
-        onChange={() =>
-          toggleDirectoryIdFormSelectedDirectories(+props.item.id)
-        }
-        sx={{
-          alignSelf: "start",
-          px: 3,
-          display: props.item.id != "add_new_directory_113" ? "block" : "none",
-        }}
-      />
       <Stack
         sx={{
           bgcolor: "#92AFCF",
@@ -41,22 +38,15 @@ export default function MainItem(props: PropsType) {
           justifyContent: "center",
           alignItems: "center",
           cursor: "pointer",
-          mt: props.item.id != "add_new_directory_113" ? 0 : 6.5,
-          transition: "all 0.2s ease-in-out",
-          ":hover": {
-            boxShadow: "2px 2px 4px 4px lightgray",
-            transform: "scale(1.1)",
-          },
+          m: 2,
         }}
-        onClick={() => props.handleClick(props.item)}
+        onClick={handleClick}
       >
         {/* Edit Button */}
-        {props.item.id != "add_new_directory_113" && (
-          <SettingBtn
-            handleEditDirectory={handleEditDirectory}
-            item={props.item}
-          />
-        )}
+        <SettingBtn
+          item={props.item}
+          handleEditDirectory={handleEditDirectory}
+        />
         {/* Type public or private */}
         <Box
           sx={{
@@ -79,7 +69,7 @@ export default function MainItem(props: PropsType) {
           alt={`icon for ${props.item.name}`}
         />
       </Stack>
-      <Typography variant="body2" fontSize={18} textAlign={"center"} my={2}>
+      <Typography variant="body2" fontSize={18} textAlign={"center"}>
         {props.item.name}
       </Typography>
     </Stack>
@@ -88,8 +78,4 @@ export default function MainItem(props: PropsType) {
 
 type PropsType = {
   item: LibrariesMainPageItemType;
-  handleClick: (
-    item: LibrariesMainPageItemType | undefined,
-    editMode?: boolean
-  ) => void;
 };

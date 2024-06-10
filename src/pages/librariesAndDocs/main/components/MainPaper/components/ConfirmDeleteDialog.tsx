@@ -9,54 +9,38 @@ import {
 import { Dialog } from "@mui/material";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import { useContext, useEffect, useState } from "react";
-import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 import { List } from "@mui/material";
 import { ListItem } from "@mui/material";
 import { ListItemIcon } from "@mui/material";
 import { ListItemText } from "@mui/material";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import axios from "axios";
-import { Api } from "../../../../../constants";
 import { useSnackbar } from "notistack";
+import { LibrariesMainPageItemType } from "./MianItemsData";
+import { Api } from "../../../../../../constants";
+import { LibraryMainPageContext } from "../../../context/LibraryMainPageContext";
 
-export default function ConfirmFileProccess(props: PropsType) {
+export default function ConfirmDeleteDirectory(props: PropsType) {
   // TODO::declare and define state and variables
   const [loading, setLoading] = useState(false);
+  const { deleteDirectory } = useContext(LibraryMainPageContext);
   const { enqueueSnackbar } = useSnackbar();
-  const { files, selectedFilesIds } = useContext(LibraryDocumentionContext);
-  const [filesList, setFilesList] = useState<{ id: number; name: string }[]>(
-    []
-  );
 
-  useEffect(() => {
-    let arr = files
-      .filter((ele) => selectedFilesIds.indexOf(ele.id) != -1)
-      .map((ele) => ({ id: ele.id, name: ele.name }));
-    setFilesList(arr);
-  }, [props.open]);
   // TODO::declare and define helper methods
   const handleClose = () => {
     props.setOpen(false);
   };
-  const handleFileProcessing = () => {
+
+  const handleDeleteDirectory = () => {
     setLoading(true);
-    let url =
-      props.operationType == "Merge"
-        ? "employee/library/file-process/merge"
-        : "employee/library/file-process/compress";
     axios
-      .post(Api(url), {
-        ids: selectedFilesIds,
-      })
-      .then((response) => {
-        enqueueSnackbar("تم اجراء العملية بنجاح");
-        handleClose();
+      .delete(Api(`employee/library/folder/delete/${props.item.id}`))
+      .then(() => {
+        deleteDirectory(props.item);
+        enqueueSnackbar("تم الحذف بنجاح");
       })
       .catch((err) => {
-        let errMsg = "تعذر اتمام العملية";
-        if (err.response.data.msg == "Undefined array key 0")
-          errMsg = "يجب ان تكون كل الملفات من نوع pdf";
-        enqueueSnackbar(errMsg, { variant: "error" });
+        enqueueSnackbar("تعذر الحفظ", { variant: "error" });
       })
       .finally(() => setLoading(false));
   };
@@ -80,23 +64,11 @@ export default function ConfirmFileProccess(props: PropsType) {
           />
           <Box pl={3}>
             <Typography variant="body1" fontSize={18} fontWeight={600}>
-              سوف تقوم بعملية {props.operationType} للملفات الاتية
+              برجاء الملاحظة
             </Typography>
-            <List>
-              {filesList.length == 0 && (
-                <Typography variant="body2" color={"warning"}>
-                  انت لم تقوم باختيار اي ملف
-                </Typography>
-              )}
-              {filesList.map((ele) => (
-                <ListItem key={ele.id} disablePadding>
-                  <ListItemIcon>
-                    <InsertDriveFileOutlinedIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText primary={ele.name} />
-                </ListItem>
-              ))}
-            </List>
+            <Typography variant="body2" fontSize={14} fontWeight={500}>
+              الفولدر الذي ترغب بحذفه يحتوي علي ملفات بداخله
+            </Typography>
           </Box>
         </Stack>
       </DialogContent>
@@ -109,12 +81,16 @@ export default function ConfirmFileProccess(props: PropsType) {
         <Button
           disabled={loading}
           variant="contained"
-          color="success"
-          onClick={handleFileProcessing}
+          color="error"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDeleteDirectory();
+          }}
         >
-          متابعة
+          حذف
         </Button>
         <Button
+          color="success"
           disabled={loading}
           variant="text"
           onClick={(e) => {
@@ -132,5 +108,5 @@ export default function ConfirmFileProccess(props: PropsType) {
 type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  operationType: "Merge" | "Compress";
+  item: LibrariesMainPageItemType;
 };
