@@ -29,6 +29,13 @@ export const LibraryDocumentionContext =
     deleteFile: (id) => {},
     typeOfSelectedFiles: undefined,
     nestedDirectories: [],
+    NestedDirectoryOpenDialog: false,
+    selectedNestedDirectory: undefined,
+    handleSetNestedDirectoryOpenDialog: (open) => {},
+    handleSetSelectedNestedDirectory: (directory) => {},
+    addNewDirectory: (directory) => {},
+    editExistDirectory: (directory) => {},
+    deleteDirectory: (directory) => {},
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -42,6 +49,11 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   const [nestedDirectories, setNestedDirectories] = useState<
     LibrariesMainPageItemType[]
   >([]); //to store and controll nesteddirectories
+  const [NestedDirectoryOpenDialog, setNestedDirectoryOpenDialog] =
+    useState(false); //to control open/hide nested directory dialog
+  const [selectedNestedDirectory, setSelectedNestedDirectory] = useState<
+    LibrariesMainPageItemType | undefined
+  >(undefined); //to store selected (nested) directory to edit
   const [openDialog, setOpenDialog] = useState(false); //to handle and control add/edit dialog
   const [editFile, setEditFile] = useState(false); //to control state of dialog edit or create
   const [selectedFilesIds, setSelectedFilesIds] = useState<number[]>([]); //to control selected files
@@ -198,6 +210,48 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     setEditFile(isEdit);
   }
 
+  /**
+   * handle set NestedDirectoryOpenDialog
+   */
+  function handleSetNestedDirectoryOpenDialog(open: boolean) {
+    setNestedDirectoryOpenDialog(open);
+  }
+
+  function handleSetSelectedNestedDirectory(
+    directory: LibrariesMainPageItemType
+  ) {
+    setSelectedNestedDirectory(directory);
+  }
+
+  /**
+   * add new directory to directories
+   * @param directory created directory
+   */
+  function addNewDirectory(directory: LibrariesMainPageItemType) {
+    setNestedDirectories((prev) => [...prev, directory]);
+  }
+
+  /**
+   * edit existing directory
+   * @param directory directory after edit
+   */
+  function editExistDirectory(directory: LibrariesMainPageItemType) {
+    let arr = nestedDirectories.map((ele) => {
+      if (ele.id == directory.id) return directory;
+      return ele;
+    });
+    setNestedDirectories(arr);
+  }
+
+  /**
+   * delete directory
+   * @param directory directory which will delete
+   */
+  function deleteDirectory(directory: LibrariesMainPageItemType) {
+    let arr = (nestedDirectories ?? []).filter((ele) => ele.id != directory.id);
+    setNestedDirectories(arr);
+  }
+
   return (
     <LibraryDocumentionContext.Provider
       value={{
@@ -221,6 +275,13 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         deleteFile,
         typeOfSelectedFiles,
         nestedDirectories,
+        NestedDirectoryOpenDialog,
+        selectedNestedDirectory,
+        handleSetNestedDirectoryOpenDialog,
+        handleSetSelectedNestedDirectory,
+        addNewDirectory,
+        editExistDirectory,
+        deleteDirectory,
       }}
     >
       {children}
@@ -254,4 +315,11 @@ type LibraryDocumentionContextType = {
   deleteFile(id: number): void;
   typeOfSelectedFiles: "PDF" | "Image" | undefined;
   nestedDirectories: LibrariesMainPageItemType[];
+  NestedDirectoryOpenDialog: boolean;
+  selectedNestedDirectory: LibrariesMainPageItemType | undefined;
+  handleSetNestedDirectoryOpenDialog(open: boolean): void;
+  handleSetSelectedNestedDirectory(directory: LibrariesMainPageItemType): void;
+  addNewDirectory(directory: LibrariesMainPageItemType): void;
+  editExistDirectory(directory: LibrariesMainPageItemType): void;
+  deleteDirectory(directory: LibrariesMainPageItemType): void;
 };

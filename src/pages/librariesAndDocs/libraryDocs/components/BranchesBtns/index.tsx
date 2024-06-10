@@ -4,11 +4,14 @@ import AddEditLibDocDialog from "../Dialog";
 import { useContext, useState } from "react";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 import ChooseTypeDialog from "../ChooseTypeDialog";
+import NestedDirectoryDialog from "../NestedDirectories/Dialog";
 
 export default function BranchesBtns() {
   // TODO::declare and define state and variables.
   const [openChooseTypeDialog, setOpenChooseTypeDialog] = useState(false);
-  const { openDialog } = useContext(LibraryDocumentionContext);
+  const { openDialog, NestedDirectoryOpenDialog } = useContext(
+    LibraryDocumentionContext
+  );
   // TODO::declare and define helper method.
   const handleClick = () => {
     setOpenChooseTypeDialog(true);
@@ -95,6 +98,7 @@ export default function BranchesBtns() {
         setOpen={setOpenChooseTypeDialog}
       />
       <AddEditLibDocDialog open={openDialog} />
+      <NestedDirectoryDialog open={NestedDirectoryOpenDialog} />
     </Stack>
   );
 }

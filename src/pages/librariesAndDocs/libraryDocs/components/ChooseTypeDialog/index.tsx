@@ -17,7 +17,9 @@ export default function ChooseTypeDialog(props: dialogProps) {
   const [creationType, setCreationType] = useState<"File" | "Directory">(
     "File"
   );
-  const { handleOenDialog } = useContext(LibraryDocumentionContext);
+  const { handleOenDialog, handleSetNestedDirectoryOpenDialog } = useContext(
+    LibraryDocumentionContext
+  );
 
   // TODO::fetch data of selects & set data of directory in edit case
   useEffect(() => setCreationType("File"), [props.open]);
@@ -32,7 +34,7 @@ export default function ChooseTypeDialog(props: dialogProps) {
     if (creationType == "File") {
       handleOenDialog(true);
     } else {
-      console.log("open create directory dialog");
+      handleSetNestedDirectoryOpenDialog(true);
     }
     handleClose();
   };
