@@ -1,10 +1,29 @@
 import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
 import folderImg from "../../../../../assets/images/librariesAndDocs/folder.png";
 import { LibrariesMainPageItemType } from "../../../main/components/MainPaper/components/MianItemsData";
+import SettingBtn from "./SettingBtn";
+import { useContext } from "react";
+import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
+import { useNavigate } from "react-router-dom";
 
 export default function NestedDirectoryItem(props: PropsType) {
   // TODO::declare and define state and variables
+  const {
+    handleSetSelectedNestedDirectory,
+    handleSetNestedDirectoryOpenDialog,
+  } = useContext(LibraryDocumentionContext);
+  const navigator = useNavigate();
+
   // todo::declare and define helper methods
+  const handleEditDirectory = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    handleSetSelectedNestedDirectory(props.item);
+    handleSetNestedDirectoryOpenDialog(true);
+  };
+  const handleClick = () => {
+    handleSetSelectedNestedDirectory(props.item);
+    if (props.item?.id) navigator(`/react/librariesAndDocs/${props.item?.id}`);
+  };
 
   // *return our component ui.
   return (
@@ -21,11 +40,13 @@ export default function NestedDirectoryItem(props: PropsType) {
           cursor: "pointer",
           m: 2,
         }}
-        onClick={() => {
-          console.log("Nested Directory clicked");
-        }}
+        onClick={handleClick}
       >
         {/* Edit Button */}
+        <SettingBtn
+          item={props.item}
+          handleEditDirectory={handleEditDirectory}
+        />
         {/* Type public or private */}
         <Box
           sx={{

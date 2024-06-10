@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -24,6 +25,7 @@ import { Api } from "../../../../../../constants";
 import { useParams } from "react-router-dom";
 import { LibrariesMainPageItemType } from "../../../../main/components/MainPaper/components/MianItemsData";
 import { serialize } from "object-to-formdata";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 export default function NestedDirectoryDialog(props: dialogProps) {
   // TODO::declare and define state and variables
@@ -169,6 +171,43 @@ export default function NestedDirectoryDialog(props: dialogProps) {
         </AddLabelToEl>
         {/* directory icon */}
         <AddLabelToEl label="الايقون">
+          {isEdit &&
+            selectedNestedDirectory?.media &&
+            selectedNestedDirectory?.media?.length > 0 && (
+              <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                sx={{
+                  padding: " 2px 10px",
+                  border: "1px solid #808080b8",
+                  margin: "5px auto",
+                  borderRadius: "12px",
+                  width: "100%",
+                }}
+              >
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  sx={{ cursor: "pointer" }}
+                  component={`a`}
+                  href={`${selectedNestedDirectory?.media?.[0]?.original_url}`}
+                  target="_blank"
+                  download
+                >
+                  <AttachFileIcon />
+                  <Typography
+                    variant="body2"
+                    fontWeight={500}
+                    sx={{
+                      textDecoration: "underline",
+                    }}
+                  >
+                    {selectedNestedDirectory?.media?.[0]?.name}
+                  </Typography>
+                </Stack>
+              </Stack>
+            )}
           <CustomFilePond
             files={file}
             disabled={loading}
