@@ -11,11 +11,13 @@ import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import axios from "axios";
 import { Api } from "../../../../../../constants";
-import { ConstructionOutlined } from "@mui/icons-material";
+import ConfirmDeleteFileDialog from "./ConfirmDeleteFile";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function SingleDoc(props: PropsType) {
   // TODO::declare and define component state and variables
   const location = useLocation(); //to get incomming location state
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const {
     handleSetActiveFile,
     checkedFileIdInSelectedFiles,
@@ -44,7 +46,6 @@ export default function SingleDoc(props: PropsType) {
       ? `${props.file?.name?.slice(0, 11)}...`
       : props.file?.name;
 
-
   // TODO::if comming from file_name/refrance num search result show selected file
   useEffect(() => {
     if (location.state?.activeFile) {
@@ -67,6 +68,9 @@ export default function SingleDoc(props: PropsType) {
     }
   };
 
+  const handleDeleteFile = () => {
+    setOpenDeleteDialog(true);
+  };
   const handleEdit = () => {
     handleSetEditFile(true);
     console.log("breakpoint1999 file", props.file);
@@ -76,130 +80,150 @@ export default function SingleDoc(props: PropsType) {
 
   //*return component state
   return (
-    <Stack
-      spacing={1}
-      alignItems={"center"}
-      sx={{ p: 3, position: "relative", width: "200px" }}
-    >
-      {/* checkbox */}
-      <Checkbox
-        disabled={
-          typeOfSelectedFiles != undefined && typeOfSelectedFiles != fileType
-        }
-        checked={checkedFileIdInSelectedFiles(props.file.id)}
-        onChange={(e) => {
-          toggleFileIdFormSelectedFiles(props.file.id);
-        }}
-        sx={{
-          position: "absolute",
-          top: "5%",
-          left: "5%",
-        }}
-      />
-      {/* file preview */}
-      <Box
-        sx={{
-          position: "relative",
-          width: 100,
-          height: 100,
-          marginTop: "20px 5px",
-        }}
-      >
-        {/* image for preview */}
-        {fileType == "PDF" ? (
-          <iframe
-            id="myIframe"
-            src={props.file?.media?.[0]?.original_url}
-            width="100px"
-            height="100px"
-            scrolling="no"
-            style={{
-              position: "absolute",
-              borderRadius: "0",
-              overflow: "hidden",
-            }}
-          ></iframe>
-        ) : (
-          <img
-            src={props.file?.media?.[0]?.original_url ?? fileImg}
-            width={100}
-            height={100}
-            alt="file name"
-          />
-        )}
-        {/* extention */}
-        <Chip
-          label={extention}
-          size="small"
-          sx={{
-            position: "absolute",
-            bottom: "0%",
-            left: "0%",
-            fontSize: 10,
-            borderRadius: "0px",
-          }}
-          color={
-            extention == "pdf"
-              ? "info"
-              : extention == "null"
-              ? "error"
-              : "warning"
-          }
-        />
-        {/* actions */}
-        {/* download */}
-        <IconButton
-          sx={{
-            position: "absolute",
-            bottom: "0%",
-            right: "0%",
-            boxShadow: "0px 4px 9.5px 0px #0000001F",
-            borderRadius: "3px",
-          }}
-          onClick={() => handleDownloadFile()}
-        >
-          <CloudDownloadOutlinedIcon />
-        </IconButton>
-        {/* edit */}
-        <IconButton
-          sx={{
-            position: "absolute",
-            top: "0%",
-            right: "0%",
-            boxShadow: "0px 4px 9.5px 0px #0000001F",
-            borderRadius: "3px",
-          }}
-          onClick={() => handleEdit()}
-        >
-          <BorderColorOutlinedIcon />
-        </IconButton>
-      </Box>
-      {/* File information */}
+    <>
       <Stack
+        spacing={1}
         alignItems={"center"}
-        sx={{
-          cursor: "pointer",
-        }}
-        onClick={(e) => {
-          handleSetActiveFile(props.file);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
+        sx={{ p: 3, position: "relative", width: "200px" }}
       >
-        <Typography variant="body1">{fileName}</Typography>
-        <Typography variant="body1" color={"error"}>
-          {props.file?.reference_number}
-        </Typography>
-        <Stack
-          direction={"row"}
-          justifyContent={"space-around"}
-          alignItems={"center"}
+        {/* checkbox */}
+        <Checkbox
+          disabled={
+            typeOfSelectedFiles != undefined && typeOfSelectedFiles != fileType
+          }
+          checked={checkedFileIdInSelectedFiles(props.file.id)}
+          onChange={(e) => {
+            toggleFileIdFormSelectedFiles(props.file.id);
+          }}
+          sx={{
+            position: "absolute",
+            top: "5%",
+            left: "5%",
+          }}
+        />
+        {/* file preview */}
+        <Box
+          sx={{
+            position: "relative",
+            width: 100,
+            height: 100,
+            marginTop: "20px 5px",
+          }}
         >
-          <CalendarMonthOutlinedIcon />
-          <Typography variant="body2">{props.file?.end_date}</Typography>
+          {/* image for preview */}
+          {fileType == "PDF" ? (
+            <iframe
+              id="myIframe"
+              src={props.file?.media?.[0]?.original_url}
+              width="100px"
+              height="100px"
+              scrolling="no"
+              style={{
+                position: "absolute",
+                borderRadius: "0",
+                overflow: "hidden",
+              }}
+            ></iframe>
+          ) : (
+            <img
+              src={props.file?.media?.[0]?.original_url ?? fileImg}
+              width={100}
+              height={100}
+              alt="file name"
+            />
+          )}
+          {/* extention */}
+          <Chip
+            label={extention}
+            size="small"
+            sx={{
+              position: "absolute",
+              bottom: "0%",
+              left: "0%",
+              fontSize: 10,
+              borderRadius: "0px",
+            }}
+            color={
+              extention == "pdf"
+                ? "info"
+                : extention == "null"
+                ? "error"
+                : "warning"
+            }
+          />
+          {/* actions */}
+          {/* download */}
+          <IconButton
+            sx={{
+              position: "absolute",
+              bottom: "0%",
+              right: "0%",
+              boxShadow: "0px 4px 9.5px 0px #0000001F",
+              borderRadius: "3px",
+            }}
+            onClick={() => handleDownloadFile()}
+          >
+            <CloudDownloadOutlinedIcon />
+          </IconButton>
+          {/* delete */}
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: "0%",
+              left: "0%",
+              borderRadius: "3px",
+            }}
+            onClick={() => handleDeleteFile()}
+            color="error"
+          >
+            <DeleteIcon />
+          </IconButton>
+          {/* edit */}
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: "0%",
+              right: "0%",
+              boxShadow: "0px 4px 9.5px 0px #0000001F",
+              borderRadius: "3px",
+            }}
+            onClick={() => handleEdit()}
+          >
+            <BorderColorOutlinedIcon />
+          </IconButton>
+        </Box>
+        {/* File information */}
+        <Stack
+          alignItems={"center"}
+          sx={{
+            cursor: "pointer",
+          }}
+          onClick={(e) => {
+            handleSetActiveFile(props.file);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
+          <Typography variant="body1">{fileName}</Typography>
+          <Typography variant="body1" color={"error"}>
+            {props.file?.reference_number}
+          </Typography>
+          <Stack
+            direction={"row"}
+            justifyContent={"space-around"}
+            alignItems={"center"}
+          >
+            <CalendarMonthOutlinedIcon />
+            <Typography variant="body2">{props.file?.end_date}</Typography>
+          </Stack>
+          <Box bgcolor={"#D2DCEA"}>عدد التحميل : {props.file?.downloaded}</Box>
         </Stack>
-        <Box bgcolor={"#D2DCEA"}>عدد التحميل : {props.file?.downloaded}</Box>
       </Stack>
-    </Stack>
+      <ConfirmDeleteFileDialog
+        open={openDeleteDialog}
+        setOpen={setOpenDeleteDialog}
+        file={props.file}
+      />
+    </>
   );
 }
 
