@@ -4,8 +4,9 @@ import { createContext } from "react";
 // * create context
 export const MainBreadCrumbContext = createContext<MainBreadCrumbContextType>({
   links: [],
-  handleAddNewTerm: (term) => {},
-  handleClearLinks: () => {},
+  handleAddNewTerm: (term) => { },
+  handleClearLinks: () => { },
+  handleClickOnTerm: (index) => { }
 });
 
 export function MainBreadCrumbContextProvider({ children }: PropsType) {
@@ -25,9 +26,18 @@ export function MainBreadCrumbContextProvider({ children }: PropsType) {
     setLinks([]);
   }
 
+  /**
+   * handle click on Breadcrumbs term
+   * @param index index of clicked term
+   */
+  function handleClickOnTerm(index: number) {
+    let arr = links.slice(0, index + 1);
+    setLinks(arr);
+  }
+
   return (
     <MainBreadCrumbContext.Provider
-      value={{ links, handleAddNewTerm, handleClearLinks }}
+      value={{ links, handleAddNewTerm, handleClearLinks, handleClickOnTerm }}
     >
       {children}
     </MainBreadCrumbContext.Provider>
@@ -47,4 +57,5 @@ type MainBreadCrumbContextType = {
   links: BreadCrumbLinkType[];
   handleAddNewTerm(term: BreadCrumbLinkType): void;
   handleClearLinks(): void;
+  handleClickOnTerm(index: number): void
 };

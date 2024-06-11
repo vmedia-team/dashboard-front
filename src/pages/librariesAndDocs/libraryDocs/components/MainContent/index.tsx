@@ -10,7 +10,7 @@ export default function MainContentIndex() {
   const { handleAddNewTerm, handleClearLinks } = useContext(
     MainBreadCrumbContext
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, _] = useState(false);
   const { activeFileToShow, searchLoadingState, mainDirectory } = useContext(
     LibraryDocumentionContext
   );
@@ -24,7 +24,7 @@ export default function MainContentIndex() {
     });
     handleAddNewTerm({
       title: mainDirectory?.name ?? "",
-      path: "/",
+      path: `/react/librariesAndDocs/${mainDirectory?.id}`,
     });
   }, [mainDirectory]);
 

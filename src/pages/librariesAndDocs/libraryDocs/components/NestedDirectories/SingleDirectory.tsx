@@ -1,13 +1,15 @@
-import { Box, Checkbox, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import folderImg from "../../../../../assets/images/librariesAndDocs/folder.png";
 import { LibrariesMainPageItemType } from "../../../main/components/MainPaper/components/MianItemsData";
 import SettingBtn from "./SettingBtn";
 import { useContext } from "react";
 import { LibraryDocumentionContext } from "../../context/LibraryDocumentionContext";
 import { useNavigate } from "react-router-dom";
+import { MainBreadCrumbContext } from "../../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 export default function NestedDirectoryItem(props: PropsType) {
   // TODO::declare and define state and variables
+  const { handleAddNewTerm } = useContext(MainBreadCrumbContext);
   const {
     handleSetSelectedNestedDirectory,
     handleSetNestedDirectoryOpenDialog,
@@ -22,7 +24,14 @@ export default function NestedDirectoryItem(props: PropsType) {
   };
   const handleClick = () => {
     handleSetSelectedNestedDirectory(props.item);
-    if (props.item?.id) navigator(`/react/librariesAndDocs/${props.item?.id}`);
+    handleAddNewTerm({
+      title: props.item?.name ?? "",
+      path: `/react/librariesAndDocs/${props.item?.id}`,
+    });
+    if (props.item?.id) {
+      handleSetSelectedNestedDirectory(undefined)
+      navigator(`/react/librariesAndDocs/${props.item?.id}`);
+    }
   };
 
   // *return our component ui.

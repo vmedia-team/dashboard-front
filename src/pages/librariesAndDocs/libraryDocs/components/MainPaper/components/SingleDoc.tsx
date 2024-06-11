@@ -44,7 +44,6 @@ export default function SingleDoc(props: PropsType) {
       ? `${props.file?.name?.slice(0, 11)}...`
       : props.file?.name;
 
-  console.log("typeOfSelectedFiles", typeOfSelectedFiles);
 
   // TODO::if comming from file_name/refrance num search result show selected file
   useEffect(() => {
