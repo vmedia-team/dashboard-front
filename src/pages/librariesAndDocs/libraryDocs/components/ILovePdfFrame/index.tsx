@@ -32,6 +32,7 @@ export default function ILovePdfFrameIndex(props: PropsType) {
     setOpenConfirmDialog(true);
   };
 
+
   useEffect(() => {}, [props.fileUrl]);
   // TODO::return component ui
   return (

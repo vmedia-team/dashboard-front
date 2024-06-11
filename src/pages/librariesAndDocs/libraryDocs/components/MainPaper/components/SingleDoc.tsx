@@ -13,6 +13,7 @@ import axios from "axios";
 import { Api } from "../../../../../../constants";
 import ConfirmDeleteFileDialog from "./ConfirmDeleteFile";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Tooltip } from "@mui/material";
 
 export default function SingleDoc(props: PropsType) {
   // TODO::declare and define component state and variables
@@ -153,44 +154,50 @@ export default function SingleDoc(props: PropsType) {
           />
           {/* actions */}
           {/* download */}
-          <IconButton
-            sx={{
-              position: "absolute",
-              bottom: "0%",
-              right: "0%",
-              boxShadow: "0px 4px 9.5px 0px #0000001F",
-              borderRadius: "3px",
-            }}
-            onClick={() => handleDownloadFile()}
-          >
-            <CloudDownloadOutlinedIcon />
-          </IconButton>
+          <Tooltip title="Download File">
+            <IconButton
+              sx={{
+                position: "absolute",
+                bottom: "0%",
+                right: "0%",
+                boxShadow: "0px 4px 9.5px 0px #0000001F",
+                borderRadius: "3px",
+              }}
+              onClick={() => handleDownloadFile()}
+            >
+              <CloudDownloadOutlinedIcon />
+            </IconButton>
+          </Tooltip>
           {/* delete */}
-          <IconButton
-            sx={{
-              position: "absolute",
-              top: "0%",
-              left: "0%",
-              borderRadius: "3px",
-            }}
-            onClick={() => handleDeleteFile()}
-            color="error"
-          >
-            <DeleteIcon />
-          </IconButton>
+          <Tooltip title="Delete File">
+            <IconButton
+              sx={{
+                position: "absolute",
+                top: "0%",
+                left: "0%",
+                borderRadius: "3px",
+              }}
+              onClick={() => handleDeleteFile()}
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
           {/* edit */}
-          <IconButton
-            sx={{
-              position: "absolute",
-              top: "0%",
-              right: "0%",
-              boxShadow: "0px 4px 9.5px 0px #0000001F",
-              borderRadius: "3px",
-            }}
-            onClick={() => handleEdit()}
-          >
-            <BorderColorOutlinedIcon />
-          </IconButton>
+          <Tooltip title="Edit File">
+            <IconButton
+              sx={{
+                position: "absolute",
+                top: "0%",
+                right: "0%",
+                boxShadow: "0px 4px 9.5px 0px #0000001F",
+                borderRadius: "3px",
+              }}
+              onClick={() => handleEdit()}
+            >
+              <BorderColorOutlinedIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
         {/* File information */}
         <Stack
