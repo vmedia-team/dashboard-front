@@ -20,7 +20,7 @@ export default function LibrariesAndDocsMainIndex() {
       path: "/react/librariesAndDocs",
     });
     handleAddNewTerm({
-      title: "مشاريعي",
+      title: "المجلدات الرئيسية",
       path: "/",
     });
   }, []);

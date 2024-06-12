@@ -240,7 +240,7 @@ const routesCollections: RoutesCollectionType[] = [
     icon: DashboardOutlinedIcon,
     routes: [
       {
-        name: "مشاريعي",
+        name: "المجلدات الرئيسية",
         path: "/librariesAndDocs",
         react: true,
       },
