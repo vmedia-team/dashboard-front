@@ -14,6 +14,7 @@ import { Api } from "../../../../../../constants";
 import ConfirmDeleteFileDialog from "./ConfirmDeleteFile";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Tooltip } from "@mui/material";
+import FileSettingBtn from "./SettingBtn";
 
 export default function SingleDoc(props: PropsType) {
   // TODO::declare and define component state and variables
@@ -168,35 +169,12 @@ export default function SingleDoc(props: PropsType) {
               <CloudDownloadOutlinedIcon />
             </IconButton>
           </Tooltip>
-          {/* delete */}
-          <Tooltip title="Delete File">
-            <IconButton
-              sx={{
-                position: "absolute",
-                top: "0%",
-                left: "0%",
-                borderRadius: "3px",
-              }}
-              onClick={() => handleDeleteFile()}
-              color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-          {/* edit */}
-          <Tooltip title="Edit File">
-            <IconButton
-              sx={{
-                position: "absolute",
-                top: "0%",
-                right: "0%",
-                boxShadow: "0px 4px 9.5px 0px #0000001F",
-                borderRadius: "3px",
-              }}
-              onClick={() => handleEdit()}
-            >
-              <BorderColorOutlinedIcon />
-            </IconButton>
+          {/* Setting */}
+          <Tooltip title="Setting">
+            <FileSettingBtn
+              handleDeleteFile={handleDeleteFile}
+              handleEdit={handleEdit}
+            />
           </Tooltip>
         </Box>
         {/* File information */}
