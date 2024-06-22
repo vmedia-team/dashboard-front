@@ -63,10 +63,10 @@ export default function ConfirmDeleteDialog(props: PropsType) {
           />
           <Box pl={3}>
             <Typography variant="body1" fontSize={18} fontWeight={600}>
-              برجاء الملاحظة
+              تنويه
             </Typography>
             <Typography variant="body2" fontSize={14} fontWeight={500}>
-              الفولدر الذي ترغب بحذفه يحتوي علي ملفات بداخله
+              المجلد الذي ترغب بحذفه يحتوي على ملفات بداخله
             </Typography>
           </Box>
         </Stack>

@@ -157,16 +157,16 @@ export default function NestedDirectoryDialog(props: dialogProps) {
         textAlign={"center"}
         marginTop={2}
       >
-        اضافة فولدر / تعديل
+        اضافة/تعديل مجلد 
       </Typography>
       <DialogContent>
         {/* directory name */}
-        <AddLabelToEl label="اسم الفولدر">
+        <AddLabelToEl label="اسم المجلد">
           <TextField
             disabled={loading}
             size="small"
             {...register("name")}
-            placeholder="اسم الفولدر"
+            placeholder="اسم المجلد"
           />
         </AddLabelToEl>
         {/* directory icon */}

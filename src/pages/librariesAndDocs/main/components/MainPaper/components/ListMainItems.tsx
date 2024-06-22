@@ -25,7 +25,7 @@ export default function ListMainItems() {
   } = useContext(LibraryMainPageContext);
   const addDirectoryItem: LibrariesMainPageItemType = {
     id: "add_new_directory_113",
-    name: "اضافة فولدر / تعديل",
+    name: "اضافة/تعديل مجلد",
     type: 1,
     files_count: 0,
     is_deletable: 0,
