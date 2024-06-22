@@ -159,16 +159,16 @@ export default function AddEditLibDialog(props: dialogProps) {
         textAlign={"center"}
         marginTop={2}
       >
-        اضافة فولدر / تعديل
+        اضافة/تعديل مجلد
       </Typography>
       <DialogContent>
         {/* directory name */}
-        <AddLabelToEl label="اسم الفولدر">
+        <AddLabelToEl label="اسم المجلد">
           <TextField
             disabled={loading}
             size="small"
             {...register("name")}
-            placeholder="اسم الفولدر"
+            placeholder="اسم المجلد"
           />
         </AddLabelToEl>
         {/* directory icon */}
@@ -191,7 +191,7 @@ export default function AddEditLibDialog(props: dialogProps) {
                 <Stack
                   direction={"row"}
                   alignItems={"center"}
-                  sx={{ cursor: "pointer" }}
+                  sx={{ cursor: "pointer",my:1 }}
                   component={`a`}
                   href={`${selectedDirectoryToEdit?.media?.[0]?.original_url}`}
                   target="_blank"
@@ -208,9 +208,9 @@ export default function AddEditLibDialog(props: dialogProps) {
                     {selectedDirectoryToEdit?.media?.[0]?.name}
                   </Typography>
                 </Stack>
-                <IconButton color="error">
+                {/* <IconButton color="error">
                   <DeleteIcon />
-                </IconButton>
+                </IconButton> */}
               </Stack>
             )}
           <CustomFilePond

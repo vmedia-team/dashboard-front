@@ -93,7 +93,7 @@ export default function ChooseTypeDialog(props: dialogProps) {
                 }}
               />
             }
-            label="أنشاء فولدر"
+            label="أنشاء مجلد"
           />
         </RadioGroup>
       </DialogContent>

@@ -70,7 +70,7 @@ export default function MainItem(props: PropsType) {
             boxShadow: "0px 1px 4px 2px lightgray",
           }}
         >
-          {props.item.type == 1 ? "علني" : "مخصص"}
+          {props.item.type == 1 ? "عامة" : "خاصة"}
         </Box>
         <img
           src={props.item?.media?.[0]?.original_url ?? folderImg}
