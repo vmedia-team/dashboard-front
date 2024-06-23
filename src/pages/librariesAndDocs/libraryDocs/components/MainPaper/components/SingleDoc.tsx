@@ -12,6 +12,7 @@ import axios from "axios";
 import { Api } from "../../../../../../constants";
 import ConfirmDeleteFileDialog from "./ConfirmDeleteFile";
 import { Tooltip } from "@mui/material";
+import { useSnackbar } from "notistack";
 
 export default function SingleDoc(props: PropsType) {
   // TODO::declare and define component state and variables
@@ -29,6 +30,7 @@ export default function SingleDoc(props: PropsType) {
     let idx = props.file?.media?.[0]?.original_url.lastIndexOf(".");
     extention = props.file?.media?.[0]?.original_url.substring(idx + 1);
   }
+  const { enqueueSnackbar } = useSnackbar();
   //* get and prepare file type
   let fileType: MediaType = props.file?.media?.[0]?.original_url?.includes(
     ".pdf"
@@ -113,7 +115,11 @@ export default function SingleDoc(props: PropsType) {
             ></iframe>
           ) : (
             <img
-              src={props.file?.media?.[0]?.original_url ?? fileImg}
+              src={
+                extention !== "zip" && props.file?.media?.[0]?.original_url
+                  ? props.file?.media?.[0]?.original_url
+                  : fileImg
+              }
               width={100}
               height={100}
               alt="file name"
@@ -131,9 +137,11 @@ export default function SingleDoc(props: PropsType) {
               borderRadius: "0px",
             }}
             color={
-              extention == "pdf"
+              extention === "pdf"
                 ? "info"
-                : extention == "null"
+                : extention === "zip"
+                ? "secondary"
+                : extention === "null"
                 ? "error"
                 : "warning"
             }
@@ -155,7 +163,6 @@ export default function SingleDoc(props: PropsType) {
             </IconButton>
           </Tooltip>
           {/* Setting */}
-          
         </Box>
         {/* File information */}
         <Stack
@@ -164,8 +171,14 @@ export default function SingleDoc(props: PropsType) {
             cursor: "pointer",
           }}
           onClick={(e) => {
-            handleSetActiveFile(props.file);
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            if (extention !== "zip") {
+              handleSetActiveFile(props.file);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            } else {
+              enqueueSnackbar("الملف مضغوط لذلك لا يمكن عرضه", {
+                variant: "info",
+              });
+            }
           }}
         >
           <Typography variant="body1">{fileName}</Typography>
