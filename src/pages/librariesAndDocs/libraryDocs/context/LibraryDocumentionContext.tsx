@@ -40,6 +40,9 @@ export const LibraryDocumentionContext =
     handleSetActiveBranchId: (id) => {},
     searchLoadingState: false,
     mainDirectory: undefined,
+    openDeleteDialog: false,
+    handleHideShowDeleteDialog: (open) => {},
+    deleteSelectedFiles: () => {},
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -62,6 +65,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     LibrariesMainPageItemType | undefined
   >(undefined); //to store selected (nested) directory to edit
   const [openDialog, setOpenDialog] = useState(false); //to handle and control add/edit dialog
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false); //to handle and control delete dialog
   const [editFile, setEditFile] = useState(false); //to control state of dialog edit or create
   const [selectedFilesIds, setSelectedFilesIds] = useState<number[]>([]); //to control selected files
   const [activeFileToShow, setActiveFileToShow] = useState<
@@ -147,6 +151,10 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     setOpenDialog(open);
   }
 
+  function handleHideShowDeleteDialog(open: boolean) {
+    setOpenDeleteDialog(open);
+  }
+
   /**
    * add new file to library files
    * @param file DocumentationFileType
@@ -176,6 +184,12 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   function deleteFile(id: number) {
     let arr = files?.filter((ele) => ele.id != id);
     setFiles(arr);
+  }
+
+  function deleteSelectedFiles() {
+    let n = selectedFilesIds.length;
+    for (let i = 0; i < n; i++) deleteFile(selectedFilesIds[i]);
+    setSelectedFilesIds([]);
   }
   /**
    * check file id in selected files ids or not
@@ -323,6 +337,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         handleSetActiveBranchId,
         searchLoadingState,
         mainDirectory,
+        openDeleteDialog,
+        handleHideShowDeleteDialog,
+        deleteSelectedFiles,
       }}
     >
       {children}
@@ -371,4 +388,7 @@ type LibraryDocumentionContextType = {
   handleSetActiveBranchId(id: number): void;
   searchLoadingState: boolean;
   mainDirectory: LibrariesMainPageItemType | undefined;
+  openDeleteDialog: boolean;
+  handleHideShowDeleteDialog(open: boolean): void;
+  deleteSelectedFiles(): void;
 };

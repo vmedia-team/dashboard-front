@@ -8,25 +8,20 @@ import { LibraryDocumentionContext } from "../../../context/LibraryDocumentionCo
 import { useLocation } from "react-router-dom";
 import { Chip } from "@mui/material";
 import CloudDownloadOutlinedIcon from "@mui/icons-material/CloudDownloadOutlined";
-import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import axios from "axios";
 import { Api } from "../../../../../../constants";
 import ConfirmDeleteFileDialog from "./ConfirmDeleteFile";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { Tooltip } from "@mui/material";
-import FileSettingBtn from "./SettingBtn";
 
 export default function SingleDoc(props: PropsType) {
   // TODO::declare and define component state and variables
   const location = useLocation(); //to get incomming location state
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const {
     handleSetActiveFile,
     checkedFileIdInSelectedFiles,
     toggleFileIdFormSelectedFiles,
-    handleOenDialog,
-    handleSetEditFile,
     typeOfSelectedFiles,
+    openDeleteDialog,
   } = useContext(LibraryDocumentionContext); //get needed data from our context
   //* get and prepare file extention
   let extention = "null";
@@ -68,16 +63,6 @@ export default function SingleDoc(props: PropsType) {
         })
         .catch((err) => {});
     }
-  };
-
-  const handleDeleteFile = () => {
-    setOpenDeleteDialog(true);
-  };
-  const handleEdit = () => {
-    handleSetEditFile(true);
-    console.log("breakpoint1999 file", props.file);
-    handleSetActiveFile(props.file);
-    handleOenDialog(true);
   };
 
   //*return component state
@@ -170,12 +155,7 @@ export default function SingleDoc(props: PropsType) {
             </IconButton>
           </Tooltip>
           {/* Setting */}
-          <Tooltip title="Setting">
-            <FileSettingBtn
-              handleDeleteFile={handleDeleteFile}
-              handleEdit={handleEdit}
-            />
-          </Tooltip>
+          
         </Box>
         {/* File information */}
         <Stack
@@ -203,11 +183,7 @@ export default function SingleDoc(props: PropsType) {
           <Box bgcolor={"#D2DCEA"}>عدد التحميل : {props.file?.downloaded}</Box>
         </Stack>
       </Stack>
-      <ConfirmDeleteFileDialog
-        open={openDeleteDialog}
-        setOpen={setOpenDeleteDialog}
-        file={props.file}
-      />
+      <ConfirmDeleteFileDialog open={openDeleteDialog} />
     </>
   );
 }

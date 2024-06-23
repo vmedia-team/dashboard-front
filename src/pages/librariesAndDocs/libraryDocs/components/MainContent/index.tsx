@@ -23,6 +23,7 @@ export default function MainContentIndex() {
     mainDirectory,
     handleOenDialog,
     handleSetEditFile,
+    handleHideShowDeleteDialog,
   } = useContext(LibraryDocumentionContext);
 
   useEffect(() => {
@@ -87,11 +88,11 @@ export default function MainContentIndex() {
                     تعديل
                   </Button>
                   <Button
-                    disabled={selectedFilesIds?.length == 0}
+                    disabled={selectedFilesIds?.length === 0}
                     color="error"
                     variant="outlined"
                     endIcon={<DeleteIcon />}
-                    // onClick={handleDelete}
+                    onClick={() => handleHideShowDeleteDialog(true)}
                   >
                     حذف
                   </Button>
