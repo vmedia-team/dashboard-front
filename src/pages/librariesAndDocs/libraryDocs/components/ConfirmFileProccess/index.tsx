@@ -3,7 +3,10 @@ import {
   Button,
   DialogActions,
   DialogContent,
+  Divider,
+  Grid,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Dialog } from "@mui/material";
@@ -21,6 +24,8 @@ import { useSnackbar } from "notistack";
 
 export default function ConfirmFileProccess(props: PropsType) {
   // TODO::declare and define state and variables
+  const [fileName, setFileName] = useState("");
+  const [fileNameError, setFileNameError] = useState(false);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { files, selectedFilesIds } = useContext(LibraryDocumentionContext);
@@ -41,12 +46,26 @@ export default function ConfirmFileProccess(props: PropsType) {
   const handleFileProcessing = () => {
     setLoading(true);
     let url =
-      props.operationType == "Merge"
+      props.operationType === "Merge"
         ? "employee/library/file-process/merge"
-        : "employee/library/file-process/compress";
+        : "employee/library/file/compress";
+
+    let body =
+      props.operationType === "Merge"
+        ? { ids: selectedFilesIds }
+        : { ids: selectedFilesIds, name: fileName };
+    //check in compress case file name is founded
+    if (props.operationType === "Compress") {
+      if (!fileName) {
+        setFileNameError(true);
+        setLoading(false);
+        return;
+      }
+    }
+
     axios
       .post(Api(url), {
-        ids: selectedFilesIds,
+        ...body,
       })
       .then((response) => {
         enqueueSnackbar("تم اجراء العملية بنجاح");
@@ -82,21 +101,47 @@ export default function ConfirmFileProccess(props: PropsType) {
             <Typography variant="body1" fontSize={18} fontWeight={600}>
               سوف تقوم بعملية {props.operationType} للملفات الاتية
             </Typography>
-            <List>
-              {filesList.length == 0 && (
-                <Typography variant="body2" color={"warning"}>
-                  انت لم تقوم باختيار اي ملف
-                </Typography>
+            <Stack width={'100%'} direction={"row"} justifyContent={"space-around"}>
+              <Box width={props.operationType === "Compress" ? "48%" : "100%"}>
+                <List>
+                  {filesList.length == 0 && (
+                    <Typography variant="body2" color={"warning"}>
+                      انت لم تقوم باختيار اي ملف
+                    </Typography>
+                  )}
+                  {filesList.map((ele) => (
+                    <ListItem key={ele.id} disablePadding>
+                      <ListItemIcon>
+                        <InsertDriveFileOutlinedIcon color="primary" />
+                      </ListItemIcon>
+                      <ListItemText primary={ele.name} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+
+              {props.operationType === "Compress" && (
+                <>
+                  <Divider orientation="vertical" flexItem />
+                  <Box width={"48%"} mx={1}>
+                    <TextField
+                      id="standard-basic"
+                      label="أدخل أسم الملف"
+                      variant="standard"
+                      value={fileName}
+                      onChange={(e) => setFileName(e.target.value)}
+                      error={fileNameError}
+                      fullWidth
+                      helperText={
+                        fileNameError
+                          ? "اسم الملف مطلوب."
+                          : "اسم الملف الناتج من عملية compress"
+                      }
+                    />
+                  </Box>
+                </>
               )}
-              {filesList.map((ele) => (
-                <ListItem key={ele.id} disablePadding>
-                  <ListItemIcon>
-                    <InsertDriveFileOutlinedIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText primary={ele.name} />
-                </ListItem>
-              ))}
-            </List>
+            </Stack>
           </Box>
         </Stack>
       </DialogContent>

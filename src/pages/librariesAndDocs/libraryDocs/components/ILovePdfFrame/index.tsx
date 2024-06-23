@@ -67,7 +67,7 @@ export default function ILovePdfFrameIndex(props: PropsType) {
           borderRadius: "12px",
         }}
       ></iframe>
-      {typeOfSelectedFiles == "PDF" && (
+      {typeOfSelectedFiles === "PDF" && (
         <Stack
           width={"98%"}
           direction={"row"}
