@@ -1,4 +1,11 @@
-import { Grid, Button, Checkbox, FormControlLabel, Stack } from "@mui/material";
+import {
+  Grid,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Stack,
+  ButtonGroup,
+} from "@mui/material";
 import LibraryDocsMainPaper from "../MainPaper";
 import ILovePdfFrameIndex from "../ILovePdfFrame";
 import { useContext, useEffect, useState } from "react";
@@ -7,6 +14,9 @@ import LibrariesLoading from "../../../main/components/loading";
 import { MainBreadCrumbContext } from "../../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CopyAllIcon from "@mui/icons-material/CopyAll";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
+import ContentPasteGoIcon from "@mui/icons-material/ContentPasteGo";
 
 export default function MainContentIndex() {
   // todo::declare and define helper state and variables....
@@ -59,24 +69,30 @@ export default function MainContentIndex() {
                 justifyContent={"space-between"}
                 alignItems={"center"}
               >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={
-                        selectedFilesIds?.length == files?.length &&
-                        files?.length != 0
-                      }
-                      onChange={() => SelectAll()}
-                      name="select_all"
-                    />
-                  }
-                  label={
-                    selectedFilesIds?.length == files?.length &&
-                    files?.length != 0
-                      ? "ازالة تحديد الكل"
-                      : "تحديد الكل"
-                  }
-                />
+                <ButtonGroup variant="text" aria-label="library files btns">
+                  <Button startIcon={<CopyAllIcon />}>نسخ</Button>
+                  <Button startIcon={<ContentCutIcon />}>قص</Button>
+                  <Button startIcon={<ContentPasteGoIcon />}>لصق</Button>
+                  <FormControlLabel
+                    sx={{ mx: 0.5 }}
+                    control={
+                      <Checkbox
+                        checked={
+                          selectedFilesIds?.length == files?.length &&
+                          files?.length != 0
+                        }
+                        onChange={() => SelectAll()}
+                        name="select_all"
+                      />
+                    }
+                    label={
+                      selectedFilesIds?.length == files?.length &&
+                      files?.length != 0
+                        ? "ازالة تحديد الكل"
+                        : "تحديد الكل"
+                    }
+                  />
+                </ButtonGroup>
                 <Stack direction={"row"} spacing={1}>
                   <Button
                     disabled={selectedFilesIds?.length != 1}
