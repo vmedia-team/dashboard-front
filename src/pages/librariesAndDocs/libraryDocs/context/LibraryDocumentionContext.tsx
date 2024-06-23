@@ -13,31 +13,31 @@ export const LibraryDocumentionContext =
     libraryId: 1,
     files: [],
     openDialog: false,
-    handleOenDialog: (open) => { },
-    addNewDocumentation: (file) => { },
-    editExistDocumentation: (file) => { },
+    handleOenDialog: (open) => {},
+    addNewDocumentation: (file) => {},
+    editExistDocumentation: (file) => {},
     selectedFilesIds: [],
     checkedFileIdInSelectedFiles: (id) => true,
-    toggleFileIdFormSelectedFiles: (id) => { },
+    toggleFileIdFormSelectedFiles: (id) => {},
     activeFileToShow: undefined,
-    handleSetActiveFile: (file) => { },
-    handleSearch: (name) => { },
-    SelectAll: () => { },
+    handleSetActiveFile: (file) => {},
+    handleSearch: (name) => {},
+    SelectAll: () => {},
     editFile: false,
-    handleSetEditFile: (isEdit) => { },
-    deleteFile: (id) => { },
+    handleSetEditFile: (isEdit) => {},
+    deleteFile: (id) => {},
     typeOfSelectedFiles: undefined,
     nestedDirectories: [],
     NestedDirectoryOpenDialog: false,
     selectedNestedDirectory: undefined,
-    handleSetNestedDirectoryOpenDialog: (open) => { },
-    handleSetSelectedNestedDirectory: (directory) => { },
-    addNewDirectory: (directory) => { },
-    editExistDirectory: (directory) => { },
-    deleteDirectory: (directory) => { },
+    handleSetNestedDirectoryOpenDialog: (open) => {},
+    handleSetSelectedNestedDirectory: (directory) => {},
+    addNewDirectory: (directory) => {},
+    editExistDirectory: (directory) => {},
+    deleteDirectory: (directory) => {},
     branchesData: [],
     activeBranchId: -1,
-    handleSetActiveBranchId: (id) => { },
+    handleSetActiveBranchId: (id) => {},
     searchLoadingState: false,
     mainDirectory: undefined,
   });
@@ -78,7 +78,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
       .then((response) => {
         if (response?.branches) setBranchesData(response?.branches);
       })
-      .catch(() => { });
+      .catch(() => {});
     //get main directory data
     axios
       .get<{
@@ -89,7 +89,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
           setMainDirectory(response.data.folder);
         }
       })
-      .catch((err) => { });
+      .catch((err) => {});
   }, []);
   useEffect(() => getLibraryDocs(), [libraryId]);
   useEffect(() => {
@@ -103,9 +103,11 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
             setTypeOfSelectedFiles("Image");
           }
         }
+        setActiveFileToShow(file);
       }
     } else if (selectedFilesIds.length == 0) {
       setTypeOfSelectedFiles(undefined);
+      setActiveFileToShow(undefined);
     }
   }, [selectedFilesIds]);
   // TODO::declare and define our helper methods
@@ -122,7 +124,8 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         folders?: LibrariesMainPageItemType[];
       }>(
         Api(
-          `employee/library/file/files-by-folder/${libraryId}${params ? "?" + params : ""
+          `employee/library/file/files-by-folder/${libraryId}${
+            params ? "?" + params : ""
           }`
         )
       )
@@ -132,7 +135,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
           setNestedDirectories(response.data.folders);
         }
       })
-      .catch((err) => { })
+      .catch((err) => {})
       .finally(() => setSearchLoadingState(false));
   }
 
@@ -189,6 +192,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
    */
   function toggleFileIdFormSelectedFiles(id: number) {
     let exist = checkedFileIdInSelectedFiles(id);
+    console.log("This is Target Place");
 
     if (exist) {
       setSelectedFilesIds((prev) => prev.filter((ele) => ele != id));
@@ -202,6 +206,9 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
    * @param file DocumentationFileType
    */
   function handleSetActiveFile(file: DocumentationFileType | undefined) {
+    if (file === undefined) {
+      if (selectedFilesIds.length === 1) setSelectedFilesIds([]);
+    }
     setActiveFileToShow(file);
   }
 
@@ -350,7 +357,9 @@ type LibraryDocumentionContextType = {
   NestedDirectoryOpenDialog: boolean;
   selectedNestedDirectory: LibrariesMainPageItemType | undefined;
   handleSetNestedDirectoryOpenDialog(open: boolean): void;
-  handleSetSelectedNestedDirectory(directory: LibrariesMainPageItemType | undefined): void;
+  handleSetSelectedNestedDirectory(
+    directory: LibrariesMainPageItemType | undefined
+  ): void;
   addNewDirectory(directory: LibrariesMainPageItemType): void;
   editExistDirectory(directory: LibrariesMainPageItemType): void;
   deleteDirectory(directory: LibrariesMainPageItemType): void;
