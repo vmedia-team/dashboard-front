@@ -77,9 +77,6 @@ export default function SingleDoc(props: PropsType) {
       >
         {/* checkbox */}
         <Checkbox
-          disabled={
-            typeOfSelectedFiles != undefined && typeOfSelectedFiles != fileType
-          }
           checked={checkedFileIdInSelectedFiles(props.file.id)}
           onChange={(e) => {
             toggleFileIdFormSelectedFiles(props.file.id);

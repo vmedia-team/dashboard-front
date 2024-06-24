@@ -64,6 +64,7 @@ export default function MainContentIndex() {
     handleSetEditFile(true);
     handleOenDialog(true);
   };
+  
   const handleCopyFiles = () => {
     //check there are a selected file(s)
     if (selectedFilesIds.length === 0) {

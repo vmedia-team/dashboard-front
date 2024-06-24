@@ -24,6 +24,7 @@ export default function ILovePdfFrameIndex(props: PropsType) {
     handleSetActiveFile,
     selectedFilesIds,
     typeOfSelectedFiles,
+    selectedIdsHaveImage,
   } = useContext(LibraryDocumentionContext);
 
   // TODO::declare and define helper methods
@@ -31,7 +32,6 @@ export default function ILovePdfFrameIndex(props: PropsType) {
     setOperationType(type);
     setOpenConfirmDialog(true);
   };
-
 
   useEffect(() => {}, [props.fileUrl]);
   // TODO::return component ui
@@ -67,13 +67,13 @@ export default function ILovePdfFrameIndex(props: PropsType) {
           borderRadius: "12px",
         }}
       ></iframe>
-      {typeOfSelectedFiles === "PDF" && (
-        <Stack
-          width={"98%"}
-          direction={"row"}
-          justifyContent={"space-around"}
-          alignItems={"center"}
-        >
+      <Stack
+        width={"98%"}
+        direction={"row"}
+        justifyContent={"space-around"}
+        alignItems={"center"}
+      >
+        {typeOfSelectedFiles === "PDF" && !selectedIdsHaveImage && (
           <Stack
             spacing={1}
             sx={{
@@ -98,32 +98,33 @@ export default function ILovePdfFrameIndex(props: PropsType) {
               عدد الملفات المحددة : {selectedFilesIds.length} ملفات
             </Typography>
           </Stack>
-          <Stack
-            spacing={1}
-            sx={{
-              p: 2,
-              cursor: "pointer",
-              border: "2px solid gold",
-              borderRadius: "12px",
+        )}
+        {/* merge will appear with only pdf files */}
+        <Stack
+          spacing={1}
+          sx={{
+            p: 2,
+            cursor: "pointer",
+            border: "2px solid gold",
+            borderRadius: "12px",
+          }}
+          onClick={() => handleClick("Compress")}
+        >
+          <img
+            src={compressImg}
+            width={68}
+            height={68}
+            alt="merge pdf"
+            style={{
+              width: "94px",
+              height: "77px",
             }}
-            onClick={() => handleClick("Compress")}
-          >
-            <img
-              src={compressImg}
-              width={68}
-              height={68}
-              alt="merge pdf"
-              style={{
-                width: "94px",
-                height: "77px",
-              }}
-            />
-            <Typography variant="body2" fontSize={10}>
-              عدد الملفات المحددة : {selectedFilesIds.length} ملفات
-            </Typography>
-          </Stack>
+          />
+          <Typography variant="body2" fontSize={10}>
+            عدد الملفات المحددة : {selectedFilesIds.length} ملفات
+          </Typography>
         </Stack>
-      )}
+      </Stack>
       <ConfirmFileProccess
         open={openConfirmDialog}
         setOpen={setOpenConfirmDialog}

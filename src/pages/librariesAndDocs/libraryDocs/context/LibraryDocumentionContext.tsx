@@ -48,6 +48,7 @@ export const LibraryDocumentionContext =
     canPaste: 0,
     handleTransferFile: () => {},
     handlePasteFile: (files) => {},
+    selectedIdsHaveImage: false,
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -82,6 +83,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
   const [activeBranchId, setActiveBranchId] = useState(-1); //to control current active button
   const [canCopy, setCanCopy] = useState(0); //to handle user can copy or not
   const [canPaste, setCanPaste] = useState(0); //to handle user can paste or not
+  const [selectedIdsHaveImage, setSelectedIdsHaveImage] = useState(false); //to know selected files have an image or not to control show and hide merge btn
 
   useEffect(() => {
     // * get branches data
@@ -117,9 +119,27 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         setActiveFileToShow(file);
       }
     } else if (selectedFilesIds.length == 0) {
+      setSelectedIdsHaveImage(true);
       setTypeOfSelectedFiles(undefined);
       setActiveFileToShow(undefined);
     }
+
+    //check selectedFilesIds contains images
+    let haveImg = false,
+      len = selectedFilesIds.length;
+    for (let i = 0; i < len; i++) {
+      let _file = files?.find((ele) => ele.id === selectedFilesIds[i]);
+      if (_file && _file?.media?.[0]?.original_url)
+        if (
+          _file?.media?.[0]?.original_url.includes(".png") ||
+          _file?.media?.[0]?.original_url.includes(".jpg") ||
+          _file?.media?.[0]?.original_url.includes(".jpeg")
+        ) {
+          haveImg = true;
+          break;
+        }
+    }
+    setSelectedIdsHaveImage(haveImg);
   }, [selectedFilesIds]);
   // TODO::declare and define our helper methods
   /**
@@ -375,6 +395,7 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         canPaste,
         handleTransferFile,
         handlePasteFile,
+        selectedIdsHaveImage,
       }}
     >
       {children}
@@ -430,4 +451,5 @@ type LibraryDocumentionContextType = {
   canPaste: number;
   handleTransferFile(): void;
   handlePasteFile(pasted_files: DocumentationFileType[]): void;
+  selectedIdsHaveImage: boolean;
 };
