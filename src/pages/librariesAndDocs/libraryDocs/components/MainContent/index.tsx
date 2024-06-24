@@ -17,13 +17,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CopyAllIcon from "@mui/icons-material/CopyAll";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
 import ContentPasteGoIcon from "@mui/icons-material/ContentPasteGo";
+import { useSnackbar } from "notistack";
+import axios from "axios";
+import { Api } from "../../../../../constants";
+import { DocumentationFileType } from "../../../../../types/librariesAndDocs/DocumentationFile";
 
 export default function MainContentIndex() {
   // todo::declare and define helper state and variables....
-  const { handleAddNewTerm, handleClearLinks } = useContext(
-    MainBreadCrumbContext
-  );
-  const [loading, _] = useState(false);
   const {
     SelectAll,
     selectedFilesIds,
@@ -34,7 +34,17 @@ export default function MainContentIndex() {
     handleOenDialog,
     handleSetEditFile,
     handleHideShowDeleteDialog,
+    canCopy,
+    canPaste,
+    handleTransferFile,
+    handlePasteFile,
+    deleteSelectedFiles,
   } = useContext(LibraryDocumentionContext);
+  const [loading, _] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
   useEffect(() => {
     // set breadcrumb terms
@@ -54,6 +64,67 @@ export default function MainContentIndex() {
     handleSetEditFile(true);
     handleOenDialog(true);
   };
+  const handleCopyFiles = () => {
+    //check there are a selected file(s)
+    if (selectedFilesIds.length === 0) {
+      enqueueSnackbar("قم بتحديد الملف/الملفات اولا", {
+        variant: "warning",
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    // start copy process
+    axios
+      .post(Api(`employee/library/file/copy`), {
+        ids: selectedFilesIds,
+      })
+      .then(() => {
+        handleTransferFile();
+        enqueueSnackbar("تم نسخ الملف/الملفات للحافظة بنجاح");
+      })
+      .catch((err) => {
+        enqueueSnackbar("تعذر النسخ فى الحافظة", { variant: "error" });
+      });
+  };
+
+  const handleCutFiles = () => {
+    //check there are a selected file(s)
+    if (selectedFilesIds.length == 0) {
+      enqueueSnackbar("قم بتحديد الملف/الملفات اولا", {
+        variant: "warning",
+        autoHideDuration: 3000,
+      });
+      return;
+    }
+    // start cut process
+    axios
+      .post(Api(`employee/library/file/cut`), {
+        ids: selectedFilesIds,
+      })
+      .then(() => {
+        handleTransferFile();
+        deleteSelectedFiles();
+        enqueueSnackbar("تم نقل الملف/الملفات للحافظة بنجاح");
+      })
+      .catch((err) => {
+        enqueueSnackbar("تعذر النقل فى الحافظة", { variant: "error" });
+      });
+  };
+
+  const handlePaste = () => {
+    axios
+      .post<{ pasted_files: DocumentationFileType[] }>(
+        Api(`employee/library/file/paste/${mainDirectory?.id}`)
+      )
+      .then((response) => {
+        console.log("response1011::", response);
+        handlePasteFile(response.data?.pasted_files ?? []);
+        enqueueSnackbar("تم", { autoHideDuration: 2000 });
+      })
+      .catch((err) => {
+        enqueueSnackbar("تعذر", { variant: "error", autoHideDuration: 2000 });
+      });
+  };
 
   return (
     <Grid container>
@@ -70,9 +141,27 @@ export default function MainContentIndex() {
                 alignItems={"center"}
               >
                 <ButtonGroup variant="text" aria-label="library files btns">
-                  <Button startIcon={<CopyAllIcon />}>نسخ</Button>
-                  <Button startIcon={<ContentCutIcon />}>قص</Button>
-                  <Button startIcon={<ContentPasteGoIcon />}>لصق</Button>
+                  <Button
+                    onClick={handleCopyFiles}
+                    disabled={!canCopy}
+                    startIcon={<CopyAllIcon />}
+                  >
+                    نسخ
+                  </Button>
+                  <Button
+                    onClick={handleCutFiles}
+                    disabled={!canCopy}
+                    startIcon={<ContentCutIcon />}
+                  >
+                    قص
+                  </Button>
+                  <Button
+                    onClick={handlePaste}
+                    disabled={!canPaste}
+                    startIcon={<ContentPasteGoIcon />}
+                  >
+                    لصق
+                  </Button>
                   <FormControlLabel
                     sx={{ mx: 0.5 }}
                     control={

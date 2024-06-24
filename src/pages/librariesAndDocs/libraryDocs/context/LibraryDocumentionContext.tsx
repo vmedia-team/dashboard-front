@@ -6,6 +6,7 @@ import { Api } from "../../../../constants";
 import { DocumentationFileType } from "../../../../types/librariesAndDocs/DocumentationFile";
 import { LibrariesMainPageItemType } from "../../main/components/MainPaper/components/MianItemsData";
 import { getUseData } from "../../../../methods/getUseData";
+import { number } from "zod";
 
 // * create context
 export const LibraryDocumentionContext =
@@ -43,6 +44,10 @@ export const LibraryDocumentionContext =
     openDeleteDialog: false,
     handleHideShowDeleteDialog: (open) => {},
     deleteSelectedFiles: () => {},
+    canCopy: 0,
+    canPaste: 0,
+    handleTransferFile: () => {},
+    handlePasteFile: (files) => {},
   });
 
 export function LibraryDocumentionContextProvider({ children }: PropsType) {
@@ -75,6 +80,8 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     { id: number; name: string }[]
   >([]); //to store branches data
   const [activeBranchId, setActiveBranchId] = useState(-1); //to control current active button
+  const [canCopy, setCanCopy] = useState(0); //to handle user can copy or not
+  const [canPaste, setCanPaste] = useState(0); //to handle user can paste or not
 
   useEffect(() => {
     // * get branches data
@@ -126,6 +133,8 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
       .get<{
         files: DocumentationFileType[];
         folders?: LibrariesMainPageItemType[];
+        canCopy: number;
+        canPaste: number;
       }>(
         Api(
           `employee/library/file/files-by-folder/${libraryId}${
@@ -135,6 +144,8 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
       )
       .then((response) => {
         setFiles(response.data.files);
+        setCanCopy(response.data?.canCopy ?? 0);
+        setCanPaste(response.data?.canPaste ?? 0);
         if (response.data?.folders) {
           setNestedDirectories(response.data.folders);
         }
@@ -304,6 +315,26 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
     setActiveBranchId(id);
   }
 
+  /**
+   * prepare context state to transfer(copy/cut) file
+   */
+  function handleTransferFile() {
+    setCanCopy(0);
+    setCanPaste(1);
+  }
+
+  /**
+   * prepare context state to paste file, u can copy again
+   */
+  function handlePasteFile(pasted_files: DocumentationFileType[]) {
+    for (let i = 0; i < pasted_files.length; i++) {
+      addNewDocumentation(pasted_files[i]);
+    }
+    setCanCopy(1);
+    setCanPaste(0);
+    setSelectedFilesIds([]);
+  }
+
   return (
     <LibraryDocumentionContext.Provider
       value={{
@@ -340,6 +371,10 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
         openDeleteDialog,
         handleHideShowDeleteDialog,
         deleteSelectedFiles,
+        canCopy,
+        canPaste,
+        handleTransferFile,
+        handlePasteFile,
       }}
     >
       {children}
@@ -391,4 +426,8 @@ type LibraryDocumentionContextType = {
   openDeleteDialog: boolean;
   handleHideShowDeleteDialog(open: boolean): void;
   deleteSelectedFiles(): void;
+  canCopy: number;
+  canPaste: number;
+  handleTransferFile(): void;
+  handlePasteFile(pasted_files: DocumentationFileType[]): void;
 };

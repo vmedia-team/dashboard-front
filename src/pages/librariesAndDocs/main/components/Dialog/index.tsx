@@ -230,7 +230,7 @@ export default function AddEditLibDialog(props: dialogProps) {
             name="row-radio-buttons-group"
           >
             <FormControlLabel
-              value="علني"
+              value="عامة"
               disabled={loading}
               control={
                 <Radio
@@ -243,10 +243,10 @@ export default function AddEditLibDialog(props: dialogProps) {
                   }}
                 />
               }
-              label="علني"
+              label="عامة"
             />
             <FormControlLabel
-              value="مخصص"
+              value="خاصة"
               disabled={loading}
               control={
                 <Radio
@@ -259,7 +259,7 @@ export default function AddEditLibDialog(props: dialogProps) {
                   }}
                 />
               }
-              label="مخصص"
+              label="خاصة"
             />
           </RadioGroup>
         </AddLabelToEl>
