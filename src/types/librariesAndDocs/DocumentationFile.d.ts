@@ -13,4 +13,5 @@ export type DocumentationFileType = {
   downloaded: number;
   media: Media[];
   employees?: { id: number; name: string }[];
+  updateable?: number;
 };
