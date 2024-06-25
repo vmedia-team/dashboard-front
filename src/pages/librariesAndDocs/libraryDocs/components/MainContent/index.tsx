@@ -61,10 +61,35 @@ export default function MainContentIndex() {
 
   // todo::declare and define helper methods
   const handleEdit = () => {
-    handleSetEditFile(true);
-    handleOenDialog(true);
+    // check file is updatable or not?
+    if (activeFileToShow?.updateable === 0) {
+      enqueueSnackbar("هذا الملف غير قابل لتعديل", { variant: "error" });
+      return;
+    } else {
+      handleSetEditFile(true);
+      handleOenDialog(true);
+    }
   };
-  
+
+  const handleDelete = () => {
+    // check all files are deletable??
+    let allDeletable = true,
+      n = selectedFilesIds.length;
+    for (let i = 0; i < n; i++) {
+      let file = files.find((ele) => ele.id === selectedFilesIds[i]);
+      if (file && file?.updateable === 0) {
+        allDeletable = false;
+        break;
+      }
+    }
+    if (allDeletable) handleHideShowDeleteDialog(true);
+    else {
+      enqueueSnackbar("هناك ملفات ضمن الملفات المحددة لا يمكن حذفها", {
+        variant: "error",
+      });
+    }
+  };
+
   const handleCopyFiles = () => {
     //check there are a selected file(s)
     if (selectedFilesIds.length === 0) {
@@ -198,7 +223,7 @@ export default function MainContentIndex() {
                     color="error"
                     variant="outlined"
                     endIcon={<DeleteIcon />}
-                    onClick={() => handleHideShowDeleteDialog(true)}
+                    onClick={handleDelete}
                   >
                     حذف
                   </Button>

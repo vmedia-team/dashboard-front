@@ -6,7 +6,7 @@ import { Api } from "../../../../constants";
 import { DocumentationFileType } from "../../../../types/librariesAndDocs/DocumentationFile";
 import { LibrariesMainPageItemType } from "../../main/components/MainPaper/components/MianItemsData";
 import { getUseData } from "../../../../methods/getUseData";
-import { number } from "zod";
+
 
 // * create context
 export const LibraryDocumentionContext =
@@ -213,13 +213,13 @@ export function LibraryDocumentionContextProvider({ children }: PropsType) {
    * @param id number
    */
   function deleteFile(id: number) {
-    let arr = files?.filter((ele) => ele.id != id);
+    let arr = files?.filter((ele) => ele.id !== id);
     setFiles(arr);
   }
 
   function deleteSelectedFiles() {
-    let n = selectedFilesIds.length;
-    for (let i = 0; i < n; i++) deleteFile(selectedFilesIds[i]);
+    let arr = files?.filter((ele) => selectedFilesIds.indexOf(ele.id) === -1);
+    setFiles(arr);
     setSelectedFilesIds([]);
   }
   /**
