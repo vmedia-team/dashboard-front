@@ -64,7 +64,7 @@ function DetailsView(): JSX.Element {
             />
             <Grid item lg={6} xs={12}>
               <Typography component={"label"}>اسم العميل</Typography>
-              <Tooltip title={soilData?.client?.phone} placement="top">
+              <Tooltip title={soilData?.client?.phone} placement="top-start">
                 <Typography fontWeight={700} variant="body1">
                   {soilData?.client?.name}
                 </Typography>
