@@ -42,6 +42,7 @@ type SoilOrder = {
   payment_status: null;
   long: number;
   lat: number;
+  created_by: string;
 };
 
 type License = {
