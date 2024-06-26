@@ -40,4 +40,5 @@ export interface Client {
   contracts_count?: number;
   contract_status?: string;
   contract_status_id?: number;
+  phone: string;
 }

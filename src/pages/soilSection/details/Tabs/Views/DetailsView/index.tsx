@@ -1,5 +1,12 @@
 import { useContext, useMemo, useRef, useState } from "react";
-import { Grid, GridProps, Typography, Box, Button } from "@mui/material";
+import {
+  Grid,
+  GridProps,
+  Typography,
+  Box,
+  Button,
+  Tooltip,
+} from "@mui/material";
 import AddLabelToEl from "../../../../../../components/AddLabelToEl";
 import { SoilDataContext } from "../../..";
 import { formatDate } from "../../../../../../methods";
@@ -55,7 +62,14 @@ function DetailsView(): JSX.Element {
               label="تاريخ الطلب"
               value={formatDate(soilData?.created_at)}
             />
-            <InfoItem label="اسم العميل" value={soilData?.client?.name} />
+            <Grid item lg={6} xs={12}>
+              <Typography component={"label"}>اسم العميل</Typography>
+              <Tooltip title={soilData?.client?.phone} placement="top">
+                <Typography fontWeight={700} variant="body1">
+                  {soilData?.client?.name}
+                </Typography>
+              </Tooltip>
+            </Grid>
             <InfoItem
               label="اسم الخدمة"
               value={soilData?.soil_order?.type_order.name}
@@ -76,7 +90,10 @@ function DetailsView(): JSX.Element {
               label="عدد الجسات"
               value={soilData?.soil_order?.number_bodies}
             />
-            <InfoItem label="الاجمالي" value={soilData?.soil_order?.price} />
+            <InfoItem
+              label="اسم منشيْ الطلب"
+              value={soilData?.soil_order?.created_by}
+            />
             <InfoItem
               label="الاجمالي المطلوب"
               value={soilData?.soil_order?.total_price}
