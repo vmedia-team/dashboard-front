@@ -6,7 +6,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Api } from "../../../../constants";
 import { NavLink } from "react-router-dom";
@@ -18,6 +18,7 @@ import { LaravelPagination } from "../../../../types/LaravelPagination";
 import DeleteDialog from "./DeleteDialog";
 import { useSnackbar } from "notistack";
 import SearchIcon from "@mui/icons-material/Search";
+import { MainBreadCrumbContext } from "../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 interface AnnouncementsGetRoot {
   announcements?: LaravelPagination<Announcement[]>;
@@ -105,6 +106,9 @@ type ParamsType = {
 function AnnouncementsPage() {
   //Hooks
   const { enqueueSnackbar } = useSnackbar();
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
   // State
   const [announcements, setAnnouncements] = useState<
@@ -118,6 +122,16 @@ function AnnouncementsPage() {
     setParams({ ...params, ...p });
 
   const requestAnnouncements = () => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "اعدادات التطبيق",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "الاعلانات",
+      path: "/",
+    });
     getAnnouncements(params).then(({ data, current_page, last_page }) => {
       setAnnouncements(data);
       updateParams({ page: current_page, totalPages: last_page });

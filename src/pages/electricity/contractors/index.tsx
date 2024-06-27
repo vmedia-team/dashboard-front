@@ -13,9 +13,10 @@ import { useSnackbar } from "notistack";
 import CreateEditDailog from "./components/CreateEditDailog";
 import Loader from "../../../components/Loading/Loader";
 import NotFound from "../../../components/NotFound";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 export default function ElectricityConstractors() {
-  // declare my state
+  // todo::declare and define component state and variables
   const [search, setSearch] = useState("");
   const [itemsLoading, setItemsLoading] = useState(true);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -26,6 +27,9 @@ export default function ElectricityConstractors() {
   const [envoyDialogOpen, setEnvoyDialogOpen] = useState<
     "none" | "edit" | "create"
   >("none");
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
   const handleCloseEnvoyDialog = () => setEnvoyDialogOpen("none");
   const openCreateContractorDialog = () => {
@@ -108,7 +112,17 @@ export default function ElectricityConstractors() {
   };
 
   useEffect(() => {
-    console.log("Search", search);
+    // todo::set breadcrumb terms
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "كهرباء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "المقاولين",
+      path: "/",
+    });
     setLoading();
     getContractorsData();
   }, []);

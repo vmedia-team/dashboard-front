@@ -1,6 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SearchBar from "./components/SearchBar";
-import { Box, Button, Typography, Breadcrumbs, Paper, Link, Stack, Tab, Tabs as MuiTabs} from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Breadcrumbs,
+  Paper,
+  Link,
+  Stack,
+  Tab,
+  Tabs as MuiTabs,
+} from "@mui/material";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import DataTableOfWorkOrders from "./components/DataTable";
 import EditIcon from "@mui/icons-material/Edit";
@@ -13,10 +23,10 @@ import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/Loading/Loader";
 import NotFound from "../../../components/NotFound";
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 import Views from "./Views";
-
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 // function handleClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
 //   event.preventDefault();
@@ -28,8 +38,6 @@ export enum TabsEnum {
   ONGOING = "ongoing",
 }
 
-
-
 export default function FollowUpEmployees() {
   // TODO::Declare our variables
   const [search, setSearch] = useState("");
@@ -40,18 +48,19 @@ export default function FollowUpEmployees() {
   const { enqueueSnackbar } = useSnackbar();
   const navigator = useNavigate();
   const [tab, setTab] = useState<TabsEnum>(TabsEnum.INCOMING);
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
   const handleChange = (event: React.SyntheticEvent, newValue: TabsEnum) => {
     setTab(newValue);
   };
 
-
-
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/" >
+    <Link underline="hover" key="1" color="inherit" href="/">
       لوحة التحكم
     </Link>,
-    
+
     <Typography key="3" color="text.primary">
       متابعة الموظفين
     </Typography>,
@@ -67,9 +76,7 @@ export default function FollowUpEmployees() {
     }
     axios
       .get<{ work_type_instructions: WorkOrderType[] }>(
-        Api(
-          `employee/type-work-instruction${params}`
-        )
+        Api(`employee/type-work-instruction${params}`)
       )
       .then(({ data }) => {
         console.log("Response data:-", data);
@@ -120,6 +127,16 @@ export default function FollowUpEmployees() {
 
   // TODO::fetch data of work order types
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "كهرباء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "متابعة الموظفين",
+      path: "/",
+    });
     getData();
   }, []);
 
@@ -161,22 +178,14 @@ export default function FollowUpEmployees() {
   return (
     <>
       <SearchBar search={search} setSearch={setSearch} getData={getData} />
-      
+
       <Breadcrumbs
-         separator={<NavigateNextIcon fontSize="small" />}
-         aria-label="breadcrumb"
-         dir="rtl"
+        separator={<NavigateNextIcon fontSize="small" />}
+        aria-label="breadcrumb"
+        dir="rtl"
       >
-      {breadcrumbs}
+        {breadcrumbs}
       </Breadcrumbs>
-
-
-
-
-
-
-
-
 
       <Paper
         sx={{
@@ -204,17 +213,16 @@ export default function FollowUpEmployees() {
 
         </Box> */}
 
-<Stack>
-      {/* Tabs Navigation */}
-      <MuiTabs value={tab} onChange={handleChange}>
-        <Tab value={TabsEnum.INCOMING} label="التقارير" />
-        <Tab value={TabsEnum.ONGOING} label="الخريطة" />
-        <Tab value={TabsEnum} label="المرفقات" />
-      </MuiTabs>
-      {/* View */}
-      <Views tab={tab} />
-    </Stack>
-        
+        <Stack>
+          {/* Tabs Navigation */}
+          <MuiTabs value={tab} onChange={handleChange}>
+            <Tab value={TabsEnum.INCOMING} label="التقارير" />
+            <Tab value={TabsEnum.ONGOING} label="الخريطة" />
+            <Tab value={TabsEnum} label="المرفقات" />
+          </MuiTabs>
+          {/* View */}
+          <Views tab={tab} />
+        </Stack>
       </Paper>
     </>
   );

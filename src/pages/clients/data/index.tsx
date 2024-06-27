@@ -1,6 +1,6 @@
 import { Stack, Typography, Box, Paper, Button } from "@mui/material";
 import SearchBar from "./SearchBar";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Api } from "../../../constants";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -13,9 +13,13 @@ import LoadingTable from "../../../components/LoadingTable";
 import NotFound from "../../../components/NotFound";
 import { Client } from "../../../types/Clients";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 function ClientData() {
   const [open, setOpen] = useState(false);
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
   // search bar
   const [requests, setRequests] = useState<Client[] | "loading" | "error">(
     "loading"
@@ -49,6 +53,16 @@ function ClientData() {
   const deleteDisabled = selectedItems.length === 0 || anyClientHasContracts;
   const updateDisabled = selectedItems.length !== 1;
   function getRequests(advancedSearchParams?: unknown) {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "العملاء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "بيانات العملاء",
+      path: "/",
+    });
     setRequests("loading");
     axios
       .get<{ data: Client[] }>(Api("employee/client"), {

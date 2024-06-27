@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
@@ -14,6 +14,7 @@ import { Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/Loading/Loader";
 import NotFound from "../../../components/NotFound";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 export default function WorkOrderPage() {
   // TODO::Declare our variables
@@ -24,7 +25,23 @@ export default function WorkOrderPage() {
   const [loading, setLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const navigator = useNavigate();
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
+  // todo::set breadcrumb terms
+  useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "كهرباء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "أنواع أوامر العمل",
+      path: "/",
+    });
+  }, []);
   //TODO::declaration of helper functions
   const getData = () => {
     setLoading(true);
@@ -35,9 +52,7 @@ export default function WorkOrderPage() {
     }
     axios
       .get<{ work_type_instructions: WorkOrderType[] }>(
-        Api(
-          `employee/type-work-instruction${params}`
-        )
+        Api(`employee/type-work-instruction${params}`)
       )
       .then(({ data }) => {
         console.log("Response data:-", data);

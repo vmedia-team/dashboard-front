@@ -4,17 +4,39 @@ import TendersTable from "./Table";
 import TendersFilters from "./Filters";
 import Counters from "./Counters";
 import { TenderTableContextProvider } from "./TableContext";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CreateDialog from "./CreateDialog";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 function TendersData() {
+  // todo::declare and define component state and variables
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
+
+  // todo::set breadcrumb terms
+  useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "مشاريعي",
+      path: "/react/tenders",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "منافسات",
+      path: "/",
+    });
+  }, []);
+
   function handleOpenCreateDialog() {
     setOpenCreateDialog(true);
   }
   function handleCloseCreateDialog() {
     setOpenCreateDialog(false);
   }
+
+  // * return component ui.
   return (
     <TenderTableContextProvider>
       <Stack>

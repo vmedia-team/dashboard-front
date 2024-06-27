@@ -3,13 +3,14 @@ import { CommunicationPerson } from "../../../../types/CommunicationPeople";
 import { LaravelPagination } from "../../../../types/LaravelPagination";
 import axios from "axios";
 import { Api } from "../../../../constants";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CommunicationCard from "./CommunicationCard";
 import CenteredPagination from "../../../../components/CenteredPagination";
 import { useSnackbar } from "notistack";
 import AddDialog from "./Dialog/AddDialog";
 import AddIcon from "@mui/icons-material/Add";
 import Table from "./Table";
+import { MainBreadCrumbContext } from "../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 interface RootResponse {
   message: string;
@@ -31,6 +32,9 @@ function GetCommunication(params?: unknown): Promise<RootResponse> {
 }
 
 function CommunicationPeople() {
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
   const [communication, setCommunications] = useState<RootResponse | undefined>(
     undefined
   );
@@ -57,6 +61,16 @@ function CommunicationPeople() {
       });
   }
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "اعدادات التطبيق",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "تواصل معنا",
+      path: "/",
+    });
     CommunicationData();
   }, []);
   // useEffect(() => {

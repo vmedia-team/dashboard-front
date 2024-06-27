@@ -10,7 +10,7 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Api } from "../../../../constants";
 import { NavLink } from "react-router-dom";
@@ -25,6 +25,7 @@ import {
 } from "../../../../types/MobileServices";
 import { z } from "zod";
 import ServiceMedia from "../set-service/ServiceMedia";
+import { MainBreadCrumbContext } from "../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 export interface Root {
   mobile_services: unknown[];
@@ -162,8 +163,21 @@ function MobileServicesMainPage() {
   const [params, setParams] = useState<ParamsType>({});
   const updateParams = (p: Partial<ParamsType>) =>
     setParams({ ...params, ...p });
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
   const requestServices = () => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "اعدادات التطبيق",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "خدمات التطبيق",
+      path: "/",
+    });
     getServices(params).then((services) => {
       setServices(services);
     });

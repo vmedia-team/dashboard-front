@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
@@ -13,6 +13,7 @@ import axios from "axios";
 import { Api } from "../../../constants";
 import { useSnackbar } from "notistack";
 import { work_instruction } from "../../../types/electricity/work_instruction";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 const WorkOrdersPage = () => {
   // TODO::Declare our component state
@@ -23,6 +24,9 @@ const WorkOrdersPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const navigator = useNavigate();
   const [items, setItems] = useState<work_instruction[]>([]);
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
   //TODO::declare helpers varables
   const AddBtn = (
@@ -78,6 +82,16 @@ const WorkOrdersPage = () => {
   };
 
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "كهرباء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "أوامر العمل",
+      path: "/",
+    });
     getData();
   }, []);
 

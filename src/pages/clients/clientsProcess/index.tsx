@@ -1,6 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import TabsAndAdd from "./TabsAndAdd";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Paper } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
@@ -11,6 +11,7 @@ import { FormData } from "./types/FormData";
 import { OrderType } from "./types/OrderType";
 import LevelsPlaceholder from "../../../components/PlaceHolder/LevelsPlaceholder";
 import { useSnackbar } from "notistack";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 const InitLevel: StepType = {
   branch_id: 0,
@@ -34,6 +35,9 @@ const ClientProcess = () => {
   const [process, setProcess] = useState<ProcedureType>({
     levels: [InitLevel],
   });
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
   const { enqueueSnackbar } = useSnackbar();
 
   const getFormData = () => {
@@ -108,6 +112,16 @@ const ClientProcess = () => {
   };
 
   const loadLevels = () => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "العملاء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "اجراءات العملاء",
+      path: "/",
+    });
     setEndPointStatus("loading");
     getFormData().then(getLevels).catch();
   };

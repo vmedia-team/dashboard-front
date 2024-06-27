@@ -1,6 +1,6 @@
 import { Stack, Typography, Paper } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import LevelItem from "./LevelItem/LevelItem";
 import { ProceduresModelsType, Step } from "./types";
@@ -14,6 +14,7 @@ import LevelsPlaceholder from "../../../components/PlaceHolder/LevelsPlaceholder
 import { EmployeeType } from "../../../types";
 import { conversions } from "../../../methods/conversions";
 import { useSnackbar } from "notistack";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 const InitLevel: Step = {
   action: 0,
@@ -40,6 +41,10 @@ function EmploeesRequestsProcedures() {
   const [employees, setEmployees] = useState<Partial<EmployeeType>[] | null>(
     null
   );
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
+
   useEffect(loadLevels, [currentTab]);
 
   return (
@@ -169,6 +174,16 @@ function EmploeesRequestsProcedures() {
   }
 
   function loadLevels() {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "العملاء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "طلبات الموظفين",
+      path: "/",
+    });
     setLevels([]);
     setendpointStatus("loading");
 

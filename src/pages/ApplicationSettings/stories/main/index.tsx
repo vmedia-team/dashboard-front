@@ -2,11 +2,12 @@ import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { Story } from "../../../../types/Stories";
 import axios from "axios";
 import { Api } from "../../../../constants";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import StoryCard from "./StoryCard";
 import AddIcon from "@mui/icons-material/Add";
 import { NavLink } from "react-router-dom";
+import { MainBreadCrumbContext } from "../../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 interface Root {
   stories: Story[];
@@ -26,6 +27,9 @@ async function getStories(params?: unknown): Promise<Story[]> {
 }
 
 function StoriesPage() {
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
   const { enqueueSnackbar } = useSnackbar();
   const [stories, setStories] = useState<undefined | Story[]>(undefined);
 
@@ -39,6 +43,16 @@ function StoriesPage() {
   }
 
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "اعدادات التطبيق",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "القصص",
+      path: "/",
+    });
     seedStories();
   }, []);
 
