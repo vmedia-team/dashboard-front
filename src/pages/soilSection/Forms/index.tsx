@@ -1,14 +1,31 @@
 import { Stack } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SeparatedAccordion } from "../../../components/SeparatedAccordion";
 import CoveredSites from "./Covered sites";
 import AreaSites from "./Area sites";
 import AddRoles from "./Add Floors";
 import { SoilContextProvider } from "../SoilContext";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 function FormsSection() {
   const [dialogState, setDialogState] = useState<DialogState>("none");
   const [expanded, setExpanded] = useState<undefined | number>(undefined);
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
+
+  useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "الاعدادات",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "اعدادات التربة",
+      path: "/",
+    });
+  }, []);
 
   const closeDialog = () => {
     setDialogState("none");

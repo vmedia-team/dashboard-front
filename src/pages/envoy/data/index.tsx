@@ -11,6 +11,7 @@ import { Envoy } from "../../../types/Envoys/Envoy";
 import { Api } from "../../../constants";
 import axios from "axios";
 import { useSnackbar } from "notistack";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 const EnvoysDataPage = () => (
   <EnvoysContextProvider>
@@ -19,6 +20,10 @@ const EnvoysDataPage = () => (
 );
 
 function Consumer() {
+  // todo::declare and define component state and variables
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
   const [search, setSearch] = useState("");
   const [envoyDialogOpen, setEnvoyDialogOpen] = useState<
     "none" | "edit" | "create"
@@ -63,6 +68,16 @@ function Consumer() {
   };
 
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "الكهرباء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "المناديب",
+      path: "/",
+    });
     setLoading();
     getEnvoysData();
   }, []);

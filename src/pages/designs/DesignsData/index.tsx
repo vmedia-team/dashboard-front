@@ -2,16 +2,32 @@ import { Stack } from "@mui/material";
 import ClassificationCard from "../../DesignReports/components/classificationCard/ClassificationCard";
 import ClassificationCardContainer from "./ClassificationCard/ClassificationCardContainer";
 import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import Views from "./Views";
 import axios from "axios";
 import { Api } from "../../../constants";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 function DesignDataPage() {
   const [currentTab, setCurrentTab] = useState(1);
   const [counts, setCounts] = useState<undefined | Counts>(undefined);
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
+
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "الخدمات",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "خدمات التصاميم",
+      path: "/",
+    });
+
     axios
       .get<Counts>(Api("client/design"), { headers: { from: "dashboard" } })
       .then(({ data }) => {

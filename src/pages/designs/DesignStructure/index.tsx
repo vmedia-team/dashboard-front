@@ -12,7 +12,7 @@ import AddLabelToEl from "../../../components/AddLabelToEl";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import { Api } from "../../../constants";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormStatus } from "../../../types/FormStatus";
 import { TextFieldProps } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -20,6 +20,7 @@ import CustomFilePond from "../../../components/CustomFilepond";
 import { FileBondState } from "../../../types/FileBondState";
 import { Media } from "../../../types";
 import { serialize } from "object-to-formdata";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 const GridItem = (props: GridProps) => (
   <Grid sx={{ padding: "0.5rem" }} item md={6} {...props} />
@@ -31,6 +32,10 @@ function DesignStructurePage() {
   const [banner, setBanner] = useState<FileBondState>([]);
   const { enqueueSnackbar } = useSnackbar();
   const [bannerUploadedImages, setBannerUploadedImages] = useState<Media[]>([]);
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
+
   const handleFormSubmit = handleSubmit((formData) => {
     setFormStatus("loading");
     axios
@@ -61,6 +66,17 @@ function DesignStructurePage() {
   useEffect(getStructureDesignData, []);
 
   function getStructureDesignData() {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "الخدمات",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "هيكل تصميم المباني",
+      path: "/",
+    });
+
     setFormStatus("loading");
     axios
       .get<{ strucre_designs: StructureDesign }>(Api("client/strucre-design"), {

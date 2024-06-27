@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Api } from "../../../constants";
 import { Box, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useContext, useEffect, useReducer, useRef, useState } from "react";
 import LoadingTable from "../../../components/LoadingTable";
 import { PanelData, StepStatusData } from "./types";
 import reducer, { FiltersInit } from "./Filter/reducer";
@@ -20,6 +20,7 @@ import ReportDialog from "./Dialogs/reportDialog";
 import TestDialog from "./Dialogs/testDialog";
 import VisitDialog from "./Dialogs/visitDialog";
 import AcceptDialog from "./Dialogs/acceptDialog";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 const ClientRequests = () => {
   const tableRef: React.RefObject<HTMLTableElement> =
@@ -29,6 +30,9 @@ const ClientRequests = () => {
       window.print();
     }
   };
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
   const [filters, dispatch] = useReducer(reducer, FiltersInit);
   const [currentTab, setCurrentTab] = useState<string>("");
   const [requests, setRequests] = useState<
@@ -147,6 +151,16 @@ const ClientRequests = () => {
   };
 
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "العملاء",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "طلبات العملاء",
+      path: "/",
+    });
     getRequests();
     getFormData();
   }, [

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Api } from "../../../constants";
 import axios from "axios";
 import BranchImage from "../../../assets/images/branch_image.jpg";
@@ -18,13 +18,27 @@ import {
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { NavLink } from "react-router-dom";
 import BranchLoadingPlaceholder from "./BranchLoadingPlaceholder";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 function VacationsSettings() {
   const [vacationsArr, setVacationsData] = useState<
     VacationsArr[] | "error" | "loading" | "none"
   >("none");
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
 
   useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "الاعدادات",
+      path: "/",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "اعدادات الاجازات",
+      path: "/",
+    });
     setVacationsData("loading");
     axios
       .get<{ date: VacationsArr[] }>(Api("employee/vacation"))

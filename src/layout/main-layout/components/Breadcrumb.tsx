@@ -23,7 +23,7 @@ function Breadcrumb() {
     <Breadcrumbs separator={<NavigateBeforeIcon />}>
       {links?.map((term, idx) => (
         <Button
-          disabled={idx == links.length - 1}
+          disabled={idx == links.length - 1 || term?.disabled === true}
           sx={{ fontWeight: 700 }}
           onClick={() => handleClick(term, idx)}
         >

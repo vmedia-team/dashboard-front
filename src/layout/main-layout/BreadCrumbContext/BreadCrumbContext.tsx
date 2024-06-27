@@ -4,9 +4,9 @@ import { createContext } from "react";
 // * create context
 export const MainBreadCrumbContext = createContext<MainBreadCrumbContextType>({
   links: [],
-  handleAddNewTerm: (term) => { },
-  handleClearLinks: () => { },
-  handleClickOnTerm: (index) => { }
+  handleAddNewTerm: (term) => {},
+  handleClearLinks: () => {},
+  handleClickOnTerm: (index) => {},
 });
 
 export function MainBreadCrumbContextProvider({ children }: PropsType) {
@@ -51,11 +51,12 @@ type PropsType = {
 export type BreadCrumbLinkType = {
   title: string;
   path: string;
+  disabled?: boolean;
 };
 
 type MainBreadCrumbContextType = {
   links: BreadCrumbLinkType[];
   handleAddNewTerm(term: BreadCrumbLinkType): void;
   handleClearLinks(): void;
-  handleClickOnTerm(index: number): void
+  handleClickOnTerm(index: number): void;
 };
