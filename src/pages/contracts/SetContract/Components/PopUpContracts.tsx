@@ -91,7 +91,7 @@ export default function PopUpContracts(props: PropType) {
                   value={type.id}
                   control={<Radio />}
                   label={type.name}
-                  disabled={type.name !== "ادخال مباشر"}
+                  disabled={type.id !== 1 && type.id !== 5}
                   onChange={(e: React.SyntheticEvent<Element, Event>) => {
                     setIsChecked("4");
                   }}
@@ -102,11 +102,15 @@ export default function PopUpContracts(props: PropType) {
           <Button
             variant="contained"
             component={NavLink}
-            to={`create/${contract_id}`}
+            to={
+              contract_id == 1
+                ? `create/${contract_id}`
+                : `standardContract/${contract_id}`
+            }
             sx={{ my: 5 }}
             disabled={!!!isChecked}
           >
-            الذهاب لصفحة الادخال المباشر
+            الذهاب لصفحة الادخال
           </Button>
         </Box>
       </DialogContent>

@@ -50,6 +50,7 @@ import MobileServicesMainPage from "./pages/ApplicationSettings/services/main";
 import SetMobileServicePage from "./pages/ApplicationSettings/services/set-service";
 import LibrariesAndDocsMainIndex from "./pages/librariesAndDocs/main";
 import LibraryDocsIndex from "./pages/librariesAndDocs/libraryDocs";
+import SetStandredContract from "./pages/contracts/setStandredContract";
 
 function RoutesComponent() {
   const { hasPermission, hasAnyOfPermissions } = usePermissions();
@@ -208,10 +209,16 @@ function RoutesComponent() {
           )}
           {/* <Route path="add" element={<ContractsNotFound />} /> */}
           {hasPermission(Permission.CONTRACTS_CREATE) && (
-            <Route
-              path="create/:type"
-              element={<CreateContracts type="create" />}
-            />
+            <>
+              <Route
+                path="create/:type"
+                element={<CreateContracts type="create" />}
+              />
+              <Route
+                path="standardContract/:type"
+                element={<SetStandredContract />}
+              />
+            </>
           )}
           <Route path=":id">
             {hasPermission(Permission.CONTRACTS_VIEW) && (
