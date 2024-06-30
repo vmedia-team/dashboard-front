@@ -50,6 +50,7 @@ import MobileServicesMainPage from "./pages/ApplicationSettings/services/main";
 import SetMobileServicePage from "./pages/ApplicationSettings/services/set-service";
 import LibrariesAndDocsMainIndex from "./pages/librariesAndDocs/main";
 import LibraryDocsIndex from "./pages/librariesAndDocs/libraryDocs";
+import LettersMainPage from "./pages/letters/main";
 
 function RoutesComponent() {
   const { hasPermission, hasAnyOfPermissions } = usePermissions();
@@ -108,6 +109,9 @@ function RoutesComponent() {
         <Route path="mytasks" element={<MyTasks />} />
         <Route path="envoy">
           <Route path="" element={<EnvoysDataPage />} />
+        </Route>
+        <Route path="letters">
+          <Route path="" element={<LettersMainPage />} />
         </Route>
         <Route path="electricity">
           <Route path="contractors" element={<ElectricityConstractors />} />
