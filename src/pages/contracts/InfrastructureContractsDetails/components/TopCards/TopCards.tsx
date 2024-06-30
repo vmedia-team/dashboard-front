@@ -7,15 +7,19 @@ import {
   Typography,
 } from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
-import DoneAndReminder from "./DoneAndReminder";
+import DoneAndReminder from "../DoneAndReminder";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import EditRaioDialog from "./EditDialog";
+import EditRaioDialog from "../EditDialog";
 import { useContext, useMemo, useState } from "react";
 import "./TopCards.scss";
-import { ContractDetailsContext } from "..";
-import { useUser } from "../../../../contexts/user/user";
-import { EmployeeType } from "../../../../types";
-import { TransactionType } from "../../../../types/Contracts/ContractTransactionAttachment";
+import { ContractDetailsContext } from "../..";
+import { useUser } from "../../../../../contexts/user/user";
+import { EmployeeType } from "../../../../../types";
+import { TransactionType } from "../../../../../types/Contracts/ContractTransactionAttachment";
+import NumberOfTransaction from "./directContract/NumberOfTransaction";
+import OverallCompletionRate from "./directContract/OverallCompletionRate";
+import NumberOfPermits from "./StandardContract/NumberOfPermits";
+import WorkOrderStatistics from "./StandardContract/WorkOrderStatistics";
 
 interface Item {
   id: number;
@@ -401,137 +405,17 @@ export default function TopCards() {
         </Box>
       </Box>
       {/* Third Card */}
-      <Box
-        sx={{
-          width: "15%",
-          background: "linear-gradient(-45deg, #cddae8, transparent)",
-          minHeight: "200px",
-          padding: "8px",
-          borderRadius: "8px",
-        }}
-      >
-        <Typography
-          variant="body1"
-          fontSize={15}
-          fontWeight={700}
-          marginBottom={1}
-        >
-          ارقام المعاملات
-        </Typography>
-        <Box
-          sx={{
-            height: "150px",
-            display: "flex",
-            justifyContent: "start",
-            flexDirection: "column",
-            overflowY: "auto",
-            scrollBehavior: "smooth",
-            scrollbarWidth: "thin",
-          }}
-        >
-          {allProcessing?.map((processing) => {
-            return (
-              <Box key={processing.id} display={"flex"} marginY={2}>
-                <Typography
-                  color={"primary.main"}
-                  variant="body2"
-                  fontSize={14}
-                  fontWeight={500}
-                  marginX={1}
-                >
-                  {processing.receiver}
-                </Typography>
-                <Typography
-                  color={"secondary.main"}
-                  variant="body2"
-                  fontSize={14}
-                  fontWeight={500}
-                >
-                  {processing.id}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Box>
-      </Box>
+      {/* infrestructure contract */}
+      <NumberOfTransaction allProcessing={allProcessing} />
+      {/* in standared contract */}
+      {/* <NumberOfPermits /> */}
+
       {/* Forth Card */}
-      <Box
-        sx={{
-          width: "30%",
-          background: "linear-gradient(45deg, #cddae8, transparent)",
-          minHeight: "200px",
-          padding: "8px",
-          borderRadius: "8px",
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-        }}
-      >
-        <Typography
-          variant="body1"
-          fontSize={15}
-          fontWeight={700}
-          marginBottom={1}
-        >
-          نسب الانجاز الكلية
-        </Typography>
-        {user?.employee_id === contract?.employee_id && (
-          <Button
-            sx={{
-              bgcolor: "#fff",
-              position: "absolute",
-              right: "5%",
-              boxShadow: "1px 1px 2px 2px lightgray",
-              transition: "all 0.5 ease-in-out",
-              ":hover": {
-                color: "#fff",
-                bgcolor: "primary.main",
-                transform: "scale(1.056)",
-              },
-            }}
-            startIcon={<SettingsOutlinedIcon />}
-            onClick={() => setOpenDialog(true)}
-          >
-            تعديل
-          </Button>
-        )}
-        <Grid container sx={{ paddingBottom: "1rem" }}>
-          <Grid item xs={4}>
-            <DoneAndReminder column={true} />
-          </Grid>
-          <Grid item xs={8} sx={{ marginTop: "3.4rem" }}>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "start",
-                position: "relative",
-                paddingX: "1rem",
-              }}
-              className="RatioCircularProgress"
-            >
-              <CircularProgress
-                style={{ width: "90px" }}
-                variant="determinate"
-                color={"warning"}
-                value={contract?.achievement_percentage}
-              />
-              <Typography
-                sx={{
-                  position: "absolute",
-                  fontSize: "18px",
-                  fontWeight: 900,
-                  top: "8px",
-                }}
-                color={"warning"}
-                variant="body2"
-              >
-                {contract?.achievement_percentage}%
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
+      <OverallCompletionRate
+        setOpenDialog={setOpenDialog}
+        contract={contract}
+      />
+      {/* <WorkOrderStatistics /> */}
 
       <EditRaioDialog open={openDialog} setOpen={setOpenDialog} />
     </Grid>

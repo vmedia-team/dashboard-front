@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, Grid } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import MainPandHeader from "./MainPandHeader";
-import "../../../../components/TopCards.scss";
+import "../../../../components/TopCards/TopCards.scss";
 import SubPandsList from "./SubPansList";
 import InternalTabs, { TabType } from "../tabs";
 import Transactions from "../tabs/Transactions";

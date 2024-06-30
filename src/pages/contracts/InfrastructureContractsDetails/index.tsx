@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import TopCards from "./components/TopCards";
+import TopCards from "./components/TopCards/TopCards";
 import { Backdrop, Button, Grid, Stack } from "@mui/material";
 import TabsButtons from "./components/TabsButtons";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
