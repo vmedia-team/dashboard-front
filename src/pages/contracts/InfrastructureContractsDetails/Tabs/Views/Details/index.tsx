@@ -11,7 +11,7 @@ import { useContext, useState } from "react";
 import ForumSharpIcon from "@mui/icons-material/ForumSharp";
 // import ChatBox from "../components/ChatBox";
 import KeyboardArrowDownSharpIcon from "@mui/icons-material/KeyboardArrowDownSharp";
-import "../../../components/TopCards.scss";
+import "../../../components/TopCards/TopCards.scss";
 import { ContractDetailsContext } from "../../..";
 import AddLabelToEl from "../../../../../../components/AddLabelToEl";
 import ChatBox from "../../../components/ChatBox";
