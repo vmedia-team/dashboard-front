@@ -10,11 +10,14 @@ import {
   TextField,
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
-import AddLabelToEl from "../../../../../components/AddLabelToEl";
 import { LoadingButton } from "@mui/lab";
-import CustomFilePond from "../../../../../components/CustomFilepond";
+import AddLabelToEl from "../../../../../../components/AddLabelToEl";
 
-function SetDialog({ open, setOpen }: PropsType) {
+function SetDialog(props: PropsType) {
+  // TODO::declare and define component state and variables here.
+  let { open, setOpen } = props;
+  // TODO::declare and define component helper methods here.
+  // * return component UI.
   return (
     <>
       <Dialog
@@ -25,6 +28,7 @@ function SetDialog({ open, setOpen }: PropsType) {
         // onSubmit={handleSubmit}
         maxWidth={"sm"}
       >
+        {/* close dialog */}
         <IconButton
           size="small"
           sx={{
@@ -39,21 +43,26 @@ function SetDialog({ open, setOpen }: PropsType) {
         >
           <GridCloseIcon fontSize="inherit" />
         </IconButton>
+
         <DialogTitle textAlign={"center"} fontWeight={600}>
           اضافة مرفق
         </DialogTitle>
+
         <DialogContent>
           <Grid container spacing={2}>
+            {/* name */}
             <Grid item xs={6}>
               <AddLabelToEl label={"اسم المرفق"} required>
                 <TextField size="small" />
               </AddLabelToEl>
             </Grid>
+            {/* code */}
             <Grid item xs={6}>
               <AddLabelToEl label={"رقم المرفق"} required>
                 <TextField size="small" />
               </AddLabelToEl>
             </Grid>
+            {/* type */}
             <Grid item xs={6}>
               <AddLabelToEl label={"نوع المرفق"}>
                 <Select size={"small"}>
@@ -61,26 +70,28 @@ function SetDialog({ open, setOpen }: PropsType) {
                 </Select>
               </AddLabelToEl>
             </Grid>
+            {/* attachments files */}
             <Grid item xs={6}>
               <AddLabelToEl label={"ارفاق ملف"}>
                 {/* <Controller
-                  name="image"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomFilePond
-                      {...field}
-                      onupdatefiles={(files) => {
-                        field.onChange(files.map((file) => file.file)?.[0]);
-                      }}
-                      allowMultiple={false}
-                      maxFiles={1}
-                    />
-                  )}
-                /> */}
+                    name="image"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomFilePond
+                        {...field}
+                        onupdatefiles={(files) => {
+                          field.onChange(files.map((file) => file.file)?.[0]);
+                        }}
+                        allowMultiple={false}
+                        maxFiles={1}
+                      />
+                    )}
+                  /> */}
               </AddLabelToEl>
             </Grid>
           </Grid>
         </DialogContent>
+
         <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
           <LoadingButton variant="contained" type="submit">
             اضافة

@@ -1,54 +1,34 @@
-import { AccordionDetails, AccordionSummary } from "@mui/material";
-import { Accordion } from "@mui/material";
-import { Stack, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ContructData from "./FormSection/ContructData";
-import TableAmountAndValue from "./TableSection/TableAmountAndValue";
-import TableAttachmentContruct from "./TableSection/TableAttachmentContruct";
+import { useContext, useEffect } from "react";
+import EntryPointStandredContract from "./EntryPoint";
+import { StandredContractContextProvider } from "./context/StandredContractContext";
+import { MainBreadCrumbContext } from "../../../layout/main-layout/BreadCrumbContext/BreadCrumbContext";
 
 function SetStandredContract() {
+  // TODO::declare and define component state and variables
+  const { handleAddNewTerm, handleClearLinks } = useContext(
+    MainBreadCrumbContext
+  );
+
+  
+  // todo::set breadcrumb terms
+  useEffect(() => {
+    handleClearLinks();
+    handleAddNewTerm({
+      title: "لوحة التحكم",
+      path: "",
+      disabled: true,
+    });
+    handleAddNewTerm({
+      title: "العقود الموحدة",
+      path: "/",
+    });
+  }, []);
+
+  // return component ui
   return (
-    <Stack>
-      <Typography variant="h5" fontWeight={600} mb={3}>
-        انشاء عقد موحد
-      </Typography>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-          بيانات العقد
-        </AccordionSummary>
-        <AccordionDetails>
-          <ContructData />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2-content"
-          id="panel2-header"
-        >
-          الكميات والقيمة المالية والبنود
-        </AccordionSummary>
-        <AccordionDetails>
-          <TableAmountAndValue />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2-content"
-          id="panel2-header"
-        >
-          مرفقات العقد
-        </AccordionSummary>
-        <AccordionDetails>
-          <TableAttachmentContruct />
-        </AccordionDetails>
-      </Accordion>
-    </Stack>
+    <StandredContractContextProvider>
+      <EntryPointStandredContract />
+    </StandredContractContextProvider>
   );
 }
 

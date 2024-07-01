@@ -10,10 +10,14 @@ import {
   TextField,
 } from "@mui/material";
 import { GridCloseIcon } from "@mui/x-data-grid";
-import AddLabelToEl from "../../../../../components/AddLabelToEl";
 import { LoadingButton } from "@mui/lab";
+import AddLabelToEl from "../../../../../../components/AddLabelToEl";
 
-function SetDialog({ open, setOpen }: PropsType) {
+function SetDialog(props: PropsType) {
+  // TODO::define and declare component state and variables
+  let { open, setOpen } = props;
+  // TODO::define and declare component helper methods
+  // * return component UI
   return (
     <>
       <Dialog
@@ -41,23 +45,28 @@ function SetDialog({ open, setOpen }: PropsType) {
         <DialogTitle textAlign={"center"} fontWeight={600}>
           اضافة بند
         </DialogTitle>
+
         <DialogContent>
+          {/* code */}
           <Grid container spacing={2}>
             <Grid item xs={6}>
               <AddLabelToEl label={"كود البند"}>
                 <TextField size="small" />
               </AddLabelToEl>
             </Grid>
+            {/* short description */}
             <Grid item xs={6}>
               <AddLabelToEl label={"وصف قصير للبند"}>
                 <TextField size="small" />
               </AddLabelToEl>
             </Grid>
+            {/* long description */}
             <Grid item xs={6}>
               <AddLabelToEl label={"وصف طويل للبند"}>
                 <TextField size="small" multiline minRows={4} />
               </AddLabelToEl>
             </Grid>
+            {/* Contract type */}
             <Grid item xs={6}>
               <AddLabelToEl label={"اختيار نموذج العقد"}>
                 <Select size={"small"}>
@@ -65,17 +74,20 @@ function SetDialog({ open, setOpen }: PropsType) {
                 </Select>
               </AddLabelToEl>
             </Grid>
+            {/* unit */}
             <Grid item xs={6} sx={{ offset: "6" }}>
               <AddLabelToEl label={"وحدة"}>
                 <TextField size="small" />
               </AddLabelToEl>
             </Grid>
             <Grid item xs={6}></Grid>
+            {/* price */}
             <Grid item xs={6}>
               <AddLabelToEl label={"السعر"}>
                 <TextField size="small" />
               </AddLabelToEl>
             </Grid>
+            {/* value */}
             <Grid item xs={6}>
               <AddLabelToEl label={"القيمة"}>
                 <TextField size="small" />
@@ -83,6 +95,7 @@ function SetDialog({ open, setOpen }: PropsType) {
             </Grid>
           </Grid>
         </DialogContent>
+
         <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
           <LoadingButton variant="contained" type="submit">
             اضافة
